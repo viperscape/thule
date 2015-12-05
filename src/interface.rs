@@ -2,14 +2,13 @@ use glium::glutin::Event as glutin_event;
 use glium::{Display};
 use na::Vec2;
 
-use ::ui::{Target,};
-use ::ui::{Colors};
+use ::ui::{Target,Colors,Render};
 use ::input::keyboard::Keyboard;
 use ::input::mouse::Mouse;
 use ::events::Events;
 
 pub struct Interface {
-    window: Display,
+    display: Display,
     pub keyboard: Keyboard,
     mouse: Mouse,
 
@@ -20,12 +19,12 @@ pub struct Interface {
 
 impl Interface {
     pub fn new (size_x: u32, size_y: u32) -> Interface {
-        let window: Display = Target::new(size_x, size_y);
+        let display: Display = Target::new(size_x, size_y);
 
         let keyboard = Keyboard::new();
         
         Interface {
-            window: window,
+            display: display,
             keyboard: keyboard,
             mouse: Mouse::new(),
             events: vec!(),
@@ -35,7 +34,7 @@ impl Interface {
 
     pub fn update (&mut self) {
         let mut window_events = vec!();
-        for e in self.window.poll_events() {
+        for e in self.display.poll_events() {
             window_events.push(e);
         }
 
@@ -56,14 +55,17 @@ impl Interface {
                               &mut self.events,
                               win_size);
         }
+
+        Render::update(&mut self.display,
+                       Colors::grey_dark());
     }
 
     pub fn get_display_mut (&mut self) -> &mut Display {
-        &mut self.window
+        &mut self.display
     }
 
     pub fn get_win_size(&self) -> Option<Vec2<f32>> {
-        if let Some(size) = Target::get_size(&self.window) {
+        if let Some(size) = Target::get_size(&self.display) {
             return Some(Vec2::new(size.0 as f32,size.1 as f32))
         }
         None
