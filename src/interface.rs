@@ -2,13 +2,14 @@ use glium::glutin::Event as glutin_event;
 use glium::{Display};
 use na::Vec2;
 
-use ::ui::{Target,Colors,Render};
+use ::ui::{Target,Colors,Render,Transforms};
 use ::input::keyboard::Keyboard;
 use ::input::mouse::Mouse;
 use ::events::Events;
 
 pub struct Interface {
     display: Display,
+    pub render: Render,
     pub keyboard: Keyboard,
     mouse: Mouse,
 
@@ -19,12 +20,14 @@ pub struct Interface {
 
 impl Interface {
     pub fn new (size_x: u32, size_y: u32) -> Interface {
-        let display: Display = Target::new(size_x, size_y);
+        let mut display: Display = Target::new(size_x, size_y);
+        let render = Render::new(&mut display);
 
         let keyboard = Keyboard::new();
         
         Interface {
             display: display,
+            render: render,
             keyboard: keyboard,
             mouse: Mouse::new(),
             events: vec!(),
@@ -56,8 +59,8 @@ impl Interface {
                               win_size);
         }
 
-        Render::update(&mut self.display,
-                       Colors::grey_dark());
+        self.render.update(&mut self.display,
+                           Colors::grey_dark());
     }
 
     pub fn get_display_mut (&mut self) -> &mut Display {

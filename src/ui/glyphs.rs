@@ -103,7 +103,7 @@ impl GlyphDrawer {
                 let position = Vec2::new((i as f32 *
                                           cache.0.advance.0 as f32)
                                          - offset_x as f32,
-                                         0.0);
+                                         0.0) * size;
 
                 let img_size = Vec2::new(cache.0.image_size.0 as f32,
                                          cache.0.image_size.1 as f32);

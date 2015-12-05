@@ -1,19 +1,11 @@
 #![allow(dead_code)]
 
 use na::{
-    cast,
-
     ToHomogeneous,
-    Inv,
-    
     Iso3,
     Mat4,
     Ortho3,
-    Persp3,
     Vec2,Vec3,Vec4,
-    Pnt3,Pnt2,Pnt4,
-    Rot3,
-    
     one,
 };
 

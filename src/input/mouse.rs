@@ -1,8 +1,7 @@
-#[allow(dead_code)]
+#![allow(dead_code)]
 
 use clock_ticks::precise_time_s;
-use na::{Vec3,Vec2,
-               Pnt3 };
+use na::{Vec2,};
 
 use glium::glutin::Event as glutin_events;
 use glium::glutin::ElementState;
