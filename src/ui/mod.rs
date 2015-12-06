@@ -4,6 +4,7 @@ mod glyphs;
 mod color;
 mod transforms;
 mod render;
+mod mesh;
 
 pub use self::window::Target;
 pub use self::color::{Color,Colorable,Colors};

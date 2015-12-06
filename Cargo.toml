@@ -5,10 +5,18 @@ authors = ["viperscape <chrisfgill@gmail.com>"]
 
 [dependencies]
 nalgebra = "0.3.0"
+
 font-atlas = "0.1.0"
 font-atlas-image = "0.1.0"
 image = "0.3.14"
+
 rustc-serialize = "0.3.16"
 rand = "0.3.11"
+
 glium = "0.9.1"
+
 clock_ticks = "*"
+
+hex2d = "*"
+genmesh = "0.3.2"
+obj = "0.3.0"

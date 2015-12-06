@@ -10,6 +10,9 @@ extern crate image;
 
 extern crate clock_ticks;
 
+extern crate obj;
+extern crate genmesh;
+
 mod ui;
 mod input;
 mod events;
