@@ -13,10 +13,13 @@ extern crate clock_ticks;
 extern crate obj;
 extern crate genmesh;
 
+extern crate hex2d;
+
 mod ui;
 mod input;
 mod events;
 mod interface;
+mod grid;
 
 pub use font_atlas::{RenderedFont};
 pub use image::DynamicImage;
@@ -24,3 +27,4 @@ pub type Font = RenderedFont<DynamicImage>;
 
 pub use events::Events;
 pub use interface::Interface;
+pub use grid::Grid;
