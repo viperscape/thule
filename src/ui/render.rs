@@ -49,14 +49,21 @@ impl Render {
 
             let ui = Transforms::default_ui(win_size);
             
-            for tile in game.map.tiles.iter() {
-                let size = 10.;
-                let pos = Vec2::new(tile.coord.x as f32 * size,
-                                    tile.coord.y as f32 + size);
-                self.tile.draw(Vec2::new(size,size),
-                               Colors::green_spring(),
-                               ui.to_screen(pos),
-                               &mut target);
+            for r in 0..game.map.size {
+                let size = 100.;
+                let off = {
+                    if r & 1 == 1 { 0. }
+                    else { size / 2. }
+                };
+                for c in 0..game.map.size {
+                    let tile = game.map.tiles.get(&(r,c)).unwrap();
+                    let pos = Vec2::new(r as f32 * size * 0.5,
+                                        c as f32 * size + off * 2.);
+                    self.tile.draw(Vec2::new(size,size),
+                                   Colors::random(),
+                                   ui.to_screen(pos),
+                                   &mut target);
+                }
             }
 
             self.text.draw("thule",
