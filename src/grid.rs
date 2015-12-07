@@ -1,8 +1,23 @@
 use hex2d::{Coordinate};
 
+pub const TILESIZE: f32 = 10.;
+
+#[derive(Debug)]
+pub struct Tile {
+    coord: Coordinate,
+    kind: TileKind,
+}
+
+#[derive(Debug)]
+pub enum TileKind {
+    Grass,
+    Water,
+    Stone,
+}
+
 #[derive(Debug)]
 pub struct Grid {
-    coords: Vec<Coordinate>,
+    pub tiles: Vec<Tile>,
 }
 
 impl Grid {
@@ -10,10 +25,13 @@ impl Grid {
         let mut v = vec!();
         for x in 0..50 {
             for y in 0..50 {
-                v.push(Coordinate::new(x, y));
+                v.push(Tile {
+                    coord: Coordinate::new(x, y),
+                    kind: TileKind::Grass,
+                });
             }
         }
 
-        Grid { coords: v, }
+        Grid { tiles: v, }
     }
 }

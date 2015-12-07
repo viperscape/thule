@@ -20,6 +20,7 @@ mod input;
 mod events;
 mod interface;
 mod grid;
+mod game;
 
 pub use font_atlas::{RenderedFont};
 pub use image::DynamicImage;
@@ -28,3 +29,4 @@ pub type Font = RenderedFont<DynamicImage>;
 pub use events::Events;
 pub use interface::Interface;
 pub use grid::Grid;
+pub use game::GameState;

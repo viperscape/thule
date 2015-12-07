@@ -7,7 +7,6 @@ fn main() {
     let mut iface = Interface::new(800,800);
     let grid = Grid::new();
 
-    println!("{:?}",grid);
     
     'main: loop {
         iface.update();

@@ -6,6 +6,7 @@ use ::ui::{Target,Colors,Render,Transforms};
 use ::input::keyboard::Keyboard;
 use ::input::mouse::Mouse;
 use ::events::Events;
+use ::GameState;
 
 pub struct Interface {
     display: Display,
@@ -23,19 +24,18 @@ impl Interface {
         let mut display: Display = Target::new(size_x, size_y);
         let render = Render::new(&mut display);
 
-        let keyboard = Keyboard::new();
-        
         Interface {
             display: display,
             render: render,
-            keyboard: keyboard,
+            keyboard: Keyboard::new(),
             mouse: Mouse::new(),
             events: vec!(),
             dt: 0.0,
         }
     }
 
-    pub fn update (&mut self) {
+    pub fn update (&mut self,
+                   game: &GameState) {
         let mut window_events = vec!();
         for e in self.display.poll_events() {
             window_events.push(e);
@@ -59,8 +59,9 @@ impl Interface {
                               win_size);
         }
 
-        self.render.update(&mut self.display,
-                           Colors::grey_dark());
+        self.dt = self.render.update(&mut self.display,
+                                     Colors::grey_dark(),
+                                     game);
     }
 
     pub fn get_display_mut (&mut self) -> &mut Display {
