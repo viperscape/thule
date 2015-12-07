@@ -12,10 +12,12 @@ pub struct Render {
 
 impl Render {
     pub fn new (display: &mut Display,) -> Render {
-        let font = Atlas::new("assets/font/UbuntuMono-20").expect("Font atlas cannot load, missing fonts?");
         Render {
-            text: GlyphDrawer::new(font,display),
-            tile: MeshDrawer::new_from_path("assets/mesh/hex.obj",display),
+            text: GlyphDrawer::new_from_path(
+                "assets/font/UbuntuMono-20",display),
+            
+            tile: MeshDrawer::new_from_path(
+                "assets/mesh/hex.obj",display),
         }
     }
     pub fn update(&mut self,
@@ -33,7 +35,7 @@ impl Render {
             let ui = Transforms::default_ui(win_size);
             
 
-            self.tile.draw(Vec2::new(100.,100.),
+            self.tile.draw(Vec2::new(10.,10.),
                            Colors::green_spring(),
                            ui.to_screen(Vec2::new(100.,100.)),
                            &mut target);

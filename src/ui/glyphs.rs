@@ -59,7 +59,7 @@ pub struct GlyphDrawer {
 }
 
 impl GlyphDrawer {
-    pub fn new(mut font: Font, window: &Display) -> GlyphDrawer {
+    pub fn new(mut font: Font, display: &Display) -> GlyphDrawer {
         implement_vertex!(Vertex, pos, tex);
         let verts = vec![
             Vertex { pos: [ -0.5,  0.5 ], tex: [ 0.0, 0.0 ] },
@@ -68,12 +68,12 @@ impl GlyphDrawer {
             Vertex { pos: [  0.5, -0.5 ], tex: [ 1.0, 1.0 ] },
             ];
         
-        let program = program!(window,
+        let program = program!(display,
                                140 => { vertex: VERT_SRC,
                                         fragment: FRAG_SRC, } ).unwrap();
-        let vbo = glium::vertex::VertexBuffer::new(window, &verts).unwrap().into_vertex_buffer_any();
+        let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
 
-        let cache = GlyphDrawer::load_glyphs(&mut font, window);
+        let cache = GlyphDrawer::load_glyphs(&mut font, display);
         
         GlyphDrawer {
             vbo: vbo,
@@ -82,7 +82,7 @@ impl GlyphDrawer {
             cache: cache,
         }
     }
-
+    
     pub fn draw(
         &mut self,
         text: &str,
@@ -154,6 +154,12 @@ impl GlyphDrawer {
         }
         
         cache
+    }
+
+    pub fn new_from_path(path: &str, display: &Display) -> GlyphDrawer {
+        let atlas = Atlas::new(path).expect("Font atlas cannot load, missing fonts?");
+
+        GlyphDrawer::new(atlas,display)
     }
 }
 
