@@ -6,7 +6,7 @@ pub struct Target;
 impl Target {
     pub fn new(width: u32, height: u32) -> Display {
         let display = glutin::WindowBuilder::new()
-            .with_title("Project Mab".to_string())
+            .with_title("Thule".to_string())
             .with_dimensions(width, height)
             .with_vsync()
             .with_multisampling(8)

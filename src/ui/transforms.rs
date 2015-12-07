@@ -60,7 +60,7 @@ pub fn ortho(win_size: Vec2<f32>) -> Mat4<f32> {
 }
 
 //straight translation, used for ui placement
-fn translation(v: Vec3<f32>) -> Mat4<f32> {
+pub fn translation(v: Vec3<f32>) -> Mat4<f32> {
     let translation = Iso3::new(
         Vec3::new(v.x, v.y, v.z),
         Vec3::new(0.0, 0.0, 0.0),

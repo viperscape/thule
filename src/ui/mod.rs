@@ -11,4 +11,5 @@ pub use self::color::{Color,Colorable,Colors};
 pub use self::render::Render;
 pub use self::glyphs::GlyphDrawer;
 pub use self::atlas::Atlas;
-pub use self::transforms::Transforms;
+pub use self::transforms::{Transforms,translation};
+pub use self::mesh::MeshDrawer;

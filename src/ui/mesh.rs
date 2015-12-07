@@ -20,12 +20,8 @@ static VERT_SRC: &'static str = r"
         in vec3 pos;
         in vec3 norm;
 
-        //uniform mat4  transform;
-        uniform mat4  model;
-        uniform mat4  view;
-        uniform mat4  proj;
-
-        uniform float size;
+        uniform mat4  transform;
+        uniform vec2  size;
         uniform vec3  color;
 
         out vec3 v_color;
@@ -33,9 +29,9 @@ static VERT_SRC: &'static str = r"
         out vec3 v_normal;
 
         void main() {
-             v_position = pos;
+             v_position = pos * vec3(size,1.0);
              v_normal = norm;
-             gl_Position = proj * view * model * vec4(v_position, 1.0);
+             gl_Position = transform * vec4(v_position, 1.0);
              v_color = color;
         }
 ";
@@ -69,15 +65,15 @@ pub struct MeshDrawer {
 
 impl MeshDrawer {
     pub fn new(verts : Vec<Vertex>,
-               window: &Display) -> MeshDrawer {
+               display: &Display) -> MeshDrawer {
         implement_vertex!(Vertex, pos, norm, tex);
         
        // let v = verts.iter().map(|vert| *Pnt3::from_array_ref(&vert.pos)).collect();
 
-        let program = program!(window,
+        let program = program!(display,
                                140 => { vertex: VERT_SRC,
                                         fragment: FRAG_SRC, } ).unwrap();
-        let vbo = glium::vertex::VertexBuffer::new(window, &verts).unwrap().into_vertex_buffer_any();
+        let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
         MeshDrawer {
             verts: Arc::new(verts),
             vbo: vbo,
@@ -90,15 +86,13 @@ impl MeshDrawer {
         &mut self,
         size     : Vec2<f32>,
         color    : color::Color,
-        transforms: [Mat4<f32>;3],
+        transform: Mat4<f32>,
         target: &mut glium::Frame,
         ) {
         let uniforms = uniform! {
-            model: *transforms[2].as_array(),
-            view: *transforms[1].as_array(),
-            proj: *transforms[0].as_array(),
-            size     : size[0],
-            color    : color,
+            transform: *transform.as_array(),
+            size: *size.as_array(),
+            color: color,
         };
 
         // draw parameters
@@ -117,13 +111,13 @@ impl MeshDrawer {
                     &self.program, &uniforms, &params).unwrap();
     }
     
-    pub fn new_from_path(path: &str, window: &Display) -> MeshDrawer {
+    pub fn new_from_path(path: &str, display: &Display) -> MeshDrawer {
         if let Some(f) = File::open(path).ok() {
             let mut data = ::std::io::BufReader::new(f);
             let data = obj::Obj::load(&mut data);
             
             let verts = load_wavefront(data);
-            MeshDrawer::new(verts,window,)
+            MeshDrawer::new(verts,display,)
         }
         else { panic!("mesh asset not found: {:?}", path); }
     }
