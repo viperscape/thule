@@ -50,15 +50,12 @@ impl Render {
             let ui = Transforms::default_ui(win_size);
             
             for r in 0..game.map.size {
-                let size = 100.;
-                let off = {
-                    if r & 1 == 1 { 0. }
-                    else { size / 2. }
-                };
+                let size = 20.;
+                let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
                     let tile = game.map.tiles.get(&(r,c)).unwrap();
-                    let pos = Vec2::new(r as f32 * size * 0.5,
-                                        c as f32 * size + off * 2.);
+                    let pos = Vec2::new((c as f32 * size) + off,
+                                        r as f32 * size * 0.75);
                     self.tile.draw(Vec2::new(size,size),
                                    Colors::random(),
                                    ui.to_screen(pos),
