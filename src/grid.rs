@@ -4,7 +4,7 @@ pub const TILESIZE: f32 = 10.;
 
 #[derive(Debug)]
 pub struct Tile {
-    coord: Coordinate,
+    pub coord: Coordinate,
     kind: TileKind,
 }
 

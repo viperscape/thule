@@ -1,7 +1,7 @@
 use ::Grid;
 
 pub struct GameState {
-    map: Grid,
+    pub map: Grid,
 }
 
 impl GameState {

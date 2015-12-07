@@ -1,7 +1,7 @@
 #![feature(drain)]
 
 extern crate thule;
-use thule::{Interface,Events,Grid,GameState};
+use thule::{Interface,Events,GameState};
 
 fn main() {
     let mut iface = Interface::new(800,800);

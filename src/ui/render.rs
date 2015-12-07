@@ -49,11 +49,15 @@ impl Render {
 
             let ui = Transforms::default_ui(win_size);
             
-
-            self.tile.draw(Vec2::new(10.,10.),
-                           Colors::green_spring(),
-                           ui.to_screen(Vec2::new(100.,100.)),
-                           &mut target);
+            for tile in game.map.tiles.iter() {
+                let size = 10.;
+                let pos = Vec2::new(tile.coord.x as f32 * size,
+                                    tile.coord.y as f32 + size);
+                self.tile.draw(Vec2::new(size,size),
+                               Colors::green_spring(),
+                               ui.to_screen(pos),
+                               &mut target);
+            }
 
             self.text.draw("thule",
                            Vec2::new(1.,1.),
