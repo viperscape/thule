@@ -1,15 +1,14 @@
 #![feature(drain)]
 
 extern crate thule;
-use thule::{Interface,Events,Grid};
+use thule::{Interface,Events,Grid,GameState};
 
 fn main() {
     let mut iface = Interface::new(800,800);
-    let grid = Grid::new();
-
+    let mut game = GameState::new();
     
     'main: loop {
-        iface.update();
+        iface.update(&game);
         
         for e in iface.events.drain(..) {
             match e {
