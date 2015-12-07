@@ -54,7 +54,7 @@ pub type GlyphCache = HashMap<char,(CharInfo,Texture2d)>;
 pub struct GlyphDrawer {
     vbo: glium::vertex::VertexBufferAny,
     program: glium::Program,
-    font: Font,
+    _font: Font,
     cache:  GlyphCache,
 }
 
@@ -78,7 +78,7 @@ impl GlyphDrawer {
         GlyphDrawer {
             vbo: vbo,
             program: program,
-            font: font,
+            _font: font,
             cache: cache,
         }
     }

@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::sync::Arc;
 
-use na::{Mat4,Vec2,Pnt3};
+use na::{Mat4,Vec2};
 
 use glium::{self,Surface,Display};
 use glium::vertex::VertexBufferAny;

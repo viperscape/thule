@@ -1,7 +1,7 @@
 use glium::{Display,Surface};
-use ::ui::{Color,Colors,Atlas,Transforms,translation};
+use ::ui::{Color,Colors,Transforms};
 use ::ui::{GlyphDrawer,MeshDrawer,};
-use na::{Vec2,Vec3};
+use na::{Vec2};
 use clock_ticks::precise_time_s;
 
 use ::ui::Target;
@@ -39,7 +39,7 @@ impl Render {
             let win_size = Vec2::new(win_size.0 as f32,win_size.1 as f32);
 
             self.fps.log_frame_time();
-            let frame_time_avg = self.fps.frame_time_avg;
+            let _frame_time_avg = self.fps.frame_time_avg;
             
             let mut target = display.draw();
             target.clear_color_and_depth((color[0],
@@ -53,11 +53,11 @@ impl Render {
                 let size = 20.;
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
-                    let tile = game.map.tiles.get(&(r,c)).unwrap();
+                    let _tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec2::new((c as f32 * size) + off,
-                                        r as f32 * size * 0.75);
+                                        r as f32 * size * 0.866);
                     self.tile.draw(Vec2::new(size,size),
-                                   Colors::random(),
+                                   Colors::green(),
                                    ui.to_screen(pos),
                                    &mut target);
                 }
@@ -81,7 +81,7 @@ impl Render {
 
 struct Timing {
     frame_time_avg: f64,
-    frame_times: [f64;FRAME_SAMPLE],
+    _frame_times: [f64;FRAME_SAMPLE],
     frame_time_idx: usize,
     frame_start: f64,
 
@@ -92,7 +92,7 @@ impl Timing {
     fn new () -> Timing {
         Timing {
             frame_time_avg: 0.0,
-            frame_times: [0.0;FRAME_SAMPLE],
+            _frame_times: [0.0;FRAME_SAMPLE],
             frame_time_idx: 0,
             frame_start: precise_time_s(),
             

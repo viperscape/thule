@@ -2,7 +2,7 @@ use glium::glutin::Event as glutin_event;
 use glium::{Display};
 use na::Vec2;
 
-use ::ui::{Target,Colors,Render,Transforms};
+use ::ui::{Target,Colors,Render};
 use ::input::keyboard::Keyboard;
 use ::input::mouse::Mouse;
 use ::events::Events;

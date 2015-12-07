@@ -6,7 +6,6 @@ use na::{
     Mat4,
     Ortho3,
     Vec2,Vec3,Vec4,
-    one,
 };
 
 pub const FOV: f32 = 0.75;
