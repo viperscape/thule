@@ -47,7 +47,8 @@ impl Render {
                                           color[2],
                                           1.0), 1.0);
 
-            let ui = Transforms::default_ui(win_size);
+            let ui_view = Transforms::default_ui(win_size);
+            let grid_view = Transforms::default_grid(win_size);
             
             for r in 0..game.map.size {
                 let size = 20.;
@@ -58,7 +59,7 @@ impl Render {
                                         r as f32 * size * 0.866);
                     self.tile.draw(Vec2::new(size,size),
                                    Colors::green(),
-                                   ui.to_screen(pos),
+                                   grid_view.to_screen(pos),
                                    &mut target);
                 }
             }
@@ -67,7 +68,7 @@ impl Render {
                            Vec2::new(1.,1.),
                            Colors::grey_light(),
                            true,
-                           ui.to_screen(Vec2::new(100.,100.)),
+                           ui_view.to_screen(Vec2::new(100.,100.)),
                            &mut target,);
 
             target.finish().unwrap();

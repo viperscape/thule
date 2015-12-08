@@ -23,6 +23,13 @@ impl Transforms {
                 world_to_camera : translation(Vec3::new(0.0,0.0,0.0)),
         }
     }
+
+    pub fn default_grid (win_size: Vec2<f32>) -> Transforms {
+        Transforms {
+                camera_to_screen: ortho(win_size),
+                world_to_camera : translation_iso(Vec3::new(0.0,0.0,0.0)),
+        }
+    }
 }
 
 impl Transforms {
@@ -63,6 +70,15 @@ pub fn translation(v: Vec3<f32>) -> Mat4<f32> {
     let translation = Iso3::new(
         Vec3::new(v.x, v.y, v.z),
         Vec3::new(0.0, 0.0, 0.0),
+    );
+
+    translation.to_homogeneous()
+}
+
+pub fn translation_iso(v: Vec3<f32>) -> Mat4<f32> {
+    let translation = Iso3::new(
+        Vec3::new(v.x, v.y, v.z),
+        Vec3::new(45., 0., 35.25),
     );
 
     translation.to_homogeneous()
