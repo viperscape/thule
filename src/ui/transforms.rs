@@ -5,9 +5,12 @@ use na::{
     Iso3,
     Mat4,
     Ortho3,
-    Vec2,Vec3,Vec4,
+    Vec2,Vec3,
     zero,
     Rot3,
+    Inv,
+
+    Persp3,
 };
 
 pub struct Transforms {
@@ -25,45 +28,26 @@ impl Transforms {
     }
 
     pub fn default_grid (win_size: Vec2<f32>) -> Transforms {
-        
-        let eye = Rot3::look_at_z(&Vec3::new(0.0,0.0,1.0),&Vec3::y());
-        let iso = Iso3 { translation: Vec3::new(0.,0.,0.),
-                          rotation: eye };
+        let at = Vec3::new(0.1,0.1,0.1); // TODO: map position origin + offset of camera
+        let pos = Vec3::new(20.,20.,-20.);
+        let at = at - pos;
+        let iso = Iso3 { translation: pos,
+                         rotation: Rot3::look_at_z(&at,&Vec3::y()), };
         
         Transforms {
-            proj: ortho(win_size),
-            view: translation(zero(),None),//iso.to_homogeneous(),
+            proj:  ortho(win_size),
+            view: iso.to_homogeneous().inv().unwrap(),
         }
     }
 }
 
 impl Transforms {
     /// to be used with a 2d-camera, returns PVM matrix
-    pub fn to_screen(&self, position: Vec2<f32>) -> Mat4<f32> {
-        let position = Vec4::new(
-            position.x,
-            position.y,
-            1.,
-            1.,
-            );
-
-        let rad = 0.017453292519943;
-        let r = Vec3::new(45.,0.,0.) * rad;
-
-        let view_model = self.view * position;
-
-        let view_model =
-            Iso3::new(
-                Vec3::new(view_model.x, view_model.y, view_model.z),
-                r,
-                )
-            .to_homogeneous();
-
-        let eye = Rot3::look_at_z(&Vec3::new(0.0,0.0,1.0),&Vec3::y());
-        let iso = Iso3 { translation: Vec3::new(0.,0.,0.),
-                         rotation: eye };
-
-        self.proj * iso.to_homogeneous() * view_model
+    pub fn to_screen(&self, pos: Vec2<f32>) -> Mat4<f32> {
+        let model = translation(Vec3::new(pos.x,pos.y,0.1),
+                                None);
+        
+        self.proj * self.view * model
     }
 }
 
@@ -85,4 +69,14 @@ pub fn translation(v: Vec3<f32>, r: Option<Vec3<f32>>) -> Mat4<f32> {
         );
 
     translation.to_homogeneous()
+}
+
+/// fov in hundreths (0.75, not 75.0)
+pub fn persp(win_size: Vec2<f32>, fov: f32) -> Mat4<f32> {
+    let persp = Persp3::new(
+        win_size.x / win_size.y, fov,
+        0.1, 1000.0
+    );
+
+    persp.to_mat()
 }

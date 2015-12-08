@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::sync::Arc;
 
-use na::{Mat4,Vec2};
+use na::{Mat4,Vec3};
 
 use glium::{self,Surface,Display};
 use glium::vertex::VertexBufferAny;
@@ -21,7 +21,7 @@ static VERT_SRC: &'static str = r"
         in vec3 norm;
 
         uniform mat4  transform;
-        uniform vec2  size;
+        uniform vec3  size;
         uniform vec3  color;
 
         out vec3 v_color;
@@ -29,7 +29,7 @@ static VERT_SRC: &'static str = r"
         out vec3 v_normal;
 
         void main() {
-             v_position = pos * vec3(size,1.0);
+             v_position = pos * size;
              v_normal = norm;
              gl_Position = transform * vec4(v_position, 1.0);
              v_color = color;
@@ -84,7 +84,7 @@ impl MeshDrawer {
 
     pub fn draw(
         &mut self,
-        size     : Vec2<f32>,
+        size     : Vec3<f32>,
         color    : color::Color,
         transform: Mat4<f32>,
         target: &mut glium::Frame,

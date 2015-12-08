@@ -5,7 +5,7 @@ use thule::{Interface,Events,GameState};
 
 fn main() {
     let mut iface = Interface::new(800,800);
-    let mut game = GameState::new();
+    let game = GameState::new();
     
     'main: loop {
         iface.update(&game);

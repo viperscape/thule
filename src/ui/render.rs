@@ -1,7 +1,7 @@
 use glium::{Display,Surface};
 use ::ui::{Color,Colors,Transforms};
 use ::ui::{GlyphDrawer,MeshDrawer,};
-use na::{Vec2};
+use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
 
 use ::ui::Target;
@@ -23,7 +23,7 @@ impl Render {
                 "assets/font/UbuntuMono-20",display),
             
             tile: MeshDrawer::new_from_path(
-                "assets/mesh/hex.obj",display),
+                "assets/mesh/cube.obj",display),
 
             fps: Timing::new(),
         }
@@ -51,20 +51,20 @@ impl Render {
             let grid_view = Transforms::default_grid(win_size);
             
             for r in 0..game.map.size {
-                let size = 50.;
+                let size = 15.;
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
                     let _tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec2::new((c as f32 * size) + off,
-                                        r as f32 * size * 0.866 * 0.75);
-                    self.tile.draw(Vec2::new(size,size), //*1.25
-                                   Colors::green(),
+                                        r as f32 * size);// * 0.866 * 0.75);
+                    self.tile.draw(Vec3::new(size,size,size), //*1.25
+                                   Colors::blue_sky(),
                                    grid_view.to_screen(pos),
                                    &mut target);
                 }
             }
 
-            self.text.draw("thule",
+            self.text.draw("",
                            Vec2::new(1.,1.),
                            Colors::grey_light(),
                            true,
