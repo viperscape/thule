@@ -7,6 +7,7 @@ use na::{
     Ortho3,
     Vec2,Vec3,Vec4,
     zero,
+    Rot3,
 };
 
 pub struct Transforms {
@@ -24,12 +25,14 @@ impl Transforms {
     }
 
     pub fn default_grid (win_size: Vec2<f32>) -> Transforms {
-        let rad = 0.017453292519943;
-        let r = Vec3::new(0.,0.,45.) * rad;
+        
+        let eye = Rot3::look_at_z(&Vec3::new(0.0,0.0,1.0),&Vec3::y());
+        let iso = Iso3 { translation: Vec3::new(0.,0.,0.),
+                          rotation: eye };
         
         Transforms {
             proj: ortho(win_size),
-            view: translation(zero(),Some(r)),
+            view: translation(zero(),None),//iso.to_homogeneous(),
         }
     }
 }
@@ -44,16 +47,23 @@ impl Transforms {
             1.,
             );
 
+        let rad = 0.017453292519943;
+        let r = Vec3::new(45.,0.,0.) * rad;
+
         let view_model = self.view * position;
 
         let view_model =
             Iso3::new(
                 Vec3::new(view_model.x, view_model.y, view_model.z),
-                zero(),
+                r,
                 )
             .to_homogeneous();
 
-        self.proj * view_model
+        let eye = Rot3::look_at_z(&Vec3::new(0.0,0.0,1.0),&Vec3::y());
+        let iso = Iso3 { translation: Vec3::new(0.,0.,0.),
+                         rotation: eye };
+
+        self.proj * iso.to_homogeneous() * view_model
     }
 }
 
