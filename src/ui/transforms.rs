@@ -6,52 +6,51 @@ use na::{
     Mat4,
     Ortho3,
     Vec2,Vec3,Vec4,
+    zero,
 };
 
-pub const FOV: f32 = 0.75;
-
 pub struct Transforms {
-    camera_to_screen: Mat4<f32>,
-    world_to_camera : Mat4<f32>,
+    proj: Mat4<f32>,
+    view: Mat4<f32>,
 }
 
 impl Transforms {
     /// straight forward ui placement with these camera-less transform
     pub fn default_ui (win_size: Vec2<f32>) -> Transforms {
         Transforms {
-                camera_to_screen: ortho(win_size),
-                world_to_camera : translation(Vec3::new(0.0,0.0,0.0)),
+            proj: ortho(win_size),
+            view: translation(zero(),None),
         }
     }
 
     pub fn default_grid (win_size: Vec2<f32>) -> Transforms {
         Transforms {
-                camera_to_screen: ortho(win_size),
-                world_to_camera : translation_iso(Vec3::new(0.0,0.0,0.0)),
+            proj: ortho(win_size),
+            view: translation(zero(),None),
         }
     }
 }
 
 impl Transforms {
-   /// to be used with a 2d-camera
-    pub fn to_screen(&self, world_position: Vec2<f32>) -> Mat4<f32> {
-        let world_position = Vec4::new(
-            world_position.x,
-            world_position.y,
-            0.0,
-            1.0,
-        );
+    /// to be used with a 2d-camera, returns PVM matrix
+    pub fn to_screen(&self, position: Vec2<f32>) -> Mat4<f32> {
+        let position = Vec4::new(
+            position.x,
+            position.y,
+            1.,
+            1.,
+            );
 
-        let camera_position = self.world_to_camera * world_position;
+        let view_model = self.view * position;
 
-        let camera_translation =
+        let view_model =
             Iso3::new(
-                Vec3::new(camera_position.x, camera_position.y, 0.0),
-                Vec3::new(0.0, 0.0, 0.0),
+                Vec3::new(view_model.x, view_model.y, view_model.z),
+                zero(),
                 )
             .to_homogeneous();
 
-        self.camera_to_screen * camera_translation
+        self.proj * view_model
     }
 }
 
@@ -59,27 +58,18 @@ impl Transforms {
 pub fn ortho(win_size: Vec2<f32>) -> Mat4<f32> {
     let ortho = Ortho3::new(
         win_size.x, win_size.y,
-        -1.0, 1.0
-    );
+        -1000., 1000.
+        );
 
     ortho.to_mat()
 }
 
 //straight translation, used for ui placement
-pub fn translation(v: Vec3<f32>) -> Mat4<f32> {
+pub fn translation(v: Vec3<f32>, r: Option<Vec3<f32>>) -> Mat4<f32> {
     let translation = Iso3::new(
         Vec3::new(v.x, v.y, v.z),
-        Vec3::new(0.0, 0.0, 0.0),
-    );
-
-    translation.to_homogeneous()
-}
-
-pub fn translation_iso(v: Vec3<f32>) -> Mat4<f32> {
-    let translation = Iso3::new(
-        Vec3::new(v.x, v.y, v.z),
-        Vec3::new(45., 0., 35.25),
-    );
+        r.unwrap_or(zero()),
+        );
 
     translation.to_homogeneous()
 }
