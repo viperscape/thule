@@ -24,9 +24,12 @@ impl Transforms {
     }
 
     pub fn default_grid (win_size: Vec2<f32>) -> Transforms {
+        let rad = 0.017453292519943;
+        let r = Vec3::new(0.,0.,45.) * rad;
+        
         Transforms {
             proj: ortho(win_size),
-            view: translation(zero(),None),
+            view: translation(zero(),Some(r)),
         }
     }
 }
