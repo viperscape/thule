@@ -28,14 +28,15 @@ impl Transforms {
     }
 
     pub fn default_grid (win_size: Vec2<f32>) -> Transforms {
+        //let rad = 0.017453292519943;
         let at = Vec3::new(0.1,0.1,0.1); // TODO: map position origin + offset of camera
-        let pos = Vec3::new(20.,20.,-20.);
+        let pos = Vec3::new(0.1,1.,1.);
         let at = at - pos;
         let iso = Iso3 { translation: pos,
                          rotation: Rot3::look_at_z(&at,&Vec3::y()), };
         
         Transforms {
-            proj:  ortho(win_size),
+            proj:  ortho(win_size),//persp(win_size,0.45),
             view: iso.to_homogeneous().inv().unwrap(),
         }
     }
@@ -43,8 +44,8 @@ impl Transforms {
 
 impl Transforms {
     /// to be used with a 2d-camera, returns PVM matrix
-    pub fn to_screen(&self, pos: Vec2<f32>) -> Mat4<f32> {
-        let model = translation(Vec3::new(pos.x,pos.y,0.1),
+    pub fn to_screen(&self, pos: Vec3<f32>) -> Mat4<f32> {
+        let model = translation(Vec3::new(pos.x,pos.y,pos.z),
                                 None);
         
         self.proj * self.view * model

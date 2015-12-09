@@ -23,7 +23,7 @@ impl Render {
                 "assets/font/UbuntuMono-20",display),
             
             tile: MeshDrawer::new_from_path(
-                "assets/mesh/cube.obj",display),
+                "assets/mesh/cone.obj",display),
 
             fps: Timing::new(),
         }
@@ -51,11 +51,12 @@ impl Render {
             let grid_view = Transforms::default_grid(win_size);
             
             for r in 0..game.map.size {
-                let size = 15.;
+                let size = 6.;
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
                     let _tile = game.map.tiles.get(&(r,c)).unwrap();
-                    let pos = Vec2::new((c as f32 * size) + off,
+                    let pos = Vec3::new((c as f32 * size) + off,
+                                        0.,
                                         r as f32 * size);// * 0.866 * 0.75);
                     self.tile.draw(Vec3::new(size,size,size), //*1.25
                                    Colors::blue_sky(),
@@ -64,11 +65,21 @@ impl Render {
                 }
             }
 
+            self.tile.draw(Vec3::new(20.,20.,20.), //*1.25
+                           Colors::green(),
+                           grid_view.to_screen(Vec3::new(0.,0.,50.)),
+                           &mut target);
+
+            self.tile.draw(Vec3::new(20.,20.,20.), //*1.25
+                           Colors::red(),
+                           grid_view.to_screen(Vec3::new(0.,0.,-50.)),
+                           &mut target);
+            
             self.text.draw("",
                            Vec2::new(1.,1.),
                            Colors::grey_light(),
                            true,
-                           ui_view.to_screen(Vec2::new(100.,100.)),
+                           ui_view.to_screen(Vec3::new(100.,100.,0.)),
                            &mut target,);
 
             target.finish().unwrap();
