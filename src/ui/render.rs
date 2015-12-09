@@ -23,7 +23,7 @@ impl Render {
                 "assets/font/UbuntuMono-20",display),
             
             tile: MeshDrawer::new_from_path(
-                "assets/mesh/cone.obj",display),
+                "assets/mesh/hex3d.obj",display),
 
             fps: Timing::new(),
         }
@@ -51,29 +51,23 @@ impl Render {
             let grid_view = Transforms::default_grid(win_size);
             
             for r in 0..game.map.size {
-                let size = 6.;
+                let size = 40.;
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
                     let _tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec3::new((c as f32 * size) + off,
                                         0.,
-                                        r as f32 * size);// * 0.866 * 0.75);
+                                        r as f32 * size * 0.866);
                     self.tile.draw(Vec3::new(size,size,size), //*1.25
-                                   Colors::blue_sky(),
+                                   {if ((r == 0) &&
+                                        (c == 0 ))
+                                    { Colors::blue_sky() }
+                                    else { Colors::white_ghost() }
+                                    },
                                    grid_view.to_screen(pos),
                                    &mut target);
                 }
             }
-
-            self.tile.draw(Vec3::new(20.,20.,20.), //*1.25
-                           Colors::green(),
-                           grid_view.to_screen(Vec3::new(0.,0.,50.)),
-                           &mut target);
-
-            self.tile.draw(Vec3::new(20.,20.,20.), //*1.25
-                           Colors::red(),
-                           grid_view.to_screen(Vec3::new(0.,0.,-50.)),
-                           &mut target);
             
             self.text.draw("",
                            Vec2::new(1.,1.),
