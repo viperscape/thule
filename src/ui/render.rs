@@ -59,11 +59,10 @@ impl Render {
                                         0.,
                                         r as f32 * size * 0.866);
                     self.tile.draw(Vec3::new(size,size,size), //*1.25
-                                   {if ((r == 0) &&
-                                        (c == 0 ))
-                                    { Colors::blue_sky() }
+                                   {if (r == 0) && (c == 0 ) {
+                                       Colors::blue_sky() }
                                     else { Colors::white_ghost() }
-                                    },
+                                   },
                                    grid_view.to_screen(pos),
                                    &mut target);
                 }

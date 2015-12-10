@@ -10,6 +10,8 @@ dependencies = [
  "hex2d 0.0.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "image 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "nalgebra 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "noise 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
  "obj 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -535,6 +537,15 @@ dependencies = [
  "num 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "noise"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "num 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.3.12 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
