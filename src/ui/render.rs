@@ -6,7 +6,7 @@ use clock_ticks::precise_time_s;
 
 use ::ui::Target;
 use ::GameState;
-use ::TileKind;
+use ::{TileKind,Tile};
 
 const FRAME_SAMPLE: usize = 120;
 
@@ -60,10 +60,7 @@ impl Render {
                                         0.,
                                         r as f32 * size * 0.866);
                     self.tile.draw(Vec3::new(size,size,size), //*1.25
-                                   {if tile.kind == TileKind::Grass {
-                                       Colors::green_spring() }
-                                    else { Colors::blue_sky() }
-                                   },
+                                   Render::get_tile_color(&tile),
                                    grid_view.to_screen(pos),
                                    &mut target);
                 }
@@ -81,6 +78,15 @@ impl Render {
         }
 
         dt
+    }
+
+    pub fn get_tile_color(tile: &Tile) -> [f32;3] {
+        if tile.kind == TileKind::Grass {
+            Colors::green_spring() }
+        else if tile.kind == TileKind::Stone {
+            Colors::grey_light() }
+        else { Colors::blue_sky() }
+        
     }
 }
 
