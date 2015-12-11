@@ -6,6 +6,7 @@ use clock_ticks::precise_time_s;
 
 use ::ui::Target;
 use ::GameState;
+use ::TileKind;
 
 const FRAME_SAMPLE: usize = 120;
 
@@ -54,14 +55,14 @@ impl Render {
                 let size = 40.;
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
-                    let _tile = game.map.tiles.get(&(r,c)).unwrap();
+                    let tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec3::new((c as f32 * size) + off,
                                         0.,
                                         r as f32 * size * 0.866);
                     self.tile.draw(Vec3::new(size,size,size), //*1.25
-                                   {if (r == 0) && (c == 0 ) {
-                                       Colors::blue_sky() }
-                                    else { Colors::white_ghost() }
+                                   {if tile.kind == TileKind::Grass {
+                                       Colors::green_spring() }
+                                    else { Colors::blue_sky() }
                                    },
                                    grid_view.to_screen(pos),
                                    &mut target);

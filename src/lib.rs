@@ -33,5 +33,5 @@ pub type Font = RenderedFont<DynamicImage>;
 
 pub use events::Events;
 pub use interface::Interface;
-pub use grid::Grid;
+pub use grid::{Grid,TileKind,Tile};
 pub use game::GameState;

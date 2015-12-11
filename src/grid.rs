@@ -4,7 +4,7 @@ use noise::{open_simplex2,Seed};
 use std::collections::HashMap;
 
 pub const TILESIZE: f32 = 10.;
-pub const MAPSIZE: usize = 10; // square
+pub const MAPSIZE: usize = 20; // square
 
 #[derive(Debug,Clone,Copy)]
 pub struct Tile {
@@ -12,11 +12,12 @@ pub struct Tile {
     pub kind: TileKind,
 }
 
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug,Clone,Copy,PartialEq)]
 pub enum TileKind {
     Grass,
     Water,
     Stone,
+    Ice,
 }
 
 pub struct Grid {
@@ -27,11 +28,12 @@ pub struct Grid {
 impl Grid {
     pub fn new () -> Grid {
         let mut v = HashMap::new();
+        let g = Grid::gen(0,MAPSIZE,MAPSIZE);
         
-        for r in 0..MAPSIZE {
-            for c in 0..MAPSIZE {
-                let t = Tile { kind: TileKind::Grass };
-                v.insert((r,c),t);
+        for y in 0..MAPSIZE {
+            for x in 0..MAPSIZE {
+                let t = Tile { kind: Grid::gen_tile(g[y+x]) };
+                v.insert((x,y),t);
             }
         }
 
@@ -39,10 +41,10 @@ impl Grid {
                size: MAPSIZE }
     }
 
-    pub fn regen(s: u32, w: u32, h: u32,
+    pub fn regen(s: u32, w: usize, h: usize,
                  b: &mut [f32]) {
         let seed = Seed::new(s);
-        let mut i = 0;
+        //let mut i = 0;
         
         for y in 0..w {
             for x in 0..h {
@@ -50,17 +52,33 @@ impl Grid {
                                                &[x as f32,
                                                  y as f32]);
                 
-                b[i] = value;
-                i += 1;
+                b[y+x] = value;
+                //i += 1;
             }
         }
     }
 
-    pub fn gen(s: u32, w: u32, h: u32) -> Vec<f32> {
-        let mut pixels: Vec<f32> = vec![0.;(w * h) as usize];
+    pub fn gen(s: u32, w: usize, h: usize) -> Vec<f32> {
+        let mut pixels: Vec<f32> = vec![0.;(w * h)];
 
         Grid::regen(s,w,h, pixels.as_mut_slice());
 
         pixels
     }
+
+    pub fn gen_tile(n: f32) -> TileKind {
+        if n > 0. {
+            if n > 0.5 {
+                TileKind::Stone
+            }
+            else { TileKind::Grass }
+        }
+        else {
+            if n < -0.5 {
+                TileKind::Ice
+            }
+            else { TileKind::Water }
+        }
+    }
+       
 }
