@@ -7,7 +7,7 @@ fn main() {
     let mut iface = Interface::new(800,800);
     let game = GameState::new();
 
-    let grid = Grid::gen::<f32>();
+    let grid = Grid::gen(0,10,10);
     println!("{:?}",grid);
     
     'main: loop {

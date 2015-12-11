@@ -1,6 +1,6 @@
 //use hex2d::{Coordinate};
 extern crate num;
-use noise::{open_simplex2,Seed,Point2};
+use noise::{open_simplex2,Seed};
 use std::collections::HashMap;
 
 pub const TILESIZE: f32 = 10.;
@@ -24,12 +24,6 @@ pub struct Grid {
     pub size: usize,
 }
 
-use self::num::{Float, NumCast};
-
-fn cast<T: NumCast, R: NumCast>(val: T) -> R {
-    num::traits::cast(val).unwrap()
-}
-
 impl Grid {
     pub fn new () -> Grid {
         let mut v = HashMap::new();
@@ -45,25 +39,28 @@ impl Grid {
                size: MAPSIZE }
     }
 
-    pub fn gen<T: Float + NumCast>() -> Vec<T> {
-        let seed = Seed::new(0);
-        let mut pixels: Vec<T> = Vec::with_capacity((100 * 100) as usize);
-
-        for y in (0..100) {
-            for x in (0..100) {
-                let value: f32 = cast(open_simplex2(&seed, &[cast::<_,T>(x) - cast::<_,T>(100/2), cast::<_,T>(y) - cast::<_,T>(100/2)]));
-                pixels.push(cast(clamp(value * 0.5 + 0.5, 0.0, 1.0) * 255.0));
+    pub fn regen(s: u32, w: u32, h: u32,
+                 b: &mut [f32]) {
+        let seed = Seed::new(s);
+        let mut i = 0;
+        
+        for y in 0..w {
+            for x in 0..h {
+                let value: f32 = open_simplex2(&seed,
+                                               &[x as f32,
+                                                 y as f32]);
+                
+                b[i] = value;
+                i += 1;
             }
         }
+    }
+
+    pub fn gen(s: u32, w: u32, h: u32) -> Vec<f32> {
+        let mut pixels: Vec<f32> = vec![0.;(w * h) as usize];
+
+        Grid::regen(s,w,h, pixels.as_mut_slice());
 
         pixels
     }
 }
-
-fn clamp<F: Float>(val: F, min: F, max: F) -> F {
-    match () {
-        _ if val < min => min,
-        _ if val > max => max,
-        _ => val,
-    }
-    }
