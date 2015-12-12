@@ -31,16 +31,16 @@ fn main() {
 fn move_cam(kb: &Keyboard,) -> Vec3<f32> {
     let keys = kb.get_held_keys();
     if keys[VirtualKeyCode::Up as usize] {
-        Vec3::new(1.,0.,1.)
+        Vec3::new(10.,0.,10.)
     }
     else if keys[VirtualKeyCode::Down as usize] {
-        Vec3::new(-1.,0.,-1.)
+        Vec3::new(-10.,0.,-10.)
     }
     else if keys[VirtualKeyCode::Left as usize] {
-        Vec3::new(-1.,0.,1.)
+        Vec3::new(10.,0.,-10.)
     }
     else if keys[VirtualKeyCode::Right as usize] {
-        Vec3::new(1.,0.,-1.)
+        Vec3::new(-10.,0.,10.)
     }
     else { na::zero() }
 }
