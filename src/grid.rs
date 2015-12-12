@@ -70,8 +70,7 @@ impl Grid {
 
     pub fn gen_tile(n: f32) -> TileKind {
         if n > 0. {
-            if n > 0.6 {
-                println!("n:{:?}",n);
+            if n > 0.75 {
                 TileKind::Stone
             }
             else { TileKind::Grass }
