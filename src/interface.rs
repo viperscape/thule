@@ -1,6 +1,6 @@
 use glium::glutin::Event as glutin_event;
 use glium::{Display};
-use na::Vec2;
+use na::{Vec2,Vec3};
 
 use ::ui::{Target,Colors,Render};
 use ::input::keyboard::Keyboard;
@@ -17,6 +17,8 @@ pub struct Interface {
     pub events: Vec<Events>,
 
     pub dt: f64,
+
+    pub cam_pos: Vec3<f32>,
 }
 
 impl Interface {
@@ -31,6 +33,7 @@ impl Interface {
             mouse: Mouse::new(),
             events: vec!(),
             dt: 0.0,
+            cam_pos: Vec3::new(-20.,-20.,-20.),
         }
     }
 
@@ -61,7 +64,8 @@ impl Interface {
 
         self.dt = self.render.update(&mut self.display,
                                      Colors::grey_dark(),
-                                     game);
+                                     game,
+                                     self.cam_pos);
     }
 
     pub fn get_display_mut (&mut self) -> &mut Display {

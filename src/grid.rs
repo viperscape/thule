@@ -17,7 +17,7 @@ pub enum TileKind {
     Grass,
     Water,
     Stone,
-    Ice,
+    Sand,
 }
 
 pub struct Grid {
@@ -29,11 +29,13 @@ impl Grid {
     pub fn new () -> Grid {
         let mut v = HashMap::new();
         let g = Grid::gen(0,MAPSIZE,MAPSIZE);
-        
+
+        let mut i = 0;
         for y in 0..MAPSIZE {
             for x in 0..MAPSIZE {
-                let t = Tile { kind: Grid::gen_tile(g[y+x]) };
+                let t = Tile { kind: Grid::gen_tile(g[i]) };
                 v.insert((x,y),t);
+                i += 1;
             }
         }
 
@@ -44,7 +46,7 @@ impl Grid {
     pub fn regen(s: u32, w: usize, h: usize,
                  b: &mut [f32]) {
         let seed = Seed::new(s);
-        //let mut i = 0;
+        let mut i = 0;
         
         for y in 0..w {
             for x in 0..h {
@@ -52,8 +54,8 @@ impl Grid {
                                                &[x as f32,
                                                  y as f32]);
                 
-                b[y+x] = value;
-                //i += 1;
+                b[i] = value;
+                i += 1;
             }
         }
     }
@@ -68,16 +70,17 @@ impl Grid {
 
     pub fn gen_tile(n: f32) -> TileKind {
         if n > 0. {
-            if n > 0.5 {
+            if n > 0.6 {
+                println!("n:{:?}",n);
                 TileKind::Stone
             }
             else { TileKind::Grass }
         }
         else {
-            if n < -0.5 {
-                TileKind::Ice
+            if n < -0.25 {
+                TileKind::Water
             }
-            else { TileKind::Water }
+            else { TileKind::Sand }
         }
     }
        

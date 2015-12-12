@@ -32,7 +32,8 @@ impl Render {
     pub fn update(&mut self,
                   display: &mut Display,
                   color: Color,
-                  game: &GameState,) -> f64 {
+                  game: &GameState,
+                  cam_pos: Vec3<f32>,) -> f64 {
         let dt = precise_time_s()-self.fps.time;
         self.fps.time = precise_time_s();
         
@@ -48,8 +49,8 @@ impl Render {
                                           color[2],
                                           1.0), 1.0);
 
-            let ui_view = Transforms::default_ui(win_size);
-            let grid_view = Transforms::default_grid(win_size);
+            let ui_view = Transforms::ui(win_size);
+            let grid_view = Transforms::grid(win_size,cam_pos);
             
             for r in 0..game.map.size {
                 let size = 40.;
@@ -59,7 +60,7 @@ impl Render {
                     let pos = Vec3::new((c as f32 * size) + off,
                                         0.,
                                         r as f32 * size * 0.866);
-                    self.tile.draw(Vec3::new(size,size,size), //*1.25
+                    self.tile.draw(Vec3::new(size,size,size),
                                    Render::get_tile_color(&tile),
                                    grid_view.to_screen(pos),
                                    &mut target);
@@ -84,7 +85,9 @@ impl Render {
         if tile.kind == TileKind::Grass {
             Colors::green_spring() }
         else if tile.kind == TileKind::Stone {
-            Colors::grey_light() }
+            Colors::red_brick() }
+        else if tile.kind == TileKind::Sand {
+            Colors::white_ghost() }
         else { Colors::blue_sky() }
         
     }
