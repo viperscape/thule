@@ -1,4 +1,5 @@
-use na::{Vec3,zero,Iso3,Rot3};
+use na::{Vec3,zero,one,
+         Iso3,Rot3};
 
 pub struct Camera {
     pub pos: Vec3<f32>,
@@ -26,7 +27,9 @@ impl Camera {
     }
 
     pub fn update (&self,) -> Iso3<f32> {
-        self.iso * Iso3::new(self.pos,zero())
+        let mut iso = self.iso;
+        iso.translation = self.pos;
+        iso
     }
 }
 
