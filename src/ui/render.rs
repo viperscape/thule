@@ -4,7 +4,7 @@ use ::ui::{GlyphDrawer,MeshDrawer,};
 use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
 
-use ::ui::Target;
+use ::ui::{Target,Camera};
 use ::GameState;
 use ::{TileKind,Tile};
 
@@ -33,7 +33,7 @@ impl Render {
                   display: &mut Display,
                   color: Color,
                   game: &GameState,
-                  cam_pos: Vec3<f32>,) -> f64 {
+                  cam: &Camera,) -> f64 {
         let dt = precise_time_s()-self.fps.time;
         self.fps.time = precise_time_s();
         
@@ -50,7 +50,7 @@ impl Render {
                                           1.0), 1.0);
 
             let ui_view = Transforms::ui(win_size);
-            let grid_view = Transforms::grid(win_size,cam_pos);
+            let grid_view = Transforms::grid(win_size,&cam);
             
             for r in 0..game.map.size {
                 let size = 40.;

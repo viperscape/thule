@@ -15,7 +15,7 @@ fn main() {
     
     'main: loop {
         let offset = move_cam(&iface.keyboard);
-        iface.cam_pos = iface.cam_pos + offset;
+        iface.cam.pos = iface.cam.pos + offset;
         iface.update(&game);
         
         for e in iface.events.drain(..) {
@@ -37,7 +37,7 @@ fn move_cam(kb: &Keyboard,) -> Vec3<f32> {
         Vec3::new(-1.,0.,-1.)
     }
     else if keys[VirtualKeyCode::Left as usize] {
-        Vec3::new(-1.,0.,-1.)
+        Vec3::new(-1.,0.,1.)
     }
     else if keys[VirtualKeyCode::Right as usize] {
         Vec3::new(1.,0.,-1.)

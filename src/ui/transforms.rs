@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use ::ui::Camera;
 
 use na::{
     ToHomogeneous,
@@ -27,14 +28,10 @@ impl Transforms {
         }
     }
 
-    pub fn grid (win_size: Vec2<f32>,cam_pos: Vec3<f32>) -> Transforms {
-        let at = Vec3::new(-50.,0.1,-50.); // TODO: map position origin + offset of camera
-        let at = at - cam_pos;
-        let iso = Iso3 { translation: cam_pos,
-                         rotation: Rot3::look_at_z(&at,&Vec3::y()), };
-        
+    pub fn grid (win_size: Vec2<f32>,cam: &Camera) -> Transforms {
+        let iso = cam.update();
         Transforms {
-            proj:  ortho(win_size),
+            proj: ortho(win_size),
             view: iso.to_homogeneous().inv().unwrap(),
         }
     }

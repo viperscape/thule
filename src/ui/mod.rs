@@ -5,6 +5,7 @@ mod color;
 mod transforms;
 mod render;
 mod mesh;
+mod camera;
 
 pub use self::window::Target;
 pub use self::color::{Color,Colorable,Colors};
@@ -13,3 +14,4 @@ pub use self::glyphs::GlyphDrawer;
 pub use self::atlas::Atlas;
 pub use self::transforms::{Transforms,translation};
 pub use self::mesh::MeshDrawer;
+pub use self::camera::Camera;
