@@ -24,7 +24,7 @@ impl Render {
                 "assets/font/UbuntuMono-20",display),
             
             tile: MeshDrawer::new_from_path(
-                "assets/mesh/hex3d.obj",display),
+                "assets/mesh/hex.obj",display),
 
             fps: Timing::new(),
         }
@@ -59,7 +59,7 @@ impl Render {
                     let tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec3::new((c as f32 * size) + off,
                                         0.,
-                                        r as f32 * size * 0.866);
+                                        r as f32 * size);// * 0.866);
                     self.tile.draw(Vec3::new(size,size,size),
                                    Render::get_tile_color(&tile),
                                    grid_view.to_screen(pos),
