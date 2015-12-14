@@ -52,7 +52,7 @@ impl Render {
             let ui_view = Transforms::ui(win_size);
             let grid_view = Transforms::grid(win_size,&cam);
 
-            let size = 40. * cam.zoom;
+            let size = 100. * cam.zoom;
 
             let mut c = 0;
             for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
