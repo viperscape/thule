@@ -61,7 +61,9 @@ impl Interface {
                               &mut self.events,
                               win_size);
 
-            //self.cam.get_mouse_ray(&self.mouse,win_size);
+            if game.map.has_ray(&self.cam,None) {
+                println!("r!");
+            }
         }
 
         self.dt = self.render.update(&mut self.display,

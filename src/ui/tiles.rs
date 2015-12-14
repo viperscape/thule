@@ -110,9 +110,9 @@ impl TileDrawer {
         target: &mut glium::Frame,
         ) {
         let uniforms = uniform! {
-            pv: *pv.as_array(),
+            pv: *pv.as_ref(),
             //m: *m.as_array(),
-            size: *size.as_array(),
+            size: *size.as_ref(),
         };
 
         let params = glium::DrawParameters {

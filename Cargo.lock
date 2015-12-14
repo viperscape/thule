@@ -9,7 +9,7 @@ dependencies = [
  "glium 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex2d 0.0.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "image 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
- "nalgebra 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nalgebra 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "ncollide 0.6.0 (git+https://github.com/sebcrozet/ncollide)",
  "noise 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "num 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -523,16 +523,6 @@ dependencies = [
 [[package]]
 name = "nalgebra"
 version = "0.2.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "num 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
- "rand 0.3.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "nalgebra"
-version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "num 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",

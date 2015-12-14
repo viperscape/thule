@@ -6,6 +6,7 @@ extern crate rand;
 
 #[macro_use] extern crate glium;
 extern crate nalgebra as na;
+extern crate ncollide as nc;
 
 extern crate font_atlas;
 extern crate font_atlas_image;

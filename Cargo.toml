@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["viperscape <chrisfgill@gmail.com>"]
 
 [dependencies]
-nalgebra = "0.3.0"
+nalgebra = "*"
 
 font-atlas = "0.1.0"
 font-atlas-image = "0.1.0"

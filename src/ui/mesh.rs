@@ -90,8 +90,8 @@ impl MeshDrawer {
         target: &mut glium::Frame,
         ) {
         let uniforms = uniform! {
-            transform: *transform.as_array(),
-            size: *size.as_array(),
+            transform: *transform.as_ref(),
+            size: *size.as_ref(),
             color: color,
         };
 

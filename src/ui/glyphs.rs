@@ -118,10 +118,10 @@ impl GlyphDrawer {
                 let transform = transform * translation.to_homogeneous();
                 
                 let uniforms = uniform! {
-                    transform: *transform.as_array(),
-                    size: *(size * img_size).as_array(),
+                    transform: *transform.as_ref(),
+                    size: *(size * img_size).as_ref(),
                     sample: &cache.1,
-                    o_color: *Vec4::new(color[0],color[1],color[2],1.0).as_array(),
+                    o_color: *Vec4::new(color[0],color[1],color[2],1.0).as_ref(),
                 };
 
                 // draw parameters
