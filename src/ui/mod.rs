@@ -4,7 +4,8 @@ mod glyphs;
 mod color;
 mod transforms;
 mod render;
-mod mesh;
+pub mod mesh;
+mod tiles;
 mod camera;
 
 pub use self::window::Target;
@@ -15,3 +16,4 @@ pub use self::atlas::Atlas;
 pub use self::transforms::{Transforms,translation};
 pub use self::mesh::MeshDrawer;
 pub use self::camera::Camera;
+pub use self::tiles::TileDrawer;

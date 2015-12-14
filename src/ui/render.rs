@@ -1,6 +1,6 @@
 use glium::{Display,Surface};
 use ::ui::{Color,Colors,Transforms};
-use ::ui::{GlyphDrawer,MeshDrawer,};
+use ::ui::{GlyphDrawer,TileDrawer,};
 use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
 
@@ -12,7 +12,7 @@ const FRAME_SAMPLE: usize = 120;
 
 pub struct Render {
     pub text: GlyphDrawer,
-    pub tile: MeshDrawer,
+    pub tile: TileDrawer,
 
     fps: Timing,
 }
@@ -23,7 +23,7 @@ impl Render {
             text: GlyphDrawer::new_from_path(
                 "assets/font/UbuntuMono-20",display),
             
-            tile: MeshDrawer::new_from_path(
+            tile: TileDrawer::new_from_path(
                 "assets/mesh/hex.obj",display),
 
             fps: Timing::new(),
@@ -51,21 +51,40 @@ impl Render {
 
             let ui_view = Transforms::ui(win_size);
             let grid_view = Transforms::grid(win_size,&cam);
-            
-            for r in 0..game.map.size {
-                let size = 40. * cam.zoom;
+
+            let size = 40. * cam.zoom;
+            /*for r in 0..game.map.size {    
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
                     let tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec3::new((c as f32 * size) + off,
                                         0.,
                                         r as f32 * size * 0.866);
-                    self.tile.draw(Vec3::new(size,size,size),
-                                   Render::get_tile_color(&tile),
-                                   grid_view.to_screen(pos),
-                                   &mut target);
+                    self.tile.inst[r+c].tile_pos = *pos.as_array();
+                    
                 }
+             }*/
+
+            let mut c = 0;
+            for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
+                let r = i/game.map.size;
+                if c > game.map.size { c = 0; }
+
+                if let Some(game_tile) = game.map.tiles.get(&(r,c)) {
+                    let off = (r & 1) as f32 * (size / 2.);
+                    let pos = Vec3::new((c as f32 * size) + off,
+                                        0.,
+                                        r as f32 * size * 0.866);
+                    tile.pos_tile = (pos.x,pos.y,pos.z);
+                    let color = Render::get_tile_color(&game_tile);
+                    tile.color = (color[0],color[1],color[2]);
+                }
+                c += 1;
             }
+
+            self.tile.draw(Vec3::new(size,size,size),
+                           grid_view.to_pv(),
+                           &mut target);
             
             self.text.draw("",
                            Vec2::new(1.,1.),

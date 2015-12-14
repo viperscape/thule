@@ -84,8 +84,8 @@ impl MeshDrawer {
 
     pub fn draw(
         &mut self,
-        size     : Vec3<f32>,
-        color    : color::Color,
+        size: Vec3<f32>,
+        color: color::Color,
         transform: Mat4<f32>,
         target: &mut glium::Frame,
         ) {

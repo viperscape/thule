@@ -45,6 +45,11 @@ impl Transforms {
         
         self.proj * self.view * model
     }
+
+    /// gets persp*view matrix
+    pub fn to_pv(&self) -> Mat4<f32> {
+        self.proj * self.view
+    }
 }
 
 /// get new ortho transform matrix based on window size specified
