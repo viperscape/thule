@@ -1,10 +1,9 @@
 //use hex2d::{Coordinate};
 extern crate num;
 use noise::{open_simplex2,Seed};
-use std::collections::HashMap;
 
 pub const TILESIZE: f32 = 10.;
-pub const MAPSIZE: usize = 20; // square
+pub const MAPSIZE: usize = 50; // square
 
 #[derive(Debug,Clone,Copy)]
 pub struct Tile {
@@ -21,20 +20,20 @@ pub enum TileKind {
 }
 
 pub struct Grid {
-    pub tiles: HashMap<(usize,usize),Tile>,
+    pub tiles: Vec<Tile>,
     pub size: usize,
 }
 
 impl Grid {
     pub fn new () -> Grid {
-        let mut v = HashMap::new();
+        let mut v = vec![Tile { kind: TileKind::Grass }; MAPSIZE*MAPSIZE];
         let g = Grid::gen(0,MAPSIZE,MAPSIZE);
 
         let mut i = 0;
         for y in 0..MAPSIZE {
             for x in 0..MAPSIZE {
                 let t = Tile { kind: Grid::gen_tile(g[i]) };
-                v.insert((x,y),t);
+                v[i] = t;
                 i += 1;
             }
         }

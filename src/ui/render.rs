@@ -41,7 +41,7 @@ impl Render {
             let win_size = Vec2::new(win_size.0 as f32,win_size.1 as f32);
 
             self.fps.log_frame_time();
-            let _frame_time_avg = self.fps.frame_time_avg;
+            let frame_time_avg = self.fps.frame_time_avg;
             
             let mut target = display.draw();
             target.clear_color_and_depth((color[0],
@@ -53,44 +53,42 @@ impl Render {
             let grid_view = Transforms::grid(win_size,&cam);
 
             let size = 40. * cam.zoom;
-            /*for r in 0..game.map.size {    
-                let off = (r & 1) as f32 * (size / 2.);
-                for c in 0..game.map.size {
-                    let tile = game.map.tiles.get(&(r,c)).unwrap();
-                    let pos = Vec3::new((c as f32 * size) + off,
-                                        0.,
-                                        r as f32 * size * 0.866);
-                    self.tile.inst[r+c].tile_pos = *pos.as_array();
-                    
-                }
-             }*/
 
             let mut c = 0;
             for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
                 let r = i/game.map.size;
                 if c > game.map.size { c = 0; }
 
-                if let Some(game_tile) = game.map.tiles.get(&(r,c)) {
-                    let off = (r & 1) as f32 * (size / 2.);
-                    let pos = Vec3::new((c as f32 * size) + off,
-                                        0.,
-                                        r as f32 * size * 0.866);
-                    tile.pos_tile = (pos.x,pos.y,pos.z);
+                let off = (r & 1) as f32 * (size / 2.);
+                let pos = Vec3::new((c as f32 * size) + off,
+                                    0.,
+                                    r as f32 * size * 0.866);
+                tile.pos_tile = (pos.x,pos.y,pos.z);
+                
+                let game_tile = game.map.tiles[i]; {
                     let color = Render::get_tile_color(&game_tile);
                     tile.color = (color[0],color[1],color[2]);
                 }
+                
                 c += 1;
             }
 
             self.tile.draw(Vec3::new(size,size,size),
                            grid_view.to_pv(),
                            &mut target);
-            
-            self.text.draw("",
+
+            self.text.draw(&format!("fps:{:?}",frame_time_avg),
                            Vec2::new(1.,1.),
-                           Colors::grey_light(),
-                           true,
-                           ui_view.to_screen(Vec3::new(100.,100.,0.)),
+                           Colors::black(),
+                           false,
+                           ui_view.to_screen(Vec3::new(-390.,-390.,0.)),
+                           &mut target,);
+
+            self.text.draw(&format!("cam:{:?}",cam.pos),
+                           Vec2::new(1.,1.),
+                           Colors::black(),
+                           false,
+                           ui_view.to_screen(Vec3::new(-390.,-370.,0.)),
                            &mut target,);
 
             target.finish().unwrap();
