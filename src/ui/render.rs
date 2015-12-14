@@ -13,6 +13,7 @@ const FRAME_SAMPLE: usize = 120;
 pub struct Render {
     pub text: GlyphDrawer,
     pub tile: TileDrawer,
+    pub tile3d: TileDrawer,
 
     fps: Timing,
 }
@@ -25,6 +26,9 @@ impl Render {
             
             tile: TileDrawer::new_from_path(
                 "assets/mesh/hex.obj",display),
+
+            tile3d: TileDrawer::new_from_path(
+                "assets/mesh/hex3d.obj",display),
 
             fps: Timing::new(),
         }
@@ -76,6 +80,10 @@ impl Render {
             self.tile.draw(Vec3::new(size,size,size),
                            grid_view.to_pv(),
                            &mut target);
+
+            self.tile3d.draw(Vec3::new(size,size,size),
+                             grid_view.to_pv(),
+                             &mut target);
 
             self.text.draw(&format!("fps:{:?}",frame_time_avg),
                            Vec2::new(1.,1.),
