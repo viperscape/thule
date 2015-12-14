@@ -21,7 +21,7 @@ static VERT_SRC: &'static str = r"
 
         in vec3 pos_tile;
         in vec3 color;
-        //in int visible;
+        in int visible;
 
         uniform mat4  pv;
         //uniform mat4  m;
@@ -33,10 +33,12 @@ static VERT_SRC: &'static str = r"
         out vec3 v_normal;
 
         void main() {
-             v_position = pos * size;
-             v_normal = norm;
-             gl_Position = pv * vec4(v_position + pos_tile, 1.0);
-             v_color = color;
+             if (visible == 1) {
+               v_position = pos * size;
+               v_normal = norm;
+               gl_Position = pv * vec4(v_position + pos_tile, 1.0);
+               v_color = color;
+             }
         }
 ";
 
@@ -57,7 +59,7 @@ static FRAG_SRC: &'static str = r"
 pub struct Attr {
     pub pos_tile: (f32,f32,f32),
     pub color: (f32,f32,f32),
-    //pub visible: i32,
+    pub visible: i32,
 }
 
 // TODO: consider using MeshDrawer with traits instead of reimpl
@@ -79,13 +81,13 @@ impl TileDrawer {
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).expect("unable to buld tile drawer vbo").into_vertex_buffer_any();
 
         let tile_inst = {
-            implement_vertex!(Attr, pos_tile,color);
+            implement_vertex!(Attr, pos_tile,color,visible);
 
             let data = vec![
                 Attr {
                     pos_tile: (0.,0.,0.),
                     color: (1.,1.,1.),
-                    //visible: 1,
+                    visible: 1,
                 }
                 ;(::MAPSIZE * ::MAPSIZE)];
 
