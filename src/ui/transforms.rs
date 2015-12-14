@@ -55,7 +55,7 @@ impl Transforms {
 pub fn ortho(win_size: Vec2<f32>) -> Mat4<f32> {
     let ortho = Ortho3::new(
         win_size.x, win_size.y,
-        -1000., 1000.
+        -2000., 2000.
         );
 
     ortho.to_mat()

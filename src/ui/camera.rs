@@ -10,12 +10,12 @@ pub struct Camera {
 impl Camera {
     pub fn default () -> Camera {
         let mut cam = Camera {
-            pos: Vec3::new(-10.,-10.,-10.),
+            pos: Vec3::new(-40.,-40.,-40.),
             iso: Iso3::new(zero(),zero()),
             zoom: 1.0,
         };
 
-        cam.look_at(Vec3::new(-25.,0.1,-25.));
+        cam.look_at(Vec3::new(-100.,0.1,-100.));
         cam
     }
 
