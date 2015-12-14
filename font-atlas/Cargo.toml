@@ -1,5 +1,5 @@
 [package]
-name = "mab_font"
+name = "atlas_gen"
 version = "0.1.0"
 authors = ["viperscape <chrisfgill@gmail.com>"]
 
@@ -7,5 +7,5 @@ authors = ["viperscape <chrisfgill@gmail.com>"]
 font-atlas = "0.1.0"
 font-atlas-freetype = "0.1.0"
 font-atlas-image = "0.1.0"
-freetype-rs = "*"
-image = "*"
+freetype-rs = "0.3.1"
+image = "0.3.15"

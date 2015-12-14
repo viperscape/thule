@@ -21,7 +21,7 @@ impl Render {
     pub fn new (display: &mut Display,) -> Render {
         Render {
             text: GlyphDrawer::new_from_path(
-                "assets/font/UbuntuMono-20",display),
+                "assets/font/SourceCodePro-Regular-20",display),
             
             tile: TileDrawer::new_from_path(
                 "assets/mesh/hex.obj",display),
