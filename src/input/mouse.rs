@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
 use clock_ticks::precise_time_s;
-use na::{Vec2,};
+use na::{Vec2,
+         Pnt3,Vec3};
 
 use glium::glutin::Event as glutin_events;
 use glium::glutin::ElementState;
@@ -13,6 +14,7 @@ use glium::glutin::Event::{
     MouseWheel,
 };
 use ::events::Events;
+use ::ui::Camera;
 
 const DRAGMIN_PX: i32 = 5i32;      // arbitrary 5px minimum
 const DRAGMIN_TIME: f64 = 0.30f64; // 30ms time minimum
@@ -137,5 +139,20 @@ impl Mouse {
         let y = pos.y - window_size.y / 2.0;
 
         Vec2::new(x,-1.0*y)
+    }
+
+    /// returns base (start,dir) for building a ray
+    pub fn get_ray (&self, win_size: Vec2<f32>, cam: &Camera, is_2d: bool) -> (Pnt3<f32>,Vec3<f32>) {
+        let pos = Vec2::new(self.pos.0 as f32,self.pos.1 as f32);
+        if is_2d {
+            let coord = Mouse::convert_ui_coord(pos,win_size) * cam.zoom;
+            let dir = Vec3::new(0.0,0.0,1.0); //NOTE: might need inv
+            return (Pnt3::new(coord.x,coord.y,0.0),dir)
+        }
+
+        let pv = ::ui::transforms::Transforms::grid(win_size,cam).to_pv();
+
+        let r = ::ui::transforms::unproject(pv, &pos, &win_size);
+        (*cam.pos.as_pnt(),r.1)
     }
 }

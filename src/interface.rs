@@ -60,6 +60,8 @@ impl Interface {
             self.mouse.update(&window_events,
                               &mut self.events,
                               win_size);
+
+            //self.cam.get_mouse_ray(&self.mouse,win_size);
         }
 
         self.dt = self.render.update(&mut self.display,

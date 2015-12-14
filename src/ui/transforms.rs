@@ -2,6 +2,7 @@
 use ::ui::Camera;
 
 use na::{
+    self,
     ToHomogeneous,
     Iso3,
     Mat4,
@@ -11,6 +12,8 @@ use na::{
     Inv,
 
     Persp3,
+
+    Pnt2,Pnt3,Pnt4,
 };
 
 pub struct Transforms {
@@ -79,4 +82,28 @@ pub fn persp(win_size: Vec2<f32>, fov: f32) -> Mat4<f32> {
     );
 
     persp.to_mat()
+}
+
+
+/// Converts a point in 2d screen coordinates to a ray (a 3d position and a direction)
+pub fn unproject(projview: Mat4<f32>,
+                 coord: &Vec2<f32>,
+                 win_size: &Vec2<f32>)
+                 -> (Pnt3<f32>, Vec3<f32>) {
+        let normalized_coord = Pnt2::new(
+            2.0 * coord.x  / win_size.x - 1.0,
+            2.0 * -coord.y / win_size.y + 1.0);
+
+        let normalized_begin = Pnt4::new(normalized_coord.x, normalized_coord.y, -1.0, 1.0);
+        let normalized_end   = Pnt4::new(normalized_coord.x, normalized_coord.y, 1.0, 1.0);
+
+        let cam = projview.inv().unwrap();
+
+        let h_unprojected_begin = cam * normalized_begin;
+        let h_unprojected_end   = cam * normalized_end;
+
+        let unprojected_begin: Pnt3<f32> = na::from_homogeneous(&h_unprojected_begin);
+        let unprojected_end:   Pnt3<f32> = na::from_homogeneous(&h_unprojected_end);
+
+        (unprojected_begin, na::normalize(&(unprojected_end - unprojected_begin)))
 }

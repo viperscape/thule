@@ -2,7 +2,7 @@ mod atlas;
 mod window;
 mod glyphs;
 mod color;
-mod transforms;
+pub mod transforms;
 mod render;
 pub mod mesh;
 mod tiles;

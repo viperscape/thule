@@ -1,5 +1,8 @@
 use na::{Vec3,zero,
-         Iso3,Rot3};
+         Iso3,Rot3,
+         Vec2,};
+
+use ::input::mouse::Mouse;
 
 pub struct Camera {
     pub pos: Vec3<f32>,
@@ -32,6 +35,13 @@ impl Camera {
         let mut iso = self.iso;
         iso.translation = self.pos;
         iso
+    }
+
+    pub fn get_mouse_ray (&self, mouse: &Mouse, win_size: Vec2<f32>) {
+        let r = mouse.get_ray(win_size,
+                              &self,false);
+
+        println!("{:?}",r);
     }
 }
 
