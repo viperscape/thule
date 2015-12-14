@@ -1,6 +1,6 @@
 use glium::glutin::Event as glutin_event;
 use glium::{Display};
-use na::{Vec2,Vec3};
+use na::{Vec2,};
 
 use ::ui::{Target,Colors,Render,Camera};
 use ::input::keyboard::Keyboard;

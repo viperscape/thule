@@ -1,7 +1,7 @@
 #![feature(drain)]
 
 extern crate thule;
-use thule::{Interface,Events,GameState,Grid,Keyboard};
+use thule::{Interface,Events,GameState,Keyboard};
 
 extern crate glium;
 use glium::glutin::VirtualKeyCode;

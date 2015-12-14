@@ -1,4 +1,4 @@
-use na::{Vec3,zero,one,
+use na::{Vec3,zero,
          Iso3,Rot3};
 
 pub struct Camera {

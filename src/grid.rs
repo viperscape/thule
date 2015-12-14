@@ -30,8 +30,8 @@ impl Grid {
         let g = Grid::gen(0,MAPSIZE,MAPSIZE);
 
         let mut i = 0;
-        for y in 0..MAPSIZE {
-            for x in 0..MAPSIZE {
+        for _ in 0..MAPSIZE {
+            for _ in 0..MAPSIZE {
                 let t = Tile { kind: Grid::gen_tile(g[i]) };
                 v[i] = t;
                 i += 1;

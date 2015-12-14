@@ -8,7 +8,6 @@ use na::{
     Ortho3,
     Vec2,Vec3,
     zero,
-    Rot3,
     Inv,
 
     Persp3,

@@ -8,10 +8,6 @@ use glium::vertex::VertexBufferAny;
 
 use obj;
 
-use ::ui::{
-    color,
-};
-
 use ::ui::mesh::{Vertex,load_wavefront};
 
 
