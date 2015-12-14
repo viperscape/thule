@@ -20,6 +20,13 @@ pub struct Render {
 
 impl Render {
     pub fn new (display: &mut Display,) -> Render {
+        let mut tile3d = TileDrawer::new_from_path(
+            "assets/mesh/hex3d.obj",display);
+
+        for tile in tile3d.inst.map().iter_mut() {
+            tile.visible = 0; // set invisible for now!
+        }
+        
         Render {
             text: GlyphDrawer::new_from_path(
                 "assets/font/SourceCodePro-Regular-20",display),
@@ -27,8 +34,7 @@ impl Render {
             tile: TileDrawer::new_from_path(
                 "assets/mesh/hex.obj",display),
 
-            tile3d: TileDrawer::new_from_path(
-                "assets/mesh/hex3d.obj",display),
+            tile3d: tile3d,
 
             fps: Timing::new(),
         }
@@ -58,25 +64,55 @@ impl Render {
 
             let size = 100. * cam.zoom;
 
-            let mut c = 0;
+            // iter 2d tiles
+            let mut c = -1;
             for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
+                c += 1;
                 let r = i/game.map.size;
-                if c > game.map.size { c = 0; }
+                if c > game.map.size as isize { c = 0; }
+                
+                let game_tile = game.map.tiles[i];
+                if game_tile.kind == TileKind::Stone {
+                    tile.visible = 0;
+                    continue
+                }
+                
+                let color = Render::get_tile_color(&game_tile);
+                tile.color = (color[0],color[1],color[2]);
 
                 let off = (r & 1) as f32 * (size / 2.);
                 let pos = Vec3::new((c as f32 * size) + off,
                                     0.,
                                     r as f32 * size * 0.866);
                 tile.pos_tile = (pos.x,pos.y,pos.z);
-                
-                let game_tile = game.map.tiles[i]; {
-                    let color = Render::get_tile_color(&game_tile);
-                    tile.color = (color[0],color[1],color[2]);
-                }
-                
-                c += 1;
             }
 
+            // iter 3d tiles
+            // TODO: filter based on tile height, not tile type
+            let mut c = -1;
+            for (i,tile) in self.tile3d.inst.map().iter_mut().enumerate() {
+                c += 1;
+                let r = i/game.map.size;
+                if c > game.map.size as isize { c = 0; }
+                
+                let game_tile = game.map.tiles[i];
+                if game_tile.kind != TileKind::Stone { // NOTE: I should do this at gen, not in render
+                    tile.visible = 0;
+                    continue
+                }
+                tile.visible = 1;
+                
+                let color = Render::get_tile_color(&game_tile);
+                tile.color = (color[0],color[1],color[2]);
+
+                let off = (r & 1) as f32 * (size / 2.);
+                let pos = Vec3::new((c as f32 * size) + off,
+                                    0.,
+                                    r as f32 * size * 0.866);
+                tile.pos_tile = (pos.x,pos.y,pos.z);
+            }
+
+            
             self.tile.draw(Vec3::new(size,size,size),
                            grid_view.to_pv(),
                            &mut target);
