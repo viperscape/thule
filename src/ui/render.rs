@@ -53,13 +53,13 @@ impl Render {
             let grid_view = Transforms::grid(win_size,&cam);
             
             for r in 0..game.map.size {
-                let size = 40.;
+                let size = 40. * cam.zoom;
                 let off = (r & 1) as f32 * (size / 2.);
                 for c in 0..game.map.size {
                     let tile = game.map.tiles.get(&(r,c)).unwrap();
                     let pos = Vec3::new((c as f32 * size) + off,
                                         0.,
-                                        r as f32 * size);// * 0.866);
+                                        r as f32 * size * 0.866);
                     self.tile.draw(Vec3::new(size,size,size),
                                    Render::get_tile_color(&tile),
                                    grid_view.to_screen(pos),

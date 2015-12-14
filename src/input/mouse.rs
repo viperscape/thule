@@ -67,10 +67,10 @@ impl Mouse {
                 MouseWheel(d) => {
                     match d {
                         MouseScrollDelta::LineDelta(_,y) => {
-                            events.push(Events::Zoom(y as f32 / 3.5));
+                            events.push(Events::Zoom(y as f32));
                         },
                         MouseScrollDelta::PixelDelta(_,y) => {
-                            events.push(Events::Zoom(y as f32 / 3.5));
+                            events.push(Events::Zoom(y as f32));
                         },
                     }
                 },

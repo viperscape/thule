@@ -21,6 +21,10 @@ fn main() {
         for e in iface.events.drain(..) {
             match e {
                 Events::Quit => break 'main,
+                Events::Zoom(z) => { // TODO: reset camera pos?
+                    if z > 0. { iface.cam.zoom *= 1.1; }
+                    else { iface.cam.zoom *= 0.9; }
+                },
                 _ => {},
             }
         }

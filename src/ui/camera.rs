@@ -4,6 +4,7 @@ use na::{Vec3,zero,one,
 pub struct Camera {
     pub pos: Vec3<f32>,
     iso: Iso3<f32>,
+    pub zoom: f32,
 }
 
 impl Camera {
@@ -11,6 +12,7 @@ impl Camera {
         let mut cam = Camera {
             pos: Vec3::new(-20.,-20.,-20.),
             iso: Iso3::new(zero(),zero()),
+            zoom: 1.0,
         };
 
         cam.look_at(Vec3::new(-50.,0.1,-50.));
