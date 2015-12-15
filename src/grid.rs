@@ -3,7 +3,7 @@ extern crate num;
 use noise::{open_simplex2,Seed};
 
 use na::{Pnt3,Vec3,Vec2,
-         ToHomogeneous,Iso3, zero};
+         ToHomogeneous,Iso3, zero, Identity};
 use nc::ray::{Ray,RayCast};
 use nc::shape::{Cuboid};
 
@@ -92,8 +92,8 @@ impl Grid {
 
     /// intersects ray, based on dimensions and cam position
     pub fn has_ray (&self,cam:&Camera, with_mouse: Option<(&Mouse,Vec2<f32>)>) -> bool {
-        let size = self.size as f32/2.;
-        let cube = Cuboid::new(Vec3::new(size, 0., size));
+        let size = (self.size as f32 * 1. * cam.zoom) / 2.;
+        let cube = Cuboid::new(Vec3::new(size, 1., size));
         
         let r;
         
@@ -104,10 +104,9 @@ impl Grid {
             r = cam.get_ray();
         }
 
-        let iso = Iso3::new(zero(),zero());
-        if let Some(rr) = cube.toi_with_ray(&iso, &r, true) {
-            true
-        }
-        else { false }
+        //let iso = Iso3::new(zero(),zero());
+        let rr = cube.toi_with_ray(&Identity::new(), &r, true);
+        if let Some(rr) = rr { println!("rr:{:?}",rr); }
+        rr.is_some()
     }
 }
