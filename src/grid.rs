@@ -1,5 +1,5 @@
 //use hex2d::{Coordinate};
-extern crate num;
+use rand::random;
 use noise::{open_simplex2,Seed};
 
 use na::{Pnt3,Vec3,Vec2,
@@ -55,13 +55,14 @@ impl Grid {
         let seed = Seed::new(s);
         let mut i = 0;
         
-        for y in 0..w {
-            for x in 0..h {
+        for r in 0..h {
+            for c in 0..w {
+                let y = c as f32 * 0.05;
+                let x = r as f32 * 0.05;
                 let value: f32 = open_simplex2(&seed,
-                                               &[x as f32,
-                                                 y as f32]);
+                                               &[x, y]);
                 
-                b[i] = value;
+                b[i] = b[i] + value;
                 i += 1;
             }
         }
@@ -73,6 +74,11 @@ impl Grid {
         Grid::regen(s,w,h, pixels.as_mut_slice());
 
         pixels
+    }
+
+    pub fn gen_rand(w: usize, h: usize) -> Vec<f32> {
+        let s = random::<u32>();
+        Grid::gen(s,w,h)
     }
 
     pub fn gen_tile(n: f32) -> TileKind {
@@ -108,5 +114,47 @@ impl Grid {
         let rr = cube.toi_with_ray(&Identity::new(), &r, true);
         if let Some(rr) = rr { println!("rr:{:?}",rr); }
         rr.is_some()
+    }
+
+    pub fn debug (v: &Vec<f32>) -> Vec<&str> {
+        let mut t = vec!();
+        for n in v {
+            if n > &0. {
+                if n > &0.5 {
+                    t.push("^"); //peak
+                }
+                else {
+                    t.push("|"); //grass
+                }
+            }
+            else {
+                if n > &-0.5 {
+                    t.push("~"); //water
+                }
+                else {
+                    t.push("*"); //surf
+                }
+            }
+        }
+
+        t
+    }
+
+    pub fn debug_prn(v: &Vec<f32>, size: usize) {
+        let t = Grid::debug(v);
+        let mut line = String::new();
+
+        let mut i = -1;
+        for n in t {
+            i += 1;
+            
+            line.push_str(n);
+            
+            if i > size as isize {
+                i = -1;
+                println!("{}",line);
+                line = String::new();
+            }
+        }
     }
 }
