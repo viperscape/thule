@@ -127,6 +127,12 @@ impl Render {
                              grid_view.to_pv(),
                              &mut target);
 
+            self.person.draw(Vec3::new(80.,80.,80.),
+                             Colors::gold(),
+                             grid_view.to_screen(game.player.pos),
+                             &mut target,);
+                             
+
             self.text.draw(&format!("fps:{:?}",frame_time_avg),
                            Vec2::new(1.,1.),
                            Colors::black(),
