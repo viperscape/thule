@@ -129,7 +129,7 @@ impl Render {
 
             self.person.draw(Vec3::new(size,size,size),
                              Colors::gold(),
-                             grid_view.to_screen(game.player.pos(&game.map)),
+                             grid_view.to_screen(game.player.pos() * size),
                              &mut target,);
                              
 

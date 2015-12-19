@@ -23,7 +23,9 @@ fn main() {
         iface.cam.pos = iface.cam.pos + offset;
 
         let offset = move_player(&iface.keyboard);
-        game.player.shift(offset,&game.map);
+        if offset.x > 0 && offset.y > 0 {
+            game.player.shift(offset,&game.map);
+        }
             
         
         iface.update(&game);
@@ -48,21 +50,22 @@ fn check_keys (kb: &Keyboard,gs: &mut GameState) {
     }
 }
 
+// NOTE: consider Compass-Coordinates instead
 fn move_player(kb: &Keyboard,) -> Vec2<i8> {
     let mut v = na::zero();
     let keys = kb.get_held_keys();
     
     if keys[VirtualKeyCode::W as usize] {
-        v = v + Vec2::new(1,1)
+        v = v + Vec2::new(0,1)
     }
     if keys[VirtualKeyCode::S as usize] {
-        v = v + Vec2::new(-1,-1)
+        v = v + Vec2::new(0,-1)
     }
     if keys[VirtualKeyCode::A as usize] {
-        v = v + Vec2::new(1,-1)
+        v = v + Vec2::new(1,0)
     }
     if keys[VirtualKeyCode::D as usize] {
-        v = v + Vec2::new(-1,1)
+        v = v + Vec2::new(-1,0)
     }
 
     v
