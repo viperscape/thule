@@ -1,6 +1,6 @@
 use glium::{Display,Surface};
 use ::ui::{Color,Colors,Transforms};
-use ::ui::{GlyphDrawer,TileDrawer,};
+use ::ui::{GlyphDrawer,TileDrawer,MeshDrawer};
 use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
 
@@ -14,7 +14,8 @@ pub struct Render {
     pub text: GlyphDrawer,
     pub tile: TileDrawer,
     pub tile3d: TileDrawer,
-
+    pub person: MeshDrawer,
+    
     fps: Timing,
 }
 
@@ -35,6 +36,9 @@ impl Render {
                 "assets/mesh/hex.obj",display),
 
             tile3d: tile3d,
+
+            person: MeshDrawer::new_from_path(
+                "assets/mesh/person.obj",display),
 
             fps: Timing::new(),
         }

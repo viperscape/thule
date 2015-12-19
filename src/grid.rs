@@ -2,9 +2,8 @@
 use rand::random;
 use noise::{open_simplex2,Seed};
 
-use na::{Pnt3,Vec3,Vec2,
-         ToHomogeneous,Iso3, zero, Identity};
-use nc::ray::{Ray,RayCast};
+use na::{Vec3,Vec2,Identity};
+use nc::ray::{RayCast};
 use nc::shape::{Cuboid};
 
 use ::ui::Camera;
@@ -52,7 +51,6 @@ impl Grid {
     pub fn regen(s: u32, w: usize, h: usize,
                  b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
-        let mut i = 0;
         
         for r in 0..h {
             for c in 0..w {
@@ -62,7 +60,6 @@ impl Grid {
                                                &[x, y]);
                 
                 b[r][c] = value;
-                i += 1;
             }
         }
     }
@@ -139,7 +136,7 @@ impl Grid {
         t
     }
 
-    pub fn debug_prn(v: &Vec<Vec<f32>>, size: usize) {
+    pub fn debug_prn(v: &Vec<Vec<f32>>,) {
         for n in v {
             let l = Grid::debug(n);
             let mut s = String::new();

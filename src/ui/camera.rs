@@ -5,7 +5,6 @@ use na::{self,
          Pnt3,};
 
 use nc::ray::{Ray,RayCast};
-use nc::math::Point;
 
 use ::input::mouse::Mouse;
 

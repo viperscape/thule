@@ -1,4 +1,3 @@
-#![feature(convert)]
 #![allow(dead_code)]
 
 extern crate rustc_serialize;
