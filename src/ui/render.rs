@@ -1,5 +1,5 @@
 use glium::{Display,Surface};
-use ::ui::{Color,Colors,Transforms};
+use ::ui::{Color,Colors,Colorable,Transforms};
 use ::ui::{GlyphDrawer,TileDrawer,MeshDrawer};
 use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
@@ -160,7 +160,7 @@ impl Render {
         else if tile.kind == TileKind::Stone {
             Colors::red_brick() }
         else if tile.kind == TileKind::Sand {
-            Colors::white_ghost() }
+            Color::from_hex("FFEBCD").unwrap() }
         else { Colors::blue_sky() }
         
     }
