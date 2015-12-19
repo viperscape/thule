@@ -33,9 +33,10 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new () -> Grid {
+    pub fn new (seed: Option<u32>) -> Grid {
+        let seed = seed.unwrap_or(0);
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; MAPSIZE];MAPSIZE];
-        let g = Grid::gen(11223344556677889900,MAPSIZE,MAPSIZE);
+        let g = Grid::gen(seed,MAPSIZE,MAPSIZE);
 
         for (i,n) in g.iter().enumerate() {
             for (j,m) in n.iter().enumerate() {

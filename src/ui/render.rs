@@ -76,6 +76,8 @@ impl Render {
                     tile.visible = 0;
                     continue
                 }
+
+                tile.visible = 1;
                 
                 let color = Render::get_tile_color(&game_tile);
                 tile.color = (color[0],color[1],color[2]);

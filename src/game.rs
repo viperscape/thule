@@ -6,7 +6,7 @@ pub struct GameState {
 
 impl GameState {
     pub fn new () -> GameState {
-        let grid = Grid::new();
+        let grid = Grid::new(None);
         GameState { map: grid }
     }
 }

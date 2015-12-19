@@ -1,4 +1,5 @@
 #![feature(drain)]
+extern crate rand;
 
 extern crate thule;
 use thule::{Interface,Events,GameState,Keyboard,Grid};
@@ -14,9 +15,10 @@ fn main() {
     //Grid::debug_prn(&grid,50);
     
     let mut iface = Interface::new(800,800);
-    let game = GameState::new();
+    let mut game = GameState::new();
     
     'main: loop {
+        check_keys(&iface.keyboard,&mut game);
         let offset = move_cam(&iface.keyboard);
         iface.cam.pos = iface.cam.pos + offset;
         iface.update(&game);
@@ -31,6 +33,13 @@ fn main() {
                 _ => {},
             }
         }
+    }
+}
+
+fn check_keys (kb: &Keyboard,gs: &mut GameState) {
+    let keys = kb.get_released_keys();
+    if keys[VirtualKeyCode::R as usize] {
+        gs.map = Grid::new(Some(rand::random::<u32>()));
     }
 }
 
