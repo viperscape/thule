@@ -8,7 +8,7 @@ extern crate glium;
 use glium::glutin::VirtualKeyCode;
 
 extern crate nalgebra as na;
-use na::Vec3;
+use na::{Vec3,Vec2};
 
 fn main() {
     //let grid = Grid::gen_rand(50,50);
@@ -21,6 +21,11 @@ fn main() {
         check_keys(&iface.keyboard,&mut game);
         let offset = move_cam(&iface.keyboard);
         iface.cam.pos = iface.cam.pos + offset;
+
+        let offset = move_player(&iface.keyboard);
+        game.player.shift(offset,&game.map);
+            
+        
         iface.update(&game);
         
         for e in iface.events.drain(..) {
@@ -43,6 +48,25 @@ fn check_keys (kb: &Keyboard,gs: &mut GameState) {
     }
 }
 
+fn move_player(kb: &Keyboard,) -> Vec2<i8> {
+    let mut v = na::zero();
+    let keys = kb.get_held_keys();
+    
+    if keys[VirtualKeyCode::W as usize] {
+        v = v + Vec2::new(1,1)
+    }
+    if keys[VirtualKeyCode::S as usize] {
+        v = v + Vec2::new(-1,-1)
+    }
+    if keys[VirtualKeyCode::A as usize] {
+        v = v + Vec2::new(1,-1)
+    }
+    if keys[VirtualKeyCode::D as usize] {
+        v = v + Vec2::new(-1,1)
+    }
+
+    v
+}
 
 fn move_cam(kb: &Keyboard,) -> Vec3<f32> {
     let mut v = na::zero();
@@ -55,10 +79,10 @@ fn move_cam(kb: &Keyboard,) -> Vec3<f32> {
         v = v + Vec3::new(-10.,0.,-10.)
     }
     if keys[VirtualKeyCode::Left as usize] {
-        v = v + Vec3::new(10.,0.,-10.)
+        v = v + Vec3::new(5.,0.,-5.)
     }
     if keys[VirtualKeyCode::Right as usize] {
-        v = v + Vec3::new(-10.,0.,10.)
+        v = v + Vec3::new(-5.,0.,5.)
     }
 
     v

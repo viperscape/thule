@@ -127,9 +127,9 @@ impl Render {
                              grid_view.to_pv(),
                              &mut target);
 
-            self.person.draw(Vec3::new(80.,80.,80.),
+            self.person.draw(Vec3::new(size,size,size),
                              Colors::gold(),
-                             grid_view.to_screen(game.player.pos),
+                             grid_view.to_screen(game.player.pos(&game.map)),
                              &mut target,);
                              
 
