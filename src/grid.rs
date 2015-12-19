@@ -28,21 +28,19 @@ pub enum TileKind {
 }
 
 pub struct Grid {
-    pub tiles: Vec<Tile>,
+    pub tiles: Vec<Vec<Tile>>,
     pub size: usize,
 }
 
 impl Grid {
     pub fn new () -> Grid {
-        let mut v = vec![Tile { kind: TileKind::Grass }; MAPSIZE*MAPSIZE];
-        let g = Grid::gen(0,MAPSIZE,MAPSIZE);
+        let mut v = vec![vec![Tile { kind: TileKind::Grass }; MAPSIZE];MAPSIZE];
+        let g = Grid::gen(11223344556677889900,MAPSIZE,MAPSIZE);
 
-        let mut i = 0;
-        for _ in 0..MAPSIZE {
-            for _ in 0..MAPSIZE {
-                let t = Tile { kind: Grid::gen_tile(g[i]) };
-                v[i] = t;
-                i += 1;
+        for (i,n) in g.iter().enumerate() {
+            for (j,m) in n.iter().enumerate() {
+                let tile = Grid::gen_tile(m);
+                v[i][j] = Tile { kind: tile };
             }
         }
 
@@ -51,7 +49,7 @@ impl Grid {
     }
 
     pub fn regen(s: u32, w: usize, h: usize,
-                 b: &mut [f32]) {
+                 b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
         let mut i = 0;
         
@@ -62,34 +60,34 @@ impl Grid {
                 let value: f32 = open_simplex2(&seed,
                                                &[x, y]);
                 
-                b[i] = b[i] + value;
+                b[r][c] = value;
                 i += 1;
             }
         }
     }
 
-    pub fn gen(s: u32, w: usize, h: usize) -> Vec<f32> {
-        let mut pixels: Vec<f32> = vec![0.;(w * h)];
+    pub fn gen(s: u32, w: usize, h: usize) -> Vec<Vec<f32>> {
+        let mut pixels: Vec<Vec<f32>> = vec![vec![0.;h];w];
 
-        Grid::regen(s,w,h, pixels.as_mut_slice());
+        Grid::regen(s,w,h, &mut pixels);
 
         pixels
     }
 
-    pub fn gen_rand(w: usize, h: usize) -> Vec<f32> {
+    pub fn gen_rand(w: usize, h: usize) -> Vec<Vec<f32>> {
         let s = random::<u32>();
         Grid::gen(s,w,h)
     }
 
-    pub fn gen_tile(n: f32) -> TileKind {
-        if n > 0. {
-            if n > 0.35 {
+    pub fn gen_tile(n: &f32) -> TileKind {
+        if n > &0. {
+            if n > &0.35 {
                 TileKind::Stone
             }
             else { TileKind::Grass }
         }
         else {
-            if n < -0.35 {
+            if n < &-0.35 {
                 TileKind::Water
             }
             else { TileKind::Sand }
@@ -140,21 +138,12 @@ impl Grid {
         t
     }
 
-    pub fn debug_prn(v: &Vec<f32>, size: usize) {
-        let t = Grid::debug(v);
-        let mut line = String::new();
-
-        let mut i = -1;
-        for n in t {
-            i += 1;
-            
-            line.push_str(n);
-            
-            if i > size as isize {
-                i = -1;
-                println!("{}",line);
-                line = String::new();
-            }
+    pub fn debug_prn(v: &Vec<Vec<f32>>, size: usize) {
+        for n in v {
+            let l = Grid::debug(n);
+            let mut s = String::new();
+            for c in l { s.push_str(c); }
+            println!("{}",s);
         }
     }
 }

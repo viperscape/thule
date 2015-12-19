@@ -69,9 +69,9 @@ impl Render {
             for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
                 c += 1;
                 let r = i/game.map.size;
-                if c > game.map.size as isize { c = 0; }
+                if c > game.map.size as isize - 1 { c = 0; }
                 
-                let game_tile = game.map.tiles[i];
+                let game_tile = game.map.tiles[r][c as usize];
                 if game_tile.kind == TileKind::Stone {
                     tile.visible = 0;
                     continue
@@ -93,9 +93,9 @@ impl Render {
             for (i,tile) in self.tile3d.inst.map().iter_mut().enumerate() {
                 c += 1;
                 let r = i/game.map.size;
-                if c > game.map.size as isize { c = 0; }
+                if c > game.map.size as isize - 1 { c = 0; }
                 
-                let game_tile = game.map.tiles[i];
+                let game_tile = game.map.tiles[r][c as usize];
                 if game_tile.kind != TileKind::Stone { // NOTE: I should do this at gen, not in render
                     tile.visible = 0;
                     continue

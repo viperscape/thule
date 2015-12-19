@@ -10,10 +10,10 @@ extern crate nalgebra as na;
 use na::Vec3;
 
 fn main() {
-    let grid = Grid::gen_rand(50,50);
-    Grid::debug_prn(&grid,50);
+    //let grid = Grid::gen_rand(50,50);
+    //Grid::debug_prn(&grid,50);
     
-   /* let mut iface = Interface::new(800,800);
+    let mut iface = Interface::new(800,800);
     let game = GameState::new();
     
     'main: loop {
@@ -31,7 +31,7 @@ fn main() {
                 _ => {},
             }
         }
-    }*/
+    }
 }
 
 
