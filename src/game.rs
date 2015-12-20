@@ -40,32 +40,39 @@ impl Player {
                   self.grid_pos.y as f32 * size * 0.75)
     }
 
-    pub fn shift(&mut self, offset: Vec2<i8>, grid: &Grid) {
+    pub fn shift(&mut self, offset: Vec2<i8>, grid: &Grid) -> Vec2<i8> {
         let time = precise_time_s();
-        if time-self.time < MOVE_TIME { return }
+        let mut shifted = zero();
+        
+        if time-self.time < MOVE_TIME { return shifted }
         
         let mut pos = self.grid_pos;
+        
         
         if offset.x < 0 {
             if pos.x > 0 {
                 pos.x -= 1;
+                shifted.x = -1;
             }
         }
         else if offset.x > 0 {
             if pos.x < MAPSIZE-1 {
                 pos.x += 1;
+                shifted.x = 1;
             }
         }
         
         if offset.y < 0 {
             if pos.y > 0 {
                 pos.y -= 1;
+                shifted.y = -1;
             }
         }
         else if offset.y > 0 {
-             if pos.y < MAPSIZE-1 {
+            if pos.y < MAPSIZE-1 {
                 pos.y += 1;
-             }
+                shifted.y = 1;
+            }
         }
 
         let tile = grid.tiles[pos.x][pos.y];
@@ -73,5 +80,7 @@ impl Player {
             self.grid_pos = pos;
             self.time = time;
         }
+
+        shifted
     }
 }

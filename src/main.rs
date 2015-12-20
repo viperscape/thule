@@ -8,7 +8,7 @@ extern crate glium;
 use glium::glutin::VirtualKeyCode;
 
 extern crate nalgebra as na;
-use na::{Vec3,Vec2};
+use na::{Vec3,Vec2,zero};
 
 fn main() {
     //let grid = Grid::gen_rand(50,50);
@@ -22,9 +22,23 @@ fn main() {
         let offset = move_cam(&iface.keyboard);
         iface.cam.pos = iface.cam.pos + offset;
 
+        let size = 100. * iface.cam.zoom;
         let offset = move_player(&iface.keyboard);
-        game.player.shift(offset,&game.map);
+        let shifted = game.player.shift(offset,&game.map);
+        if shifted != zero() {
+            let off = {
+                if shifted.x != 0 {
+                    (game.player.grid_pos.y & 1) as f32 * (size / 2.)
+                }
+                else { 0. }
+            };
             
+            let cam_shift = Vec3::new((shifted.x as f32 * size + off) * 0.866,
+                                      0.,
+                                      shifted.y as f32 * size * 0.75);
+            iface.cam.pos = iface.cam.pos + cam_shift; // offset with player position
+        }
+        
         
         iface.update(&game);
         
