@@ -23,9 +23,7 @@ fn main() {
         iface.cam.pos = iface.cam.pos + offset;
 
         let offset = move_player(&iface.keyboard);
-        if offset.x != 0 || offset.y !=0 {
-            game.player.shift(offset,&game.map);
-        }
+        game.player.shift(offset,&game.map);
             
         
         iface.update(&game);

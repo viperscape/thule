@@ -83,7 +83,15 @@ impl Render {
 
                 tile.visible = 1;
                 
-                let color = Render::get_tile_color(&game_tile);
+                let color = {
+                    if game.player.grid_pos == Vec2::new(c as usize,r as usize) {
+                        Colors::yellow()
+                    }
+                    else {
+                        Render::get_tile_color(&game_tile)
+                    }
+                };
+                
                 tile.color = (color[0],color[1],color[2]);
 
                 let off = (r & 1) as f32 * (size / 2.);
@@ -108,7 +116,15 @@ impl Render {
                 }
                 tile.visible = 1;
                 
-                let color = Render::get_tile_color(&game_tile);
+                let color = {
+                    if game.player.grid_pos == Vec2::new(c as usize,r as usize) {
+                        Colors::yellow()
+                    }
+                    else {
+                        Render::get_tile_color(&game_tile)
+                    }
+                };
+                
                 tile.color = (color[0],color[1],color[2]);
 
                 let off = (r & 1) as f32 * (size / 2.);
@@ -129,7 +145,7 @@ impl Render {
 
             self.person.draw(Vec3::new(size,size,size),
                              Colors::gold(),
-                             grid_view.to_screen(game.player.pos() * size),
+                             grid_view.to_screen(game.player.pos(size)),
                              &mut target,);
                              
 
