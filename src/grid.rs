@@ -92,6 +92,14 @@ impl Grid {
         }
     }
 
+    /// returns the appropriate real-coordinates of a grid's coords
+    pub fn hex_pos (r: usize, c: usize, size: f32) -> Vec3<f32> {
+        let off = (r & 1) as f32 * (size / 2.);
+        Vec3::new((c as f32 * size + off) * 0.866,
+                  0.,
+                  r as f32 * size * 0.75)
+    }
+
     /// intersects ray, based on dimensions and cam position
     pub fn has_ray (&self,cam:&Camera, with_mouse: Option<(&Mouse,Vec2<f32>)>) -> bool {
         let size = (self.size as f32 * 1. * cam.zoom) / 2.;

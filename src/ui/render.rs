@@ -6,7 +6,7 @@ use clock_ticks::precise_time_s;
 
 use ::ui::{Target,Camera};
 use ::GameState;
-use ::{TileKind,Tile};
+use ::{TileKind,Tile,Grid};
 
 const FRAME_SAMPLE: usize = 120;
 
@@ -94,10 +94,7 @@ impl Render {
                 
                 tile.color = (color[0],color[1],color[2]);
 
-                let off = (r & 1) as f32 * (size / 2.);
-                let pos = Vec3::new((c as f32 * size + off) * 0.866,
-                                    0.,
-                                    r as f32 * size * 0.75);
+                let pos = Grid::hex_pos(r,c as usize,size);
                 tile.pos_tile = (pos.x,pos.y,pos.z);
             }
 
@@ -127,10 +124,7 @@ impl Render {
                 
                 tile.color = (color[0],color[1],color[2]);
 
-                let off = (r & 1) as f32 * (size / 2.);
-                let pos = Vec3::new((c as f32 * size + off) * 0.866,
-                                    0.,
-                                    r as f32 * size * 0.75);
+                let pos = Grid::hex_pos(r,c as usize,size);
                 tile.pos_tile = (pos.x,pos.y,pos.z);
             }
 

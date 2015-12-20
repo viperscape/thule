@@ -34,10 +34,7 @@ impl Player {
     }
 
     pub fn pos(&self,size: f32) -> Vec3<f32> {
-        let off = (self.grid_pos.y & 1) as f32 * (size / 2.);
-        Vec3::new((self.grid_pos.x as f32 * size + off) * 0.866,
-                  0.,
-                  self.grid_pos.y as f32 * size * 0.75)
+        Grid::hex_pos(self.grid_pos.y,self.grid_pos.x,size)
     }
 
     pub fn shift(&mut self, offset: Vec2<i8>, grid: &Grid)  {
