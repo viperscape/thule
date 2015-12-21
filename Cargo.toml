@@ -23,4 +23,6 @@ obj = "0.3.0"
 
 noise = "*"
 
+toml = "0.1.25"
+
 ncollide = { version = "0.6.0", git="https://github.com/sebcrozet/ncollide" }

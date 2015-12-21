@@ -19,6 +19,7 @@ extern crate genmesh;
 extern crate hex2d;
 
 extern crate noise;
+extern crate toml;
 
 mod ui;
 mod input;
