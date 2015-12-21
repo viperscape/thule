@@ -11,7 +11,7 @@ pub struct GameState {
 
 impl GameState {
     pub fn new () -> GameState {
-        let grid = Grid::new(None);
+        let grid = Grid::new(None,zero());
         GameState {
             map: grid,
             player: Player::new(),

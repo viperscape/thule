@@ -33,10 +33,10 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new (seed: Option<u32>) -> Grid {
+    pub fn new (seed: Option<u32>, start: Vec2<usize>) -> Grid {
         let seed = seed.unwrap_or(0);
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
-        let g = Grid::gen(seed,GRIDSIZE,GRIDSIZE);
+        let g = Grid::gen(seed,start,Vec2::new(GRIDSIZE,GRIDSIZE));
 
         for (i,n) in g.iter().enumerate() {
             for (j,m) in n.iter().enumerate() {
@@ -46,18 +46,18 @@ impl Grid {
         }
 
         Grid { tiles: v,
-               size: MAPSIZE }
+               size: GRIDSIZE }
     }
 
     // TODO: consider using octaves
-    pub fn regen(s: u32, w: usize, h: usize,
+    pub fn regen(s: u32, start: Vec2<usize>, size: Vec2<usize>,
                  b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
         
-        for r in 0..h {
-            for c in 0..w {
-                let y = c as f32 * 0.05;
-                let x = r as f32 * 0.05;
+        for r in start.y .. size.y {
+            for c in start.x .. size.x {
+                let y = r as f32 * 0.05;
+                let x = c as f32 * 0.05;
                 let value: f32 = open_simplex2(&seed,
                                                &[x, y]);
                 
@@ -66,18 +66,18 @@ impl Grid {
         }
     }
 
-    pub fn gen(s: u32, w: usize, h: usize) -> Vec<Vec<f32>> {
-        let mut pixels: Vec<Vec<f32>> = vec![vec![0.;h];w];
+    pub fn gen(s: u32, start: Vec2<usize>, size: Vec2<usize>,) -> Vec<Vec<f32>> {
+        let mut pixels: Vec<Vec<f32>> = vec![vec![0.;size.y];size.x];
 
-        Grid::regen(s,w,h, &mut pixels);
+        Grid::regen(s,start,size, &mut pixels);
 
         pixels
     }
 
-    pub fn gen_rand(w: usize, h: usize) -> Vec<Vec<f32>> {
-        let s = random::<u32>();
-        Grid::gen(s,w,h)
-    }
+    //pub fn gen_rand(w: usize, h: usize) -> Vec<Vec<f32>> {
+    //    let s = random::<u32>();
+    //    Grid::gen(s,w,h)
+    //}
 
     // TODO: use multiple noise maps for biome
     pub fn gen_tile(n: &f32) -> TileKind {

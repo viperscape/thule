@@ -47,7 +47,7 @@ fn main() {
 fn check_keys (kb: &Keyboard,gs: &mut GameState) {
     let keys = kb.get_released_keys();
     if keys[VirtualKeyCode::R as usize] {
-        gs.map = Grid::new(Some(rand::random::<u32>()));
+        gs.map = Grid::new(Some(rand::random::<u32>()),zero());
     }
 }
 
