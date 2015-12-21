@@ -3,12 +3,11 @@ use na::{self,
          Iso3,Rot3,
          Vec2,
          Pnt3,};
-
 use nc::ray::{Ray,RayCast};
-
 use ::input::mouse::Mouse;
 
 pub struct Camera {
+    offset: Vec3<f32>,
     pub pos: Vec3<f32>,
     iso: Iso3<f32>,
     pub zoom: f32,
@@ -18,8 +17,10 @@ pub struct Camera {
 
 impl Camera {
     pub fn default () -> Camera {
+        let offset = Vec3::new(40.,-40.,40.);
         let mut cam = Camera {
-            pos: Vec3::new(40.,-40.,40.),
+            offset: offset,
+            pos: offset,
             iso: Iso3::new(zero(),zero()),
             zoom: 1.0,
             at: zero(),
@@ -30,7 +31,6 @@ impl Camera {
     }
 
     /// updates lookat iso transform
-    // FIXME: this is super buggy, wtf
     pub fn look_at (&mut self, at: Vec3<f32>) {
         self.at = at; // store for camera ray
         
@@ -42,7 +42,7 @@ impl Camera {
     }
 
     pub fn repos(&mut self, to:Vec3<f32>) {
-        self.pos = to + Vec3::new(40.,-40.,40.);
+        self.pos = to + self.offset;
     }
 
     /// get's direction pointing

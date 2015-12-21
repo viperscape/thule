@@ -49,10 +49,10 @@ fn check_keys (gs: &mut GameState,iface: &mut Interface) {
         gs.map = Grid::new(Some(rand::random::<u32>()),zero());
     }
 
-    // FIXME: look_at is buggy, see camera module
-    //if when("focus",&iface) {
-    //    iface.cam.look_at(gs.player.pos(100.));
-    //}
+    let size = 100. * iface.cam.zoom;
+    if when("focus",&iface) {
+        iface.cam.look_at(gs.player.pos(size));
+    }
 
     if keys[VirtualKeyCode::F12 as usize] &
         keys[VirtualKeyCode::Escape as usize] {
