@@ -43,16 +43,9 @@ fn main() {
 }
 
 fn check_keys (gs: &mut GameState,iface: &mut Interface) {
-    let bindings = &iface.bindings;
     let keys = iface.keyboard.get_released_keys();
-    let when = |action: &str| {
-        if let Some(vkey) = bindings.get(action) {
-            keys[*vkey as usize]
-        }
-        else { false }
-    };
     
-    if when("refresh") {
+    if when("refresh",&iface,) {
         gs.map = Grid::new(Some(rand::random::<u32>()),zero());
     }
 
@@ -62,17 +55,29 @@ fn check_keys (gs: &mut GameState,iface: &mut Interface) {
         }
 }
 
+
+fn when_action(action: &str, iface: &Interface, held: bool) -> bool {
+    let bindings = &iface.bindings;
+    let keys = {
+        if held { iface.keyboard.get_held_keys() }
+        else { iface.keyboard.get_released_keys() }
+    };
+    if let Some(vkey) = bindings.get(action) {
+        keys[*vkey as usize]
+    }
+    else { false }
+}
+
+fn when_held(action: &str, iface: &Interface,) -> bool {
+    when_action(action,iface,true)
+}
+fn when(action: &str, iface: &Interface,) -> bool {
+    when_action(action,iface,false)
+}
+
+
 // TODO: investigate how poor this hmap lookup is
 fn move_player(iface: &Interface) -> Vec2<i8> {
-    let bindings = &iface.bindings;
-    let keys = iface.keyboard.get_held_keys();
-    let when = |action: &str| {
-        if let Some(vkey) = bindings.get(action) {
-            keys[*vkey as usize]
-        }
-        else { false }
-    };
-    
     let mut v = na::zero();
     
     let up = Vec2::new(0,1);
@@ -80,16 +85,16 @@ fn move_player(iface: &Interface) -> Vec2<i8> {
     let left = Vec2::new(1,0);
     let right = Vec2::new(-1,0);
     
-    if when("move_up") {
+    if when_held("move_up",&iface) {
         v = v + up + left
     }
-    if when("move_down") {
+    if when_held("move_down",&iface) {
         v = v + down + right
     }
-    if when("move_left") {
+    if when_held("move_left",&iface) {
         v = v + down + left
     }
-    if when("move_right") {
+    if when_held("move_right",&iface) {
         v = v + up + right
     }
 
