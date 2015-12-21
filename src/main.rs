@@ -18,7 +18,7 @@ fn main() {
     let mut game = GameState::new();
     
     'main: loop {
-        check_keys(&iface.keyboard,&mut game);
+        check_keys(&mut game,&mut iface);
         let offset = move_cam(&iface.keyboard);
         iface.cam.pos = iface.cam.pos + offset;
 
@@ -44,11 +44,16 @@ fn main() {
     }
 }
 
-fn check_keys (kb: &Keyboard,gs: &mut GameState) {
-    let keys = kb.get_released_keys();
+fn check_keys (gs: &mut GameState,iface: &mut Interface) {
+    let keys = iface.keyboard.get_released_keys();
     if keys[VirtualKeyCode::R as usize] {
         gs.map = Grid::new(Some(rand::random::<u32>()),zero());
     }
+    
+    if keys[VirtualKeyCode::F12 as usize] &
+        keys[VirtualKeyCode::Escape as usize] {
+            iface.events.push(Events::Quit);
+        }
 }
 
 fn move_player(kb: &Keyboard,) -> Vec2<i8> {
