@@ -12,7 +12,7 @@ use ::input::mouse::Mouse;
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
 pub const GRIDSIZE: usize = 25;
-pub const INSTSIZE: usize = GRIDSIZE * 3; // 3 grids
+pub const INSTSIZE: usize = GRIDSIZE;// * 3; // 3 grids
 
 
 #[derive(Debug,Clone,Copy)]
@@ -31,7 +31,7 @@ pub enum TileKind {
 
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
-    pub size: usize,
+    //pub size: usize,
 }
 
 impl Grid {
@@ -48,7 +48,7 @@ impl Grid {
         }
 
         Grid { tiles: v,
-               size: GRIDSIZE }
+               }//size: GRIDSIZE }
     }
 
     // TODO: consider using octaves
@@ -105,7 +105,7 @@ impl Grid {
                   r as f32 * size * 0.75)
     }
 
-    /// intersects ray, based on dimensions and cam position
+  /*  /// intersects ray, based on dimensions and cam position
     pub fn has_ray (&self,cam:&Camera, with_mouse: Option<(&Mouse,Vec2<f32>)>) -> bool {
         let size = (self.size as f32 * 1. * cam.zoom) / 2.;
         let cube = Cuboid::new(Vec3::new(size, 1., size));
@@ -123,7 +123,7 @@ impl Grid {
         let rr = cube.toi_with_ray(&Identity::new(), &r, true);
         if let Some(rr) = rr { println!("rr:{:?}",rr); }
         rr.is_some()
-    }
+    }*/
 
     pub fn debug (v: &Vec<f32>) -> Vec<&str> {
         let mut t = vec!();

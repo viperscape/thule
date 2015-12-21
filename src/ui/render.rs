@@ -72,8 +72,8 @@ impl Render {
             let mut c = -1;
             for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
                 c += 1;
-                let r = i/game.map.size;
-                if c > game.map.size as isize - 1 { c = 0; }
+                let r = i/::GRIDSIZE;
+                if c > ::GRIDSIZE as isize - 1 { c = 0; }
                 
                 let game_tile = game.map.tiles[r][c as usize];
                 if game_tile.kind == TileKind::Stone {
@@ -103,8 +103,8 @@ impl Render {
             let mut c = -1;
             for (i,tile) in self.tile3d.inst.map().iter_mut().enumerate() {
                 c += 1;
-                let r = i/game.map.size;
-                if c > game.map.size as isize - 1 { c = 0; }
+                let r = i/::GRIDSIZE;
+                if c > ::GRIDSIZE as isize - 1 { c = 0; }
                 
                 let game_tile = game.map.tiles[r][c as usize];
                 if game_tile.kind != TileKind::Stone { // NOTE: I should do this at gen, not in render
