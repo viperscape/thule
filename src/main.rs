@@ -24,7 +24,7 @@ fn main() {
         let offset = move_player(&iface);
         game.player.shift(offset,&game.map);
 
-        iface.cam.pos = game.player.pos(size) - 40.;
+        //iface.cam.pos = game.player.pos(size) - 40.;
         
         
         iface.update(&game);
@@ -64,7 +64,7 @@ fn check_keys (gs: &mut GameState,iface: &mut Interface) {
 
 fn move_player(iface: &Interface) -> Vec2<i8> {
     let bindings = &iface.bindings;
-    let keys = iface.keyboard.get_released_keys();
+    let keys = iface.keyboard.get_held_keys();
     let when = |action: &str| {
         if let Some(vkey) = bindings.get(action) {
             keys[*vkey as usize]
