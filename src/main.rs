@@ -55,18 +55,22 @@ fn check_keys (kb: &Keyboard,gs: &mut GameState) {
 fn move_player(kb: &Keyboard,) -> Vec2<i8> {
     let mut v = na::zero();
     let keys = kb.get_held_keys();
+    let up = Vec2::new(0,1);
+    let down = Vec2::new(0,-1);
+    let left = Vec2::new(1,0);
+    let right = Vec2::new(-1,0);
     
     if keys[VirtualKeyCode::W as usize] {
-        v = v + Vec2::new(0,1)
+        v = v + up + left
     }
     if keys[VirtualKeyCode::S as usize] {
-        v = v + Vec2::new(0,-1)
+        v = v + down + right
     }
     if keys[VirtualKeyCode::A as usize] {
-        v = v + Vec2::new(1,0)
+        v = v + down + left
     }
     if keys[VirtualKeyCode::D as usize] {
-        v = v + Vec2::new(-1,0)
+        v = v + up + right
     }
 
     v
