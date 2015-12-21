@@ -51,7 +51,6 @@ fn check_keys (kb: &Keyboard,gs: &mut GameState) {
     }
 }
 
-// NOTE: consider Compass-Coordinates instead
 fn move_player(kb: &Keyboard,) -> Vec2<i8> {
     let mut v = na::zero();
     let keys = kb.get_held_keys();
