@@ -9,9 +9,11 @@ use nc::shape::{Cuboid};
 use ::ui::Camera;
 use ::input::mouse::Mouse;
 
-pub const TILESIZE: f32 = 10.;
-pub const MAPSIZE: usize = 25; // square
+pub const TILESIZE: f32 = 100.;
+pub const MAPSIZE: usize = 1000; // square
 pub const GRIDSIZE: usize = 25;
+pub const INSTSIZE: usize = GRIDSIZE * 3; // 3 grids
+
 
 #[derive(Debug,Clone,Copy)]
 pub struct Tile {
