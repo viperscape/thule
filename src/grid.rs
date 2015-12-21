@@ -48,6 +48,7 @@ impl Grid {
                size: MAPSIZE }
     }
 
+    // TODO: consider using octaves
     pub fn regen(s: u32, w: usize, h: usize,
                  b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
@@ -77,6 +78,7 @@ impl Grid {
         Grid::gen(s,w,h)
     }
 
+    // TODO: use multiple noise maps for biome
     pub fn gen_tile(n: &f32) -> TileKind {
         if n > &0. {
             if n > &0.35 {
