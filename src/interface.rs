@@ -55,7 +55,7 @@ impl Interface {
             }
         }
         
-        self.keyboard.update(&window_events,&mut self.events);
+        self.keyboard.update(&window_events,);
         if let Some(win_size) = self.get_win_size() {
             self.mouse.update(&window_events,
                               &mut self.events,
