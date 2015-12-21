@@ -1,4 +1,5 @@
 use glium::glutin::Event as glutin_event;
+use glium::glutin::VirtualKeyCode;
 use glium::{Display};
 use na::{Vec2,};
 
@@ -6,12 +7,13 @@ use ::ui::{Target,Colors,Render,Camera};
 use ::input::keyboard::Keyboard;
 use ::input::mouse::Mouse;
 use ::events::Events;
-use ::GameState;
+use ::{GameState,Bindings};
 
 pub struct Interface {
     display: Display,
     pub render: Render,
     pub keyboard: Keyboard,
+    pub bindings: Bindings,
     mouse: Mouse,
 
     pub events: Vec<Events>,
@@ -22,7 +24,7 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn new (size_x: u32, size_y: u32) -> Interface {
+    pub fn new (size_x: u32, size_y: u32,bindings:Bindings) -> Interface {
         let mut display: Display = Target::new(size_x, size_y);
         let render = Render::new(&mut display);
 
@@ -30,6 +32,7 @@ impl Interface {
             display: display,
             render: render,
             keyboard: Keyboard::new(),
+            bindings: bindings,
             mouse: Mouse::new(),
             events: vec!(),
             dt: 0.0,

@@ -2,7 +2,8 @@
 extern crate rand;
 
 extern crate thule;
-use thule::{Interface,Events,GameState,Keyboard,Grid};
+use thule::{Interface,Events,GameState,Keyboard,Grid,
+            Bindings,Default};
 
 extern crate glium;
 use glium::glutin::VirtualKeyCode;
@@ -11,10 +12,7 @@ extern crate nalgebra as na;
 use na::{Vec3,Vec2,zero};
 
 fn main() {
-    //let grid = Grid::gen_rand(50,50);
-    //Grid::debug_prn(&grid,50);
-    
-    let mut iface = Interface::new(800,800);
+    let mut iface = Interface::new(800,800,Bindings::default());
     let mut game = GameState::new();
     
     'main: loop {
@@ -23,7 +21,7 @@ fn main() {
         iface.cam.pos = iface.cam.pos + offset;
 
         let size = 100. * iface.cam.zoom;
-        let offset = move_player(&iface.keyboard);
+        let offset = move_player(&iface);
         game.player.shift(offset,&game.map);
 
         iface.cam.pos = game.player.pos(size) - 40.;
@@ -45,35 +43,52 @@ fn main() {
 }
 
 fn check_keys (gs: &mut GameState,iface: &mut Interface) {
+    let bindings = &iface.bindings;
     let keys = iface.keyboard.get_released_keys();
-    if keys[VirtualKeyCode::R as usize] {
+    let when = |action: &str| {
+        if let Some(vkey) = bindings.get(action) {
+            keys[*vkey as usize]
+        }
+        else { false }
+    };
+    
+    if when("refresh") {
         gs.map = Grid::new(Some(rand::random::<u32>()),zero());
     }
-    
+
     if keys[VirtualKeyCode::F12 as usize] &
         keys[VirtualKeyCode::Escape as usize] {
             iface.events.push(Events::Quit);
         }
 }
 
-fn move_player(kb: &Keyboard,) -> Vec2<i8> {
+fn move_player(iface: &Interface) -> Vec2<i8> {
+    let bindings = &iface.bindings;
+    let keys = iface.keyboard.get_released_keys();
+    let when = |action: &str| {
+        if let Some(vkey) = bindings.get(action) {
+            keys[*vkey as usize]
+        }
+        else { false }
+    };
+    
     let mut v = na::zero();
-    let keys = kb.get_held_keys();
+    
     let up = Vec2::new(0,1);
     let down = Vec2::new(0,-1);
     let left = Vec2::new(1,0);
     let right = Vec2::new(-1,0);
     
-    if keys[VirtualKeyCode::W as usize] {
+    if when("move_up") {
         v = v + up + left
     }
-    if keys[VirtualKeyCode::S as usize] {
+    if when("move_down") {
         v = v + down + right
     }
-    if keys[VirtualKeyCode::A as usize] {
+    if when("move_left") {
         v = v + down + left
     }
-    if keys[VirtualKeyCode::D as usize] {
+    if when("move_right") {
         v = v + up + right
     }
 

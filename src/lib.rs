@@ -27,6 +27,7 @@ mod events;
 mod interface;
 mod grid;
 mod game;
+mod config;
 
 pub use font_atlas::{RenderedFont};
 pub use image::DynamicImage;
@@ -37,3 +38,4 @@ pub use interface::Interface;
 pub use grid::{Grid,TileKind,Tile,GRIDSIZE,INSTSIZE,MAPSIZE};
 pub use game::{GameState,Player};
 pub use input::Keyboard;
+pub use config::{Bindings,Default};
