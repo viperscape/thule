@@ -62,6 +62,7 @@ fn check_keys (gs: &mut GameState,iface: &mut Interface) {
         }
 }
 
+// TODO: investigate how poor this hmap lookup is
 fn move_player(iface: &Interface) -> Vec2<i8> {
     let bindings = &iface.bindings;
     let keys = iface.keyboard.get_held_keys();
