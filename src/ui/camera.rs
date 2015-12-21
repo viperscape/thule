@@ -19,25 +19,30 @@ pub struct Camera {
 impl Camera {
     pub fn default () -> Camera {
         let mut cam = Camera {
-            pos: Vec3::new(-40.,-40.,-40.),
+            pos: Vec3::new(40.,-40.,40.),
             iso: Iso3::new(zero(),zero()),
             zoom: 1.0,
             at: zero(),
         };
 
-        cam.look_at(Vec3::new(-100.,0.1,-100.));
+        cam.look_at(Vec3::new(0.,0.,0.));
         cam
     }
 
     /// updates lookat iso transform
+    // FIXME: this is super buggy, wtf
     pub fn look_at (&mut self, at: Vec3<f32>) {
         self.at = at; // store for camera ray
         
-        let at = at - self.pos;
+        let at = at - self.pos; 
         let rot = Rot3::look_at_z(&at,
                                   &Vec3::y());
         self.iso = Iso3 { translation: self.pos,
                           rotation: rot, };
+    }
+
+    pub fn repos(&mut self, to:Vec3<f32>) {
+        self.pos = to + Vec3::new(40.,-40.,40.);
     }
 
     /// get's direction pointing

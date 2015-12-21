@@ -39,3 +39,4 @@ pub use grid::{Grid,TileKind,Tile,GRIDSIZE,INSTSIZE,MAPSIZE};
 pub use game::{GameState,Player};
 pub use input::Keyboard;
 pub use config::{Bindings,Default};
+pub use ui::Camera;

@@ -24,7 +24,7 @@ fn main() {
         let offset = move_player(&iface);
         game.player.shift(offset,&game.map);
 
-        //iface.cam.pos = game.player.pos(size) - 40.;
+        iface.cam.repos(game.player.pos(size));
         
         
         iface.update(&game);
@@ -48,6 +48,11 @@ fn check_keys (gs: &mut GameState,iface: &mut Interface) {
     if when("refresh",&iface,) {
         gs.map = Grid::new(Some(rand::random::<u32>()),zero());
     }
+
+    // FIXME: look_at is buggy, see camera module
+    //if when("focus",&iface) {
+    //    iface.cam.look_at(gs.player.pos(100.));
+    //}
 
     if keys[VirtualKeyCode::F12 as usize] &
         keys[VirtualKeyCode::Escape as usize] {
