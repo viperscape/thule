@@ -10,7 +10,8 @@ use ::ui::Camera;
 use ::input::mouse::Mouse;
 
 pub const TILESIZE: f32 = 10.;
-pub const MAPSIZE: usize = 50; // square
+pub const MAPSIZE: usize = 25; // square
+pub const GRIDSIZE: usize = 25;
 
 #[derive(Debug,Clone,Copy)]
 pub struct Tile {
@@ -34,8 +35,8 @@ pub struct Grid {
 impl Grid {
     pub fn new (seed: Option<u32>) -> Grid {
         let seed = seed.unwrap_or(0);
-        let mut v = vec![vec![Tile { kind: TileKind::Grass }; MAPSIZE];MAPSIZE];
-        let g = Grid::gen(seed,MAPSIZE,MAPSIZE);
+        let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
+        let g = Grid::gen(seed,GRIDSIZE,GRIDSIZE);
 
         for (i,n) in g.iter().enumerate() {
             for (j,m) in n.iter().enumerate() {
