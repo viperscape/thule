@@ -13,7 +13,7 @@ use std::collections::HashMap;
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
 pub const GRIDSIZE: usize = 25;
-pub const INSTSIZE: usize = GRIDSIZE * 3; // 3 grids, 75 square
+pub const GROUPSIZE: usize = 3;
 
 
 #[derive(Debug,Clone)]
@@ -59,14 +59,14 @@ impl Grid {
                  b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
         
-        for r in start.y .. size.y+start.y {
-            for c in start.x .. size.x+start.x {
+        for (i,r) in (start.y .. size.y+start.y).enumerate() {
+            for (j,c) in (start.x .. size.x+start.x).enumerate() {
                 let y = r as f32 * 0.05;
                 let x = c as f32 * 0.05;
                 let value: f32 = open_simplex2(&seed,
                                                &[x, y]);
                 
-                b[0][0] = value;
+                b[i][j] = value;
             }
         }
     }
@@ -171,9 +171,9 @@ impl GridGroup {
     pub fn new(seed: Option<u32>) -> GridGroup {
         let mut grids = vec!();
 
-        for i in 0..3 {
-            for j in 0..3 {
-                let coord = Vec2::new(i*GRIDSIZE,j*GRIDSIZE);
+        for c in 0..GROUPSIZE {
+            for r in 0..GROUPSIZE { 
+                let coord = Vec2::new(r*GRIDSIZE,c*GRIDSIZE);
                 let grid = Grid::new(seed,coord);
                 grids.push((coord,grid));
             }

@@ -22,9 +22,8 @@ fn main() {
 
         let size = 100. * iface.cam.zoom;
         let offset = move_player(&iface);
-        game.player.shift(offset,&game.map);
-
-        iface.cam.repos(game.player.pos(size));
+        //game.player.shift(offset,&game.map);
+        //iface.cam.repos(game.player.pos(size));
 
         game.inst.update(game.player.grid_pos);
         
@@ -47,9 +46,9 @@ fn main() {
 fn check_keys (gs: &mut GameState,iface: &mut Interface) {
     let keys = iface.keyboard.get_released_keys();
     
-    if when("refresh",&iface,) {
-        gs.map = Grid::new(Some(rand::random::<u32>()),zero());
-    }
+   // if when("refresh",&iface,) {
+   //     gs.map = Grid::new(Some(rand::random::<u32>()),zero());
+   // }
 
     let size = 100. * iface.cam.zoom;
     if when("focus",&iface) {

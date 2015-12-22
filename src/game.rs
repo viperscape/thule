@@ -5,16 +5,16 @@ use clock_ticks::precise_time_s;
 pub const MOVE_TIME: f64 = 0.095;
 
 pub struct GameState {
-    pub map: Grid,
+    //pub map: Grid,
     pub player: Player,
     pub inst: GridGroup,
 }
 
 impl GameState {
     pub fn new () -> GameState {
-        let grid = Grid::new(None,zero());
+        //let grid = Grid::new(None,zero());
         GameState {
-            map: grid,
+            //map: grid,
             player: Player::new(),
             inst: GridGroup::new(None,),
         }

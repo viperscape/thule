@@ -36,7 +36,7 @@ pub type Font = RenderedFont<DynamicImage>;
 pub use events::Events;
 pub use interface::Interface;
 pub use grid::{Grid,GridGroup,TileKind,Tile,
-               GRIDSIZE,INSTSIZE,MAPSIZE};
+               GRIDSIZE,GROUPSIZE,MAPSIZE};
 pub use game::{GameState,Player};
 pub use input::Keyboard;
 pub use config::{Bindings,Default};

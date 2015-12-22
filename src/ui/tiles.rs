@@ -89,7 +89,7 @@ impl TileDrawer {
                     color: (1.,1.,1.),
                     visible: 1,
                 }
-                ;(::INSTSIZE * ::INSTSIZE)];
+                ;(::GRIDSIZE * ::GRIDSIZE)];
 
             glium::vertex::VertexBuffer::dynamic(display, &data).expect("unable to build tile drawer attr inst vbo")
         };

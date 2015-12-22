@@ -12,8 +12,8 @@ const FRAME_SAMPLE: usize = 120;
 
 pub struct Render {
     pub text: GlyphDrawer,
-    pub tile: TileDrawer,
-    pub tile3d: TileDrawer,
+    pub tile: Vec<TileDrawer>,
+   // pub tile3d: TileDrawer,
     pub person: MeshDrawer,
     
     fps: Timing,
@@ -21,21 +21,28 @@ pub struct Render {
 
 impl Render {
     pub fn new (display: &mut Display,) -> Render {
-        let mut tile3d = TileDrawer::new_from_path(
-            "assets/mesh/hex3d.obj",display);
+      //  let mut tile3d = TileDrawer::new_from_path(
+      //      "assets/mesh/hex3d.obj",display);
 
-        for tile in tile3d.inst.map().iter_mut() {
-            tile.visible = 0; // set invisible for now!
+      //  for tile in tile3d.inst.map().iter_mut() {
+      //      tile.visible = 0; // set invisible for now!
+        //  }
+
+        let mut tiles = vec!();
+        for _ in 0 .. ::GROUPSIZE {
+            for _ in 0 .. ::GROUPSIZE {
+                tiles.push(TileDrawer::new_from_path(
+                    "assets/mesh/hex.obj",display));
+            }
         }
         
         Render {
             text: GlyphDrawer::new_from_path(
                 "assets/font/SourceCodePro-Regular-20",display),
             
-            tile: TileDrawer::new_from_path(
-                "assets/mesh/hex.obj",display),
+            tile: tiles,
 
-            tile3d: tile3d,
+          //  tile3d: tile3d,
 
             person: MeshDrawer::new_from_path(
                 "assets/mesh/person.obj",display),
@@ -70,37 +77,51 @@ impl Render {
 
             // iter 2d tiles
             let mut c = -1;
-            let mut r = 0;
-            for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
-                c += 1;
-                let g = i/::INSTSIZE/::GRIDSIZE;
+            let mut gx = 0;
+            let mut gy = 0;
+            for (g,tiles) in self.tile.iter_mut().enumerate() {
                 
-                if c > ::GRIDSIZE as isize - 1 { c = 0; r += 1; }
-                if r > ::GRIDSIZE -1 { r = 0; }
+                gy += 1;
+                if gy > ::GROUPSIZE { gy = 0; }
                 
-                let game_tile = &game.inst
-                    .grids[g].1
-                    .tiles[r][c as usize];
-                if game_tile.kind == TileKind::Stone {
-                    tile.visible = 0;
-                    continue
+                for (i,tile) in tiles.inst.map().iter_mut().enumerate() {
+                    c += 1;
+                    let r = i/::GRIDSIZE;
+                    if c > ::GRIDSIZE as isize - 1 { c = 0; }
+                    
+                    gx += 1;
+                    if gx > ::GROUPSIZE { gx = 0; }
+                    
+                    let game_tile = &game.inst
+                        .grids[g].1
+                        .tiles[r][c as usize];
+                    if game_tile.kind == TileKind::Stone {
+                        tile.visible = 0;
+                        continue
+                    }
+
+                    tile.visible = 1;
+
+                    let aposy = r + (gy * ::GRIDSIZE);
+                    let aposx = c as usize+ (gx * ::GRIDSIZE);
+                    
+                    let color = {
+                        if game.player.grid_pos == Vec2::new(aposx,
+                                                             aposy) {
+                            Colors::yellow()
+                        }
+                        else {
+                            Render::get_tile_color(&game_tile)
+                        }
+                    };
+                    
+                    tile.color = (color[0],color[1],color[2]);
+
+                    let pos = Grid::hex_pos(aposx,
+                                            aposy,
+                                            size);
+                    tile.pos_tile = (pos.x,pos.y,pos.z);
                 }
-
-                tile.visible = 1;
-                
-                let color = {
-                    if game.player.grid_pos == Vec2::new(c as usize,r as usize) {
-                        Colors::yellow()
-                    }
-                    else {
-                        Render::get_tile_color(&game_tile)
-                    }
-                };
-                
-                tile.color = (color[0],color[1],color[2]);
-
-                let pos = Grid::hex_pos(r,c as usize,size);
-                tile.pos_tile = (pos.x,pos.y,pos.z);
             }
 
             // iter 3d tiles
@@ -134,9 +155,11 @@ impl Render {
             }*/
 
             
-            self.tile.draw(Vec3::new(size,size,size),
-                           grid_view.to_pv(),
-                           &mut target);
+            for drawer in self.tile.iter_mut() {
+                drawer.draw(Vec3::new(size,size,size),
+                            grid_view.to_pv(),
+                            &mut target);
+            }
 
             //self.tile3d.draw(Vec3::new(size,size,size),
              //                grid_view.to_pv(),
