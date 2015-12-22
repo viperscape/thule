@@ -41,52 +41,37 @@ impl Player {
 
     /// this shifts the player, after checking bounds of map
     /// then will generate the next set of tiles in the grid
-    pub fn shift(&mut self, offset: Vec2<isize>, grid: &mut Grid)  {
+    pub fn shift(&mut self, offset: Vec2<isize>, grid: &Grid)  {
         let time = precise_time_s();
-        
         if time-self.time < MOVE_TIME { return }
-        
         let mut pos = self.grid_pos;
-        let mut shifted: Vec2<isize> = zero();
         
         if offset.x < 0 {
             if pos.x > 0 {
                 pos.x -= 1;
-                shifted.x = -1;
             }
         }
         else if offset.x > 0 {
             if pos.x < MAPSIZE-1 {
                 pos.x += 1;
-                shifted.x = 1;
             }
         }
         
         if offset.y < 0 {
             if pos.y > 0 {
                 pos.y -= 1;
-                shifted.y = -1;
             }
         }
         else if offset.y > 0 {
             if pos.y < MAPSIZE-1 {
                 pos.y += 1;
-                shifted.y = 1;
             }
         }
 
-        let tile = &grid.tiles[pos.x][pos.y];
-        if tile.kind != TileKind::Stone {
+        //let tile = &grid.tiles[pos.x][pos.y];
+        //if tile.kind != TileKind::Stone {
             self.grid_pos = pos;
-
-            if shifted.x > 0 {
-                //grid.map.tiles
-            }
-            else if shifted.x < 0 {
-
-            }
-            
             self.time = time;
-        }
+        //}
     }
 }

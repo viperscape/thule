@@ -70,12 +70,17 @@ impl Render {
 
             // iter 2d tiles
             let mut c = -1;
+            let mut r = 0;
             for (i,tile) in self.tile.inst.map().iter_mut().enumerate() {
                 c += 1;
-                let r = i/::GRIDSIZE;
-                if c > ::GRIDSIZE as isize - 1 { c = 0; }
+                let g = i/::INSTSIZE/::GRIDSIZE;
                 
-                let game_tile = &game.map.tiles[r][c as usize];
+                if c > ::GRIDSIZE as isize - 1 { c = 0; r += 1; }
+                if r > ::GRIDSIZE -1 { r = 0; }
+                
+                let game_tile = &game.inst
+                    .grids[g].1
+                    .tiles[r][c as usize];
                 if game_tile.kind == TileKind::Stone {
                     tile.visible = 0;
                     continue
@@ -100,7 +105,7 @@ impl Render {
 
             // iter 3d tiles
             // TODO: filter based on tile height, not tile type
-            let mut c = -1;
+          /*  let mut c = -1;
             for (i,tile) in self.tile3d.inst.map().iter_mut().enumerate() {
                 c += 1;
                 let r = i/::GRIDSIZE;
@@ -126,16 +131,16 @@ impl Render {
 
                 let pos = Grid::hex_pos(r,c as usize,size);
                 tile.pos_tile = (pos.x,pos.y,pos.z);
-            }
+            }*/
 
             
             self.tile.draw(Vec3::new(size,size,size),
                            grid_view.to_pv(),
                            &mut target);
 
-            self.tile3d.draw(Vec3::new(size,size,size),
-                             grid_view.to_pv(),
-                             &mut target);
+            //self.tile3d.draw(Vec3::new(size,size,size),
+             //                grid_view.to_pv(),
+             //                &mut target);
 
             self.person.draw(Vec3::new(size,size,size),
                              Colors::gold(),

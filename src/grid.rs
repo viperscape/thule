@@ -13,7 +13,7 @@ use std::collections::HashMap;
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
 pub const GRIDSIZE: usize = 25;
-pub const INSTSIZE: usize = GRIDSIZE;// * 3; // 3 grids
+pub const INSTSIZE: usize = GRIDSIZE * 3; // 3 grids, 75 square
 
 
 #[derive(Debug,Clone)]
@@ -34,6 +34,7 @@ pub enum TileKind {
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
     //pub size: usize,
+    seed: u32,
 }
 
 impl Grid {
@@ -45,12 +46,12 @@ impl Grid {
         for (i,n) in g.iter().enumerate() {
             for (j,m) in n.iter().enumerate() {
                 let tile = Grid::gen_tile(m);
-                v[i][j] = Tile { kind: tile };
+                v[i][j] = Tile { kind: tile }
             }
         }
 
         Grid { tiles: v,
-               }//size: GRIDSIZE }
+               seed: seed }
     }
 
     // TODO: consider using octaves/brownian
@@ -69,8 +70,6 @@ impl Grid {
             }
         }
     }
-
-    //pub fn gen_line(s:u32,
 
     pub fn gen(s: u32, start: Vec2<usize>, size: Vec2<usize>,) -> Vec<Vec<f32>> {
         let mut pixels: Vec<Vec<f32>> = vec![vec![0.;size.y];size.x];
@@ -164,7 +163,7 @@ impl Grid {
 }
 
 pub struct GridGroup {
-    grids: Vec<(Vec2<usize>,Grid)>,
+    pub grids: Vec<(Vec2<usize>,Grid)>,
 }
 
 impl GridGroup {
@@ -173,7 +172,7 @@ impl GridGroup {
 
         for i in 0..3 {
             for j in 0..3 {
-                let coord = Vec2::new(i*GRIDSIZE,j*GRIDSIZE);
+                let coord = Vec2::new(j*GRIDSIZE,i*GRIDSIZE);
                 let grid = Grid::new(seed,coord);
                 grids.push((coord,grid));
             }
@@ -190,11 +189,11 @@ impl GridGroup {
     pub fn update(&mut self,pos:Vec2<usize>) {
         for &mut (coord,ref grid) in self.grids.iter_mut() {
             if pos.x > (coord.x * GRIDSIZE) + GRIDSIZE / 2 {
-                println!("oob x!");
+               // println!("oob x!");
             }
 
             if pos.y > (coord.y * GRIDSIZE) + GRIDSIZE / 2 {
-                println!("oob y!");
+               // println!("oob y!");
             }
         }
     }
