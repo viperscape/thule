@@ -80,7 +80,7 @@ impl Render {
             let mut gx = 0;
             let mut gy = 0;
             for (g,tiles) in self.tile.iter_mut().enumerate() {
-                if gx > ::GROUPSIZE -1 { gx = 0; gy += 1; } println!("g:{:?}{:?}",gx,gy);
+                if gx > ::GROUPSIZE -1 { gx = 0; gy += 1; }
                 
                 for (i,tile) in tiles.inst.map().iter_mut().enumerate() {
                     c += 1;
@@ -90,10 +90,10 @@ impl Render {
                     let game_tile = &game.inst
                         .grids[g].1
                         .tiles[r][c as usize];
-                    //if game_tile.kind == TileKind::Stone {
-                    //    tile.visible = 0;
-                    //    continue
-                    //}
+                    if game_tile.kind == TileKind::Stone {
+                        tile.visible = 0;
+                        continue
+                    }
 
                     tile.visible = 1;
 
