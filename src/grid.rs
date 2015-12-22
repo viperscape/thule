@@ -70,6 +70,8 @@ impl Grid {
         }
     }
 
+    //pub fn gen_line(s:u32,
+
     pub fn gen(s: u32, start: Vec2<usize>, size: Vec2<usize>,) -> Vec<Vec<f32>> {
         let mut pixels: Vec<Vec<f32>> = vec![vec![0.;size.y];size.x];
 

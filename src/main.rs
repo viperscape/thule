@@ -22,11 +22,11 @@ fn main() {
 
         let size = 100. * iface.cam.zoom;
         let offset = move_player(&iface);
-        game.player.shift(offset,&game.map);
+        game.player.shift(offset,&mut game.map);
 
         iface.cam.repos(game.player.pos(size));
 
-        game.inst.update(game.player.grid_pos);
+        //game.inst.update(game.player.grid_pos);
         
         
         iface.update(&game);
@@ -84,7 +84,7 @@ fn when(action: &str, iface: &Interface,) -> bool {
 
 
 // TODO: investigate how poor this hmap lookup is
-fn move_player(iface: &Interface) -> Vec2<i8> {
+fn move_player(iface: &Interface) -> Vec2<isize> {
     let mut v = na::zero();
     
     let up = Vec2::new(0,1);
