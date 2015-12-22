@@ -35,10 +35,12 @@ static VERT_SRC: &'static str = r"
         void main() {
              if (visible == 1) {
                v_position = pos * size;
-               v_normal = norm;
-               gl_Position = pv * vec4(v_position + pos_tile, 1.0);
-               v_color = color;
              }
+             else { v_position = vec3(-3000.0,-3000.0,-3000.0); }
+             v_normal = norm;
+             gl_Position = pv * vec4(v_position + pos_tile, 1.0);
+             v_color = color;
+             
         }
 ";
 
