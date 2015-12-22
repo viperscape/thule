@@ -80,30 +80,26 @@ impl Render {
             let mut gx = 0;
             let mut gy = 0;
             for (g,tiles) in self.tile.iter_mut().enumerate() {
-                
-                gy += 1;
-                if gy > ::GROUPSIZE { gy = 0; }
+                gx += 1;
+                if gx > ::GROUPSIZE { gx = 0; gy += 1; println!("{:?}",gy); }
                 
                 for (i,tile) in tiles.inst.map().iter_mut().enumerate() {
                     c += 1;
                     let r = i/::GRIDSIZE;
                     if c > ::GRIDSIZE as isize - 1 { c = 0; }
                     
-                    gx += 1;
-                    if gx > ::GROUPSIZE { gx = 0; }
-                    
                     let game_tile = &game.inst
                         .grids[g].1
                         .tiles[r][c as usize];
-                    if game_tile.kind == TileKind::Stone {
-                        tile.visible = 0;
-                        continue
-                    }
+                    //if game_tile.kind == TileKind::Stone {
+                    //    tile.visible = 0;
+                    //    continue
+                    //}
 
                     tile.visible = 1;
 
                     let aposy = r + (gy * ::GRIDSIZE);
-                    let aposx = c as usize+ (gx * ::GRIDSIZE);
+                    let aposx = c as usize + (gx * ::GRIDSIZE);
                     
                     let color = {
                         if game.player.grid_pos == Vec2::new(aposx,
@@ -117,8 +113,8 @@ impl Render {
                     
                     tile.color = (color[0],color[1],color[2]);
 
-                    let pos = Grid::hex_pos(aposx,
-                                            aposy,
+                    let pos = Grid::hex_pos(aposy,
+                                            aposx,
                                             size);
                     tile.pos_tile = (pos.x,pos.y,pos.z);
                 }
