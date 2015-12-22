@@ -80,8 +80,7 @@ impl Render {
             let mut gx = 0;
             let mut gy = 0;
             for (g,tiles) in self.tile.iter_mut().enumerate() {
-                gx += 1;
-                if gx > ::GROUPSIZE { gx = 0; gy += 1; println!("{:?}",gy); }
+                if gx > ::GROUPSIZE -1 { gx = 0; gy += 1; } println!("g:{:?}{:?}",gx,gy);
                 
                 for (i,tile) in tiles.inst.map().iter_mut().enumerate() {
                     c += 1;
@@ -118,6 +117,8 @@ impl Render {
                                             size);
                     tile.pos_tile = (pos.x,pos.y,pos.z);
                 }
+                
+                gx += 1;
             }
 
             // iter 3d tiles

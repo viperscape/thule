@@ -43,9 +43,9 @@ impl Grid {
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
         let g = Grid::gen(seed,start,Vec2::new(GRIDSIZE,GRIDSIZE));
 
-        for (i,n) in g.iter().enumerate() {
-            for (j,m) in n.iter().enumerate() {
-                let tile = Grid::gen_tile(m);
+        for (i,r) in g.iter().enumerate() {
+            for (j,t) in r.iter().enumerate() {
+                let tile = Grid::gen_tile(t);
                 v[i][j] = Tile { kind: tile }
             }
         }
@@ -171,9 +171,9 @@ impl GridGroup {
     pub fn new(seed: Option<u32>) -> GridGroup {
         let mut grids = vec!();
 
-        for c in 0..GROUPSIZE {
-            for r in 0..GROUPSIZE { 
-                let coord = Vec2::new(r*GRIDSIZE,c*GRIDSIZE);
+        for y in 0..GROUPSIZE {
+            for x in 0..GROUPSIZE { 
+                let coord = Vec2::new(x*GRIDSIZE,y*GRIDSIZE);
                 let grid = Grid::new(seed,coord);
                 grids.push((coord,grid));
             }
