@@ -1,4 +1,4 @@
-use ::{Grid,TileKind,MAPSIZE};
+use ::{Grid,TileKind,MAPSIZE,GridGroup};
 use na::{zero,Vec3,Vec2};
 use clock_ticks::precise_time_s;
 
@@ -7,6 +7,7 @@ pub const MOVE_TIME: f64 = 0.095;
 pub struct GameState {
     pub map: Grid,
     pub player: Player,
+    pub inst: GridGroup,
 }
 
 impl GameState {
@@ -15,6 +16,7 @@ impl GameState {
         GameState {
             map: grid,
             player: Player::new(),
+            inst: GridGroup::new(None,),
         }
     }
 }

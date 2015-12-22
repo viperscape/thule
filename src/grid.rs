@@ -8,6 +8,7 @@ use na::{Vec3,Vec2,};
 
 //use ::ui::Camera;
 //use ::input::mouse::Mouse;
+use std::collections::HashMap;
 
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
@@ -161,7 +162,7 @@ impl Grid {
 }
 
 pub struct GridGroup {
-    grids: Vec<Grid>,
+    grids: Vec<(Vec2<usize>,Grid)>,
 }
 
 impl GridGroup {
@@ -172,19 +173,27 @@ impl GridGroup {
             for j in 0..3 {
                 let coord = Vec2::new(i*GRIDSIZE,j*GRIDSIZE);
                 let grid = Grid::new(seed,coord);
-                grids.push(grid);
+                grids.push((coord,grid));
             }
         }
 
         GridGroup { grids: grids }
     }
 
-    /// gen a new grid based on player position
-    /// this determines where the player is in terms of grid
+    /// updates grids based on player position
+    /// this determines where the player is in terms of grid &
     /// position in list of gridgroup
     /// then finds which grid side to build and reposition for the
     /// grid instances
-    pub fn gen(&mut self,pos:Vec2<usize>) {
-        
+    pub fn update(&mut self,pos:Vec2<usize>) {
+        for &mut (coord,ref grid) in self.grids.iter_mut() {
+            if pos.x > (coord.x * GRIDSIZE) + GRIDSIZE / 2 {
+                println!("oob x!");
+            }
+
+            if pos.y > (coord.y * GRIDSIZE) + GRIDSIZE / 2 {
+                println!("oob y!");
+            }
+        }
     }
 }
