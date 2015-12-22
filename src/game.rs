@@ -5,18 +5,15 @@ use clock_ticks::precise_time_s;
 pub const MOVE_TIME: f64 = 0.095;
 
 pub struct GameState {
-    //pub map: Grid,
     pub player: Player,
-    pub inst: GridGroup,
+    pub map: GridGroup,
 }
 
 impl GameState {
     pub fn new () -> GameState {
-        //let grid = Grid::new(None,zero());
         GameState {
-            //map: grid,
             player: Player::new(),
-            inst: GridGroup::new(None,),
+            map: GridGroup::new(None,),
         }
     }
 }
@@ -41,7 +38,7 @@ impl Player {
 
     /// this shifts the player, after checking bounds of map
     /// then will generate the next set of tiles in the grid
-    pub fn shift(&mut self, offset: Vec2<isize>, grid: &Grid)  {
+    pub fn shift(&mut self, offset: Vec2<isize>, grids: &GridGroup)  {
         let time = precise_time_s();
         if time-self.time < MOVE_TIME { return }
         let mut pos = self.grid_pos;

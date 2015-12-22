@@ -22,10 +22,10 @@ fn main() {
 
         let size = 100. * iface.cam.zoom;
         let offset = move_player(&iface);
-        //game.player.shift(offset,&game.map);
-        //iface.cam.repos(game.player.pos(size));
+        game.player.shift(offset,&game.map);
+        iface.cam.repos(game.player.pos(size));
 
-        game.inst.update(game.player.grid_pos);
+        game.map.update(game.player.grid_pos);
         
         
         iface.update(&game);

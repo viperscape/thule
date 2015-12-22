@@ -87,7 +87,7 @@ impl Render {
                     let r = i/::GRIDSIZE;
                     if c > ::GRIDSIZE as isize - 1 { c = 0; }
                     
-                    let game_tile = &game.inst
+                    let game_tile = &game.map
                         .grids[g].1
                         .tiles[r][c as usize];
                     if game_tile.kind == TileKind::Stone {
