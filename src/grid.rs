@@ -30,7 +30,7 @@ pub enum TileKind {
     Sand,
 }
 
-#[derive(Clone)]
+#[derive(Debug,Clone)]
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
     //pub size: usize,
@@ -59,14 +59,14 @@ impl Grid {
                  b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
         
-        for r in start.y .. size.y {
-            for c in start.x .. size.x {
+        for r in start.y .. size.y+start.y {
+            for c in start.x .. size.x+start.x {
                 let y = r as f32 * 0.05;
                 let x = c as f32 * 0.05;
                 let value: f32 = open_simplex2(&seed,
                                                &[x, y]);
                 
-                b[r][c] = value;
+                b[0][0] = value;
             }
         }
     }
@@ -162,6 +162,7 @@ impl Grid {
     }
 }
 
+#[derive(Debug)]
 pub struct GridGroup {
     pub grids: Vec<(Vec2<usize>,Grid)>,
 }
@@ -172,12 +173,12 @@ impl GridGroup {
 
         for i in 0..3 {
             for j in 0..3 {
-                let coord = Vec2::new(j*GRIDSIZE,i*GRIDSIZE);
+                let coord = Vec2::new(i*GRIDSIZE,j*GRIDSIZE);
                 let grid = Grid::new(seed,coord);
                 grids.push((coord,grid));
             }
         }
-
+        
         GridGroup { grids: grids }
     }
 
