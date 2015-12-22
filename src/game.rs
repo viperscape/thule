@@ -67,7 +67,7 @@ impl Player {
             }
         }
 
-        let tile = grid.tiles[pos.x][pos.y];
+        let tile = &grid.tiles[pos.x][pos.y];
         if tile.kind != TileKind::Stone {
             self.grid_pos = pos;
             self.time = time;

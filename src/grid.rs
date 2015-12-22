@@ -1,13 +1,13 @@
 //use hex2d::{Coordinate};
-use rand::random;
+//use rand::random;
 use noise::{open_simplex2,Seed};
 
-use na::{Vec3,Vec2,Identity};
-use nc::ray::{RayCast};
-use nc::shape::{Cuboid};
+use na::{Vec3,Vec2,};
+//use nc::ray::{RayCast};
+//use nc::shape::{Cuboid};
 
-use ::ui::Camera;
-use ::input::mouse::Mouse;
+//use ::ui::Camera;
+//use ::input::mouse::Mouse;
 
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
@@ -15,13 +15,13 @@ pub const GRIDSIZE: usize = 25;
 pub const INSTSIZE: usize = GRIDSIZE;// * 3; // 3 grids
 
 
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug,Clone)]
 pub struct Tile {
     //pub coord: Coordinate,
     pub kind: TileKind,
 }
 
-#[derive(Debug,Clone,Copy,PartialEq)]
+#[derive(Debug,Clone,PartialEq)]
 pub enum TileKind {
     Grass,
     Water,
@@ -29,6 +29,7 @@ pub enum TileKind {
     Sand,
 }
 
+#[derive(Clone)]
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
     //pub size: usize,
@@ -51,7 +52,7 @@ impl Grid {
                }//size: GRIDSIZE }
     }
 
-    // TODO: consider using octaves
+    // TODO: consider using octaves/brownian
     pub fn regen(s: u32, start: Vec2<usize>, size: Vec2<usize>,
                  b: &mut Vec<Vec<f32>>) {
         let seed = Seed::new(s);
@@ -156,5 +157,34 @@ impl Grid {
             for c in l { s.push_str(c); }
             println!("{}",s);
         }
+    }
+}
+
+pub struct GridGroup {
+    grids: Vec<Grid>,
+}
+
+impl GridGroup {
+    pub fn new(seed: Option<u32>) -> GridGroup {
+        let mut grids = vec!();
+
+        for i in 0..3 {
+            for j in 0..3 {
+                let coord = Vec2::new(i*GRIDSIZE,j*GRIDSIZE);
+                let grid = Grid::new(seed,coord);
+                grids.push(grid);
+            }
+        }
+
+        GridGroup { grids: grids }
+    }
+
+    /// gen a new grid based on player position
+    /// this determines where the player is in terms of grid
+    /// position in list of gridgroup
+    /// then finds which grid side to build and reposition for the
+    /// grid instances
+    pub fn gen(&mut self,pos:Vec2<usize>) {
+        
     }
 }

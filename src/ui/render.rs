@@ -75,7 +75,7 @@ impl Render {
                 let r = i/::GRIDSIZE;
                 if c > ::GRIDSIZE as isize - 1 { c = 0; }
                 
-                let game_tile = game.map.tiles[r][c as usize];
+                let game_tile = &game.map.tiles[r][c as usize];
                 if game_tile.kind == TileKind::Stone {
                     tile.visible = 0;
                     continue
@@ -106,7 +106,7 @@ impl Render {
                 let r = i/::GRIDSIZE;
                 if c > ::GRIDSIZE as isize - 1 { c = 0; }
                 
-                let game_tile = game.map.tiles[r][c as usize];
+                let game_tile = &game.map.tiles[r][c as usize];
                 if game_tile.kind != TileKind::Stone { // NOTE: I should do this at gen, not in render
                     tile.visible = 0;
                     continue
