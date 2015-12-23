@@ -97,8 +97,8 @@ impl Render {
 
                     tile.visible = 1;
 
-                    let aposy = r + (gy * ::GRIDSIZE);
-                    let aposx = c as usize + (gx * ::GRIDSIZE);
+                    let aposy = r + game.map.grids[g].0.y;// + (gy * ::GRIDSIZE);
+                    let aposx = c  as usize + game.map.grids[g].0.x;// as usize + (gx * ::GRIDSIZE);
                     
                     let color = {
                         if game.player.grid_pos == Vec2::new(aposx,
