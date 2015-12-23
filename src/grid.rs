@@ -192,15 +192,18 @@ impl GridGroup {
     pub fn update(&mut self,pos:Vec2<usize>) {
         for &mut (ref mut coord,ref mut grid) in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE + (GRIDSIZE/2) {
-                coord.x += (GRIDSIZE * 3);
+                coord.x += GRIDSIZE * 3;
                 
                 let new_grid = Grid::new(self.seed,*coord);
                 *grid = new_grid;
             }
-            else if pos.x < coord.x - GRIDSIZE - (GRIDSIZE/2) {
+            else if (pos.x as isize) < (coord.x as isize
+                                      - GRIDSIZE as isize
+                                      - (GRIDSIZE/2) as isize)
+            {
                 let x = coord.x;
-                if x - (GRIDSIZE * 3) > 0 {
-                    coord.x -= (GRIDSIZE * 3);
+                if x as isize - (GRIDSIZE * 3) as isize > GRIDSIZE as isize {
+                    coord.x -= GRIDSIZE * 3;
                 }
                 
                 let new_grid = Grid::new(self.seed,*coord);
@@ -208,15 +211,18 @@ impl GridGroup {
             }
 
             if pos.y > coord.y + GRIDSIZE + (GRIDSIZE/2) {
-                coord.y += (GRIDSIZE * 3);
+                coord.y += GRIDSIZE * 3;
                 
                 let new_grid = Grid::new(self.seed,*coord);
                 *grid = new_grid;
             }
-            else if pos.y < coord.y - GRIDSIZE - (GRIDSIZE/2) {
+            else if (pos.y as isize) < (coord.y as isize
+                                        - GRIDSIZE as isize
+                                        - (GRIDSIZE/2) as isize)
+            {
                 let y = coord.y;
-                if y - (GRIDSIZE * 3) > 0 {
-                    coord.y -= (GRIDSIZE * 3);
+                if y as isize - (GRIDSIZE * 3) as isize > GRIDSIZE as isize {
+                    coord.y -= GRIDSIZE * 3;
                 }
                 
                 let new_grid = Grid::new(self.seed,*coord);
