@@ -38,8 +38,7 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new (seed: Option<u32>, start: Vec2<usize>) -> Grid {
-        let seed = seed.unwrap_or(0);
+    pub fn new (seed: u32, start: Vec2<usize>) -> Grid {
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
         let g = Grid::gen(seed,start,Vec2::new(GRIDSIZE,GRIDSIZE));
 
@@ -165,10 +164,12 @@ impl Grid {
 #[derive(Debug)]
 pub struct GridGroup {
     pub grids: Vec<(Vec2<usize>,Grid)>,
+    seed: u32,
 }
 
 impl GridGroup {
     pub fn new(seed: Option<u32>) -> GridGroup {
+        let seed = seed.unwrap_or(0);
         let mut grids = vec!();
 
         for y in 0..GROUPSIZE {
@@ -179,7 +180,8 @@ impl GridGroup {
             }
         }
         
-        GridGroup { grids: grids }
+        GridGroup { grids: grids,
+                    seed: seed }
     }
 
     /// updates grids based on player position
@@ -188,13 +190,37 @@ impl GridGroup {
     /// then finds which grid side to build and reposition for the
     /// grid instances
     pub fn update(&mut self,pos:Vec2<usize>) {
-        for &mut (coord,ref grid) in self.grids.iter_mut() {
-            if pos.x > (coord.x * GRIDSIZE) + GRIDSIZE / 2 {
-               // println!("oob x!");
+        for &mut (ref mut coord,ref mut grid) in self.grids.iter_mut() {
+            if pos.x > coord.x + GRIDSIZE + (GRIDSIZE/2) {
+                coord.x += (GRIDSIZE * 3);
+                
+                let new_grid = Grid::new(self.seed,*coord);
+                *grid = new_grid;
+            }
+            else if pos.x < coord.x - GRIDSIZE - (GRIDSIZE/2) {
+                let x = coord.x;
+                if x - (GRIDSIZE * 3) > 0 {
+                    coord.x -= (GRIDSIZE * 3);
+                }
+                
+                let new_grid = Grid::new(self.seed,*coord);
+                *grid = new_grid;
             }
 
-            if pos.y > (coord.y * GRIDSIZE) + GRIDSIZE / 2 {
-               // println!("oob y!");
+            if pos.y > coord.y + GRIDSIZE + (GRIDSIZE/2) {
+                coord.y += (GRIDSIZE * 3);
+                
+                let new_grid = Grid::new(self.seed,*coord);
+                *grid = new_grid;
+            }
+            else if pos.y < coord.y - GRIDSIZE - (GRIDSIZE/2) {
+                let y = coord.y;
+                if y - (GRIDSIZE * 3) > 0 {
+                    coord.y -= (GRIDSIZE * 3);
+                }
+                
+                let new_grid = Grid::new(self.seed,*coord);
+                *grid = new_grid;
             }
         }
     }
