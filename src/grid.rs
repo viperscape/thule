@@ -191,42 +191,36 @@ impl GridGroup {
     /// grid instances
     pub fn update(&mut self,pos:Vec2<usize>) {
         for &mut (ref mut coord,ref mut grid) in self.grids.iter_mut() {
-            if pos.x > coord.x + GRIDSIZE + (GRIDSIZE/2) {
+            if pos.x > coord.x + GRIDSIZE * 2 {
                 coord.x += GRIDSIZE * 3;
                 
                 let new_grid = Grid::new(self.seed,*coord);
                 *grid = new_grid;
             }
-            else if (pos.x as isize) < (coord.x as isize
-                                      - GRIDSIZE as isize
-                                      - (GRIDSIZE/2) as isize)
+            else if (pos.x as isize) < coord.x as isize - GRIDSIZE as isize
             {
-                let x = coord.x;
-                if x as isize - (GRIDSIZE * 3) as isize > GRIDSIZE as isize {
-                    coord.x -= GRIDSIZE * 3;
+                let x = coord.x as isize - (GRIDSIZE * 3) as isize;
+                if x >= 0 {
+                    coord.x = x as usize;
+                    let new_grid = Grid::new(self.seed,*coord);
+                    *grid = new_grid;
                 }
-                
-                let new_grid = Grid::new(self.seed,*coord);
-                *grid = new_grid;
             }
 
-            if pos.y > coord.y + GRIDSIZE + (GRIDSIZE/2) {
+            if pos.y > coord.y + GRIDSIZE * 2 {
                 coord.y += GRIDSIZE * 3;
                 
                 let new_grid = Grid::new(self.seed,*coord);
                 *grid = new_grid;
             }
-            else if (pos.y as isize) < (coord.y as isize
-                                        - GRIDSIZE as isize
-                                        - (GRIDSIZE/2) as isize)
+            else if (pos.y as isize) < coord.y as isize - GRIDSIZE as isize
             {
-                let y = coord.y;
-                if y as isize - (GRIDSIZE * 3) as isize > GRIDSIZE as isize {
-                    coord.y -= GRIDSIZE * 3;
+                let y = coord.y as isize - (GRIDSIZE * 3) as isize;
+                if y >= 0 {
+                    coord.y = y as usize;
+                    let new_grid = Grid::new(self.seed,*coord);
+                    *grid = new_grid;
                 }
-                
-                let new_grid = Grid::new(self.seed,*coord);
-                *grid = new_grid;
             }
         }
     }
