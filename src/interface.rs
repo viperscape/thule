@@ -1,7 +1,7 @@
 use glium::glutin::Event as glutin_event;
 use glium::glutin::VirtualKeyCode;
 use glium::{Display};
-use na::{Vec2,};
+use na::{Vec2,zero};
 
 use ::ui::{Target,Colors,Render,Camera};
 use ::input::keyboard::Keyboard;
@@ -64,15 +64,18 @@ impl Interface {
                               &mut self.events,
                               win_size);
 
-          //  if game.map.has_ray(&self.cam,None) { //Some((&self.mouse,win_size))) {
-          //      println!("r!");
-          //  }
-        }
+            //  if game.map.has_ray(&self.cam,None) { //Some((&self.mouse,win_size))) {
+            //      println!("r!");
+            //  }
+            
 
-        self.dt = self.render.update(&mut self.display,
-                                     Colors::grey_dark(),
-                                     game,
-                                     &self.cam);
+            if win_size != zero() {
+                self.dt = self.render.update(&mut self.display,
+                                             Colors::grey_dark(),
+                                             game,
+                                             &self.cam);
+            }
+        }
     }
 
     pub fn get_display_mut (&mut self) -> &mut Display {
