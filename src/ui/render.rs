@@ -74,7 +74,8 @@ impl Render {
             let grid_view = Transforms::grid(win_size,&cam);
 
             let size = 100. * cam.zoom;
-
+            let player_pos = game.player.pos(size);
+            
             // iter 2d tiles
             let mut c = -1;
             for (g,tiles) in self.tile.iter_mut().enumerate() {
@@ -113,6 +114,7 @@ impl Render {
                                             aposx,
                                             size);
                     tile.pos_tile = (pos.x,pos.y,pos.z);
+                    tile.pos_player = (player_pos.x,player_pos.y,player_pos.z);
                 }
             }
 
@@ -159,7 +161,7 @@ impl Render {
 
             self.person.draw(Vec3::new(size,size,size),
                              Colors::gold(),
-                             grid_view.to_screen(game.player.pos(size)),
+                             grid_view.to_screen(player_pos),
                              &mut target,);
                              
 

@@ -20,6 +20,7 @@ static VERT_SRC: &'static str = r"
         in vec3 norm;
 
         in vec3 pos_tile;
+        in vec3 pos_player;
         in vec3 color;
         in int visible;
 
@@ -28,7 +29,7 @@ static VERT_SRC: &'static str = r"
         uniform vec3  size;
         
 
-        out vec3 v_color;
+        out vec4 v_color;
         out vec3 v_position;
         out vec3 v_normal;
 
@@ -37,9 +38,23 @@ static VERT_SRC: &'static str = r"
                v_position = pos * size;
              }
              else { v_position = vec3(-3000.0,-3000.0,-3000.0); }
+
+             vec3 apos = v_position + pos_tile;
              v_normal = norm;
-             gl_Position = pv * vec4(v_position + pos_tile, 1.0);
-             v_color = color;
+             gl_Position = pv * vec4(apos, 1.0);
+
+//distance of fragment in worldspace
+float distance = abs((apos.x+apos.z)-(pos_player.x+pos_player.z))/2;
+
+float fog_start = 50;
+float fog_end = 150;
+
+//linear interpolation
+float fog_factor = (distance-fog_start)/(fog_end-fog_start);
+fog_factor = clamp(fog_factor,0,1);
+
+          v_color = vec4(color,1.0);
+          v_color += vec4(fog_factor);
              
         }
 ";
@@ -47,19 +62,20 @@ static VERT_SRC: &'static str = r"
 static FRAG_SRC: &'static str = r"
        #version 140
        in vec3 v_normal;
-       in vec3 v_color;
+       in vec4 v_color;
 
        const vec3 LIGHT = vec3(-0.2, 0.8, 0.1);
        void main() {
             float lum = max(dot(normalize(v_normal), normalize(LIGHT)), 0.0);
-            vec3 color = (0.3 + 0.7 * lum) * v_color;
-            gl_FragColor = vec4(color, 1.0);
+            vec4 color = (0.3 + 0.7 * lum) * v_color;
+            gl_FragColor = color;
        }
 ";
 
 #[derive(Copy, Clone)]
 pub struct Attr {
     pub pos_tile: (f32,f32,f32),
+    pub pos_player: (f32,f32,f32),
     pub color: (f32,f32,f32),
     pub visible: i32,
 }
@@ -83,11 +99,12 @@ impl TileDrawer {
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).expect("unable to buld tile drawer vbo").into_vertex_buffer_any();
 
         let tile_inst = {
-            implement_vertex!(Attr, pos_tile,color,visible);
+            implement_vertex!(Attr, pos_tile,pos_player,color,visible);
 
             let data = vec![
                 Attr {
                     pos_tile: (0.,0.,0.),
+                    pos_player: (0.,0.,0.),
                     color: (1.,1.,1.),
                     visible: 1,
                 }
