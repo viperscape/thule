@@ -94,11 +94,14 @@ impl Render {
                    // }
 
                     tile.visible = 1;
+                    tile.color_fog = (color[0],
+                                      color[1],
+                                      color[2]);
 
                     let aposy = r + game.map.grids[g].0.y;
                     let aposx = c  as usize + game.map.grids[g].0.x;
                     
-                    let color = {
+                    let tile_color = {
                         if game.player.grid_pos == Vec2::new(aposx,
                                                              aposy) {
                             Colors::yellow()
@@ -108,13 +111,17 @@ impl Render {
                         }
                     };
                     
-                    tile.color = (color[0],color[1],color[2]);
+                    tile.color = (tile_color[0],
+                                  tile_color[1],
+                                  tile_color[2]);
 
                     let pos = Grid::hex_pos(aposy,
                                             aposx,
                                             size);
                     tile.pos_tile = (pos.x,pos.y,pos.z);
-                    tile.pos_player = (player_pos.x,player_pos.y,player_pos.z);
+                    tile.pos_player = (player_pos.x,
+                                       player_pos.y,
+                                       player_pos.z);
                 }
             }
 
@@ -172,7 +179,7 @@ impl Render {
                            ui_view.to_screen(Vec3::new(-390.,-390.,0.)),
                            &mut target,);
 
-            self.text.draw(&format!("cam:{:?}",cam.pos),
+            self.text.draw(&format!("cam:{:?},zoom:{:?}",cam.pos,cam.zoom),
                            Vec2::new(1.,1.),
                            Colors::black(),
                            false,

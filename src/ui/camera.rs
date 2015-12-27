@@ -22,7 +22,7 @@ impl Camera {
             offset: offset,
             pos: offset,
             iso: Iso3::new(zero(),zero()),
-            zoom: 1.0,
+            zoom: 0.45,
             at: zero(),
         };
 

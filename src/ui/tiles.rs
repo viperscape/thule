@@ -24,6 +24,8 @@ static VERT_SRC: &'static str = r"
         in vec3 color;
         in int visible;
 
+        in vec3 color_fog;
+
         uniform mat4  pv;
         //uniform mat4  m;
         uniform vec3  size;
@@ -44,18 +46,20 @@ static VERT_SRC: &'static str = r"
              gl_Position = pv * vec4(apos, 1.0);
 
 //distance of fragment in worldspace
-float distance = abs((apos.x+apos.z)-(pos_player.x+pos_player.z))/2;
+// TODO: move to frag
+float distx = apos.x-pos_player.x;
+float distz = apos.z-pos_player.z;
+float dist = sqrt(pow(distx,2.0)+pow(distz,2.0));
 
-float fog_start = 50;
-float fog_end = 150;
+float fog_start = 1300 * (size.x / 100.); // this removes zoom
+float fog_end = 1900 * (size.x / 100.);
 
 //linear interpolation
-float fog_factor = (distance-fog_start)/(fog_end-fog_start);
+float fog_factor = (dist-fog_start)/(fog_end-fog_start);
 fog_factor = clamp(fog_factor,0,1);
 
-          v_color = vec4(color,1.0);
-          v_color += vec4(fog_factor);
-             
+          //v_color = vec4(color,1.0);
+          v_color = vec4(mix(color,color_fog,vec3(fog_factor)),1.0);
         }
 ";
 
@@ -77,6 +81,7 @@ pub struct Attr {
     pub pos_tile: (f32,f32,f32),
     pub pos_player: (f32,f32,f32),
     pub color: (f32,f32,f32),
+    pub color_fog: (f32,f32,f32),
     pub visible: i32,
 }
 
@@ -99,7 +104,12 @@ impl TileDrawer {
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).expect("unable to buld tile drawer vbo").into_vertex_buffer_any();
 
         let tile_inst = {
-            implement_vertex!(Attr, pos_tile,pos_player,color,visible);
+            implement_vertex!(Attr,
+                              pos_tile,
+                              pos_player,
+                              color,
+                              color_fog,
+                              visible);
 
             let data = vec![
                 Attr {
@@ -107,6 +117,7 @@ impl TileDrawer {
                     pos_player: (0.,0.,0.),
                     color: (1.,1.,1.),
                     visible: 1,
+                    color_fog: (1.,1.,1.),
                 }
                 ;(::GRIDSIZE * ::GRIDSIZE)];
 
