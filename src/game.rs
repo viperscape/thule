@@ -11,6 +11,8 @@ pub struct GameState {
 
 impl GameState {
     pub fn new () -> GameState {
+        GridGroup::export(None);
+        
         GameState {
             player: Player::new(),
             map: GridGroup::new(None,),

@@ -1,5 +1,6 @@
 //use hex2d::{Coordinate};
 //use rand::random;
+use std::path::Path;
 use noise::{open_simplex2,Brownian2, Seed};
 
 use na::{Vec3,Vec2,};
@@ -225,5 +226,21 @@ impl GridGroup {
                 }
             }
         }
+    }
+
+    pub fn export (seed: Option<u32>) {
+        let seed = seed.unwrap_or(0);
+        let wh = 100;
+        let m = Grid::gen(seed,
+                          Vec2::new(0,0),
+                          Vec2::new(wh,wh));
+        let mut v = vec!();
+        for n in m.iter() {
+            for t in n.iter() {
+                v.push(((*t + 1.) * 128.) as u8);
+            }
+        }
+        ::image::save_buffer(&Path::new("map.png"),
+                           &*v,wh as u32,wh as u32,::image::Gray(8));
     }
 }
