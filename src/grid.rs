@@ -1,6 +1,6 @@
 //use hex2d::{Coordinate};
 //use rand::random;
-use noise::{open_simplex2,Seed};
+use noise::{open_simplex2,Brownian2, Seed};
 
 use na::{Vec3,Vec2,};
 //use nc::ray::{RayCast};
@@ -62,8 +62,10 @@ impl Grid {
             for (j,c) in (start.x .. size.x+start.x).enumerate() {
                 let y = r as f32 * 0.05;
                 let x = c as f32 * 0.05;
-                let value: f32 = open_simplex2(&seed,
-                                               &[x, y]);
+
+                let value = Brownian2::new(open_simplex2, 4).
+                    wavelength(16.0).
+                    apply(&seed,&[x,y]);
                 
                 b[i][j] = value;
             }
