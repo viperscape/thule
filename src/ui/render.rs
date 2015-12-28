@@ -175,7 +175,7 @@ impl Render {
                              grid_view.to_screen(player_pos),
                              &mut target,);
 
-            self.map.draw(Vec2::new(200.,200.),
+            self.map.draw(Vec2::new(100.,100.),
                           game.player.grid_pos,
                           ui_view.to_screen(Vec3::new(290.,-290.,0.)),
                           &mut target);

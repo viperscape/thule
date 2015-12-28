@@ -59,10 +59,10 @@ impl MapDrawer {
             ];*/
 
         let verts = vec![
-            Vertex { pos: [ -0.5,  0.5 ], tex: [ 1.0, 0.0 ] },
-            Vertex { pos: [  0.5,  0.5 ], tex: [ 1.0, 1.0 ] },
-            Vertex { pos: [ -0.5, -0.5 ], tex: [ 0.0, 1.0 ] },
-            Vertex { pos: [  0.5, -0.5 ], tex: [ 0.0, 0.0 ] },
+            Vertex { pos: [-1.0, -1.0], tex: [0.0, 0.0] },
+            Vertex { pos: [-1.0,  1.0], tex: [0.0, 1.0] },
+            Vertex { pos: [ 1.0,  1.0], tex: [1.0, 1.0] },
+            Vertex { pos: [ 1.0, -1.0], tex: [1.0, 0.0] }
             ];
         
         let program = program!(display,
@@ -100,7 +100,7 @@ impl MapDrawer {
 
         target.draw(&self.vbo,
                     &glium::index::NoIndices
-                    (glium::index::PrimitiveType::TrianglesList),
+                    (glium::index::PrimitiveType::TriangleStrip),
                     &self.program, &uniforms, &params).unwrap();
         
     }
