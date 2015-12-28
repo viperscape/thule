@@ -1,6 +1,6 @@
 use glium::{Display,Surface};
 use ::ui::{Color,Colors,Colorable,Transforms};
-use ::ui::{GlyphDrawer,TileDrawer,MeshDrawer};
+use ::ui::{GlyphDrawer,TileDrawer,MeshDrawer,MapDrawer};
 use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
 
@@ -15,6 +15,8 @@ pub struct Render {
     pub tile: Vec<TileDrawer>,
    // pub tile3d: TileDrawer,
     pub person: MeshDrawer,
+
+    pub map: MapDrawer,
     
     fps: Timing,
 }
@@ -46,6 +48,8 @@ impl Render {
 
             person: MeshDrawer::new_from_path(
                 "assets/mesh/person.obj",display),
+
+            map: MapDrawer::new("map.png",display),
 
             fps: Timing::new(),
         }
@@ -170,6 +174,11 @@ impl Render {
                              Colors::gold(),
                              grid_view.to_screen(player_pos),
                              &mut target,);
+
+            self.map.draw(Vec2::new(200.,200.),
+                          game.player.grid_pos,
+                          ui_view.to_screen(Vec3::new(290.,-290.,0.)),
+                          &mut target);
                              
 
             self.text.draw(&format!("fps:{:?}",frame_time_avg),
