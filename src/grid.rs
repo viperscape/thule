@@ -231,7 +231,7 @@ impl GridGroup {
 
     pub fn export (seed: Option<u32>) {
         let seed = seed.unwrap_or(0);
-        let wh = 500;
+        let wh = 100;
         let m = Grid::gen(seed,
                           Vec2::new(0,0),
                           Vec2::new(wh,wh));
