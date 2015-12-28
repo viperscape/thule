@@ -73,6 +73,7 @@ impl Grid {
         }
     }
 
+    // TODO: reuse vec in regem/gen for gridgroup
     pub fn gen(s: u32, start: Vec2<usize>, size: Vec2<usize>,) -> Vec<Vec<f32>> {
         let mut pixels: Vec<Vec<f32>> = vec![vec![0.;size.y];size.x];
 
@@ -230,7 +231,7 @@ impl GridGroup {
 
     pub fn export (seed: Option<u32>) {
         let seed = seed.unwrap_or(0);
-        let wh = 100;
+        let wh = 500;
         let m = Grid::gen(seed,
                           Vec2::new(0,0),
                           Vec2::new(wh,wh));
