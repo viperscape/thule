@@ -1,12 +1,13 @@
 //use hex2d::{Coordinate};
 //use rand::random;
 use std::path::Path;
+use std::fs::File;
 use noise::{open_simplex2,Brownian2, Seed};
 
 use na::{Vec3,Vec2,};
 //use nc::ray::{RayCast};
 //use nc::shape::{Cuboid};
-
+use ::ui::{Colorable,Color};
 //use ::ui::Camera;
 //use ::input::mouse::Mouse;
 use std::collections::HashMap;
@@ -229,19 +230,36 @@ impl GridGroup {
         }
     }
 
+    /// exports game map at larger size
     pub fn export (seed: Option<u32>) {
         let seed = seed.unwrap_or(0);
-        let wh = 100;
+        let wh = 400;
         let m = Grid::gen(seed,
                           Vec2::new(0,0),
                           Vec2::new(wh,wh));
         let mut v = vec!();
         for n in m.iter() {
             for t in n.iter() {
-                v.push(((*t + 1.) * 128.) as u8);
+                //v.push(((*t + 1.) * 128.) as u8);
+                let tile = Tile { kind: Grid::gen_tile(t) };
+                let b = ::ui::Render::get_tile_color(&tile).to_bytes(); {
+                    v.push(b);
+                   // v.push(b[1]);
+                   // v.push(b[2]);
+                }
             }
         }
-        ::image::save_buffer(&Path::new("map.png"),
-                           &*v,wh as u32,wh as u32,::image::Gray(8));
+        let mut img = ::image::ImageBuffer::new(wh as u32, wh as u32);
+
+        let mut i = 0;
+        for (_,_, pixel) in img.enumerate_pixels_mut() {
+            *pixel = ::image::Rgb(v[i]);
+            i += 1;
+        }
+
+        img = ::image::imageops::rotate180(&img);
+
+        let mut f = File::create(&Path::new("map.png")).unwrap();
+        ::image::ImageRgb8(img).save(&mut f, ::image::PNG); 
     }
 }
