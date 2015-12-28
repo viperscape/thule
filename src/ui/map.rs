@@ -46,6 +46,7 @@ pub struct MapDrawer {
     vbo: glium::vertex::VertexBufferAny,
     program: glium::Program,
     tex: Texture2d,
+    index_buf: glium::index::IndexBuffer<u16>,
 }
 
 impl MapDrawer {
@@ -75,6 +76,11 @@ impl MapDrawer {
             vbo: vbo,
             program: program,
             tex: Texture2d::new(display,img).unwrap(),
+            index_buf: glium::index::IndexBuffer::new(
+                display,
+                glium::index::PrimitiveType::TriangleStrip,
+                &[1 as u16, 2, 0, 3],
+                ).unwrap()
         }
     }
     
@@ -99,8 +105,7 @@ impl MapDrawer {
         };
 
         target.draw(&self.vbo,
-                    &glium::index::NoIndices
-                    (glium::index::PrimitiveType::TriangleStrip),
+                    &self.index_buf,
                     &self.program, &uniforms, &params).unwrap();
         
     }

@@ -42,7 +42,9 @@ pub struct Grid {
 impl Grid {
     pub fn new (seed: u32, start: Vec2<usize>) -> Grid {
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
-        let g = Grid::gen(seed,start,Vec2::new(GRIDSIZE,GRIDSIZE));
+        let g = Grid::gen(seed,start,
+                          Vec2::new(GRIDSIZE,GRIDSIZE),
+                          Vec2::new(0.05,0.05));
 
         for (i,r) in g.iter().enumerate() {
             for (j,t) in r.iter().enumerate() {
@@ -55,15 +57,14 @@ impl Grid {
                seed: seed }
     }
 
-    // TODO: consider using octaves/brownian
     pub fn regen(s: u32, start: Vec2<usize>, size: Vec2<usize>,
-                 b: &mut Vec<Vec<f32>>) {
+                 b: &mut Vec<Vec<f32>>, m: Vec2<f32>) {
         let seed = Seed::new(s);
         
         for (i,r) in (start.y .. size.y+start.y).enumerate() {
             for (j,c) in (start.x .. size.x+start.x).enumerate() {
-                let y = r as f32 * 0.05;
-                let x = c as f32 * 0.05;
+                let y = r as f32 * m.y;
+                let x = c as f32 * m.x;
 
                 let value = Brownian2::new(open_simplex2, 4).
                     wavelength(16.0).
@@ -75,10 +76,13 @@ impl Grid {
     }
 
     // TODO: reuse vec in regem/gen for gridgroup
-    pub fn gen(s: u32, start: Vec2<usize>, size: Vec2<usize>,) -> Vec<Vec<f32>> {
+    pub fn gen(s: u32,
+               start: Vec2<usize>,
+               size: Vec2<usize>,
+               m: Vec2<f32>) -> Vec<Vec<f32>> {
         let mut pixels: Vec<Vec<f32>> = vec![vec![0.;size.y];size.x];
 
-        Grid::regen(s,start,size, &mut pixels);
+        Grid::regen(s,start,size, &mut pixels,m);
 
         pixels
     }
@@ -231,21 +235,20 @@ impl GridGroup {
     }
 
     /// exports game map at larger size
+    // TODO: export as img buf, and hot load in render when needed?
     pub fn export (seed: Option<u32>) {
         let seed = seed.unwrap_or(0);
-        let wh = 400;
+        let wh = 100;
         let m = Grid::gen(seed,
                           Vec2::new(0,0),
-                          Vec2::new(wh,wh));
+                          Vec2::new(wh,wh),
+                          Vec2::new(0.25,0.25));
         let mut v = vec!();
         for n in m.iter() {
             for t in n.iter() {
-                //v.push(((*t + 1.) * 128.) as u8);
                 let tile = Tile { kind: Grid::gen_tile(t) };
                 let b = ::ui::Render::get_tile_color(&tile).to_bytes(); {
                     v.push(b);
-                   // v.push(b[1]);
-                   // v.push(b[2]);
                 }
             }
         }
