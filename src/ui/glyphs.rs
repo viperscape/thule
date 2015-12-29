@@ -19,7 +19,6 @@ static VERT_SRC: &'static str = r"
     in vec2 tex;
 
     in int visible;
-    in uint sample_id;
 
     uniform mat4 transform;
 
@@ -28,7 +27,6 @@ static VERT_SRC: &'static str = r"
 
     out vec2 v_tex_coord;
     out vec2 v_pos;
-    flat out uint v_tex_id;
     //in vec4 o_color;
 
     void main() {
@@ -38,7 +36,6 @@ v_pos = pos * size;
 
         gl_Position = transform * vec4(v_pos, 0.0, 1.0);
         v_tex_coord = tex;
-        v_tex_id = sample_id;
         //v_color = o_color;
     }
 ";
@@ -48,14 +45,12 @@ static FRAG_SRC: &'static str = r"
 
     uniform sampler2D sample;
     in vec2 v_tex_coord;
-    flat in uint v_tex_id;
     
     in vec4 o_color;
     out vec4 f_color;
 
     void main() {
-        texture(sample, vec3(v_tex_coord, float(v_tex_id)));
-        f_color = texture(sample, vec3(v_tex_coord, float(v_tex_id)));
+        f_color = o_color * texture2d(sample, v_tex_coord);
 
         //texture2D(sample, v_tex_coord);
     }
@@ -73,7 +68,6 @@ pub struct Attr {
     pub g_pos: (f32,f32),
     pub size: (f32,f32),
     pub o_color: (f32,f32,f32,f32),
-    pub sample_id: u32,
 }
 
 pub type GlyphCache<'a> = Vec<RawImage2d<'a,u8>>;
@@ -126,7 +120,6 @@ impl GlyphDrawer {
                     g_pos: (0.,0.),
                     size: (0.,0.),
                     o_color: (0.,0.,0.,0.),
-                    sample_id: 0,
                 }
                 ;2500];
 
@@ -209,7 +202,7 @@ impl GlyphDrawer {
                     q.g_pos = (t.pos.x,t.pos.y);
                     let size = t.size * img_size;
                     q.size = (size.x,size.y);
-                    q.sample_id = c as u32;
+                    
                     q.o_color = (t.color[0],
                                  t.color[1],
                                  t.color[2],
