@@ -3,7 +3,7 @@ use na::{self,
          Iso3,Rot3,
          Vec2,
          Pnt3,};
-use nc::ray::{Ray,RayCast};
+use nc::ray::{Ray,};
 use ::input::mouse::Mouse;
 
 pub struct Camera {

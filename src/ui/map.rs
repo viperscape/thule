@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use na::{Mat4,Vec2,Vec4};
+use na::{Mat4,Vec2};
 
 use glium::{self,Surface,Display};
 use glium::vertex::VertexBufferAny;
@@ -81,7 +81,7 @@ impl MapDrawer {
     pub fn draw(
         &mut self,
         size: Vec2<f32>,
-        player_pos: Vec2<usize>,
+        _player_pos: Vec2<usize>,
         transform: Mat4<f32>,
         target: &mut glium::Frame,
         ) {

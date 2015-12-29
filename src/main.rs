@@ -2,7 +2,7 @@
 extern crate rand;
 
 extern crate thule;
-use thule::{Interface,Events,GameState,Keyboard,Grid,
+use thule::{Interface,Events,GameState,Keyboard,
             Bindings,Default};
 
 extern crate glium;

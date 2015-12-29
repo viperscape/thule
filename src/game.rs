@@ -1,4 +1,4 @@
-use ::{Grid,TileKind,MAPSIZE,GridGroup};
+use ::{Grid,MAPSIZE,GridGroup};
 use na::{zero,Vec3,Vec2};
 use clock_ticks::precise_time_s;
 
@@ -40,7 +40,7 @@ impl Player {
 
     /// this shifts the player, after checking bounds of map
     /// then will generate the next set of tiles in the grid
-    pub fn shift(&mut self, offset: Vec2<isize>, grids: &GridGroup)  {
+    pub fn shift(&mut self, offset: Vec2<isize>, _grids: &GridGroup)  {
         let time = precise_time_s();
         if time-self.time < MOVE_TIME { return }
         let mut pos = self.grid_pos;

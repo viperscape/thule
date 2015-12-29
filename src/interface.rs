@@ -1,5 +1,4 @@
 use glium::glutin::Event as glutin_event;
-use glium::glutin::VirtualKeyCode;
 use glium::{Display};
 use na::{Vec2,zero};
 

@@ -7,10 +7,10 @@ use noise::{open_simplex2,Brownian2, Seed};
 use na::{Vec3,Vec2,};
 //use nc::ray::{RayCast};
 //use nc::shape::{Cuboid};
-use ::ui::{Colorable,Color};
+use ::ui::{Colorable};
 //use ::ui::Camera;
 //use ::input::mouse::Mouse;
-use std::collections::HashMap;
+//use std::collections::HashMap;
 
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
@@ -263,6 +263,6 @@ impl GridGroup {
         img = ::image::imageops::rotate180(&img);
 
         let mut f = File::create(&Path::new("map.png")).unwrap();
-        ::image::ImageRgb8(img).save(&mut f, ::image::PNG); 
+        let _ = ::image::ImageRgb8(img).save(&mut f, ::image::PNG); 
     }
 }

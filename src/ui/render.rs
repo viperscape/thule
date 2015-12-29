@@ -13,7 +13,6 @@ const FRAME_SAMPLE: usize = 120;
 pub struct Render {
     pub text: GlyphDrawer,
     pub tile: Vec<TileDrawer>,
-   // pub tile3d: TileDrawer,
     pub person: MeshDrawer,
 
     pub map: MapDrawer,
@@ -23,13 +22,7 @@ pub struct Render {
 
 impl Render {
     pub fn new (display: &mut Display,) -> Render {
-      //  let mut tile3d = TileDrawer::new_from_path(
-      //      "assets/mesh/hex3d.obj",display);
-
-      //  for tile in tile3d.inst.map().iter_mut() {
-      //      tile.visible = 0; // set invisible for now!
-        //  }
-
+        
         let mut tiles = vec!();
         for _ in 0 .. ::GROUPSIZE {
             for _ in 0 .. ::GROUPSIZE {
@@ -43,8 +36,6 @@ impl Render {
                 "assets/font/SourceCodePro-Regular-20",display),
             
             tile: tiles,
-
-          //  tile3d: tile3d,
 
             person: MeshDrawer::new_from_path(
                 "assets/mesh/person.obj",display),
@@ -92,12 +83,7 @@ impl Render {
                     let game_tile = &game.map
                         .grids[g].1
                         .tiles[r][c as usize];
-                   // if game_tile.kind == TileKind::Stone {
-                   //     tile.visible = 0;
-                   //     continue
-                   // }
 
-                    tile.visible = 1;
                     tile.color_fog = (color[0],
                                       color[1],
                                       color[2]);
@@ -129,35 +115,7 @@ impl Render {
                 }
             }
 
-            // iter 3d tiles
-            // TODO: filter based on tile height, not tile type
-          /*  let mut c = -1;
-            for (i,tile) in self.tile3d.inst.map().iter_mut().enumerate() {
-                c += 1;
-                let r = i/::GRIDSIZE;
-                if c > ::GRIDSIZE as isize - 1 { c = 0; }
-                
-                let game_tile = &game.map.tiles[r][c as usize];
-                if game_tile.kind != TileKind::Stone { // NOTE: I should do this at gen, not in render
-                    tile.visible = 0;
-                    continue
-                }
-                tile.visible = 1;
-                
-                let color = {
-                    if game.player.grid_pos == Vec2::new(c as usize,r as usize) {
-                        Colors::yellow()
-                    }
-                    else {
-                        Render::get_tile_color(&game_tile)
-                    }
-                };
-                
-                tile.color = (color[0],color[1],color[2]);
-
-                let pos = Grid::hex_pos(r,c as usize,size);
-                tile.pos_tile = (pos.x,pos.y,pos.z);
-            }*/
+            
 
             
             for drawer in self.tile.iter_mut() {
@@ -165,11 +123,7 @@ impl Render {
                             grid_view.to_pv(),
                             &mut target);
             }
-
-            //self.tile3d.draw(Vec3::new(size,size,size),
-             //                grid_view.to_pv(),
-             //                &mut target);
-
+            
             self.person.draw(Vec3::new(size,size,size),
                              Colors::gold(),
                              grid_view.to_screen(player_pos),
@@ -179,7 +133,9 @@ impl Render {
                           game.player.grid_pos,
                           ui_view.to_screen(Vec3::new(290.,-290.,0.)),
                           &mut target);
-                             
+
+
+            
 
             self.text.draw(&format!("fps:{:?}",frame_time_avg),
                            Vec2::new(1.,1.),

@@ -14,7 +14,7 @@ pub type Config = BTreeMap<String,Value>;
 fn load (path: &str) -> Config {
     let mut input = String::new();
     if let Some(mut file) = File::open(path).ok() {
-        file.read_to_string(&mut input);
+        let _ = file.read_to_string(&mut input);
     }
 
     Parser::new(&input).parse().unwrap_or(BTreeMap::new())
