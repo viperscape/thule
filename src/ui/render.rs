@@ -1,6 +1,7 @@
 use glium::{Display,Surface};
 use ::ui::{Color,Colors,Colorable,Transforms};
 use ::ui::{GlyphDrawer,TileDrawer,MeshDrawer,MapDrawer};
+use ::ui::glyphs::Text;
 use na::{Vec2,Vec3};
 use clock_ticks::precise_time_s;
 
@@ -137,19 +138,23 @@ impl Render {
 
             
 
-            self.text.draw(&format!("fps:{:?}",frame_time_avg),
-                           Vec2::new(1.,1.),
-                           Colors::black(),
-                           false,
-                           ui_view.to_screen(Vec3::new(-390.,-390.,0.)),
-                           &mut target,);
+            self.text.push(Text {
+                text: format!("fps:{:?}",frame_time_avg),
+                size: Vec2::new(1.,1.),
+                color: Colors::black(),
+                center: false,
+                pos: Vec3::new(-390.,-390.,0.),
+            });
 
-            self.text.draw(&format!("cam:{:?},zoom:{:?}",cam.pos,cam.zoom),
-                           Vec2::new(1.,1.),
-                           Colors::black(),
-                           false,
-                           ui_view.to_screen(Vec3::new(-390.,-370.,0.)),
-                           &mut target,);
+            self.text.push(Text {
+                text: format!("cam:{:?},zoom:{:?}",cam.pos,cam.zoom),
+                size: Vec2::new(1.,1.),
+                color: Colors::black(),
+                center: false,
+                pos: Vec3::new(-390.,-370.,0.),
+            });
+
+            self.text.draw(ui_view.to_pv(),&mut target);
 
             target.finish().unwrap();
 
