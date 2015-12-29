@@ -52,13 +52,7 @@ pub struct MapDrawer {
 impl MapDrawer {
     pub fn new(path: &str, display: &Display) -> MapDrawer {
         implement_vertex!(Vertex, pos, tex);
-        /*let verts = vec![
-            Vertex { pos: [ -0.5,  0.5 ], tex: [ 0.0, 0.0 ] },
-            Vertex { pos: [ -0.5, -0.5 ], tex: [ 0.0, 1.0 ] },
-            Vertex { pos: [  0.5,  0.5 ], tex: [ 1.0, 0.0 ] },
-            Vertex { pos: [  0.5, -0.5 ], tex: [ 1.0, 1.0 ] },
-            ];*/
-
+        
         let verts = vec![
             Vertex { pos: [-1.0, -1.0], tex: [0.0, 0.0] },
             Vertex { pos: [-1.0,  1.0], tex: [0.0, 1.0] },

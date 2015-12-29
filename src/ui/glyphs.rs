@@ -58,6 +58,11 @@ pub struct GlyphDrawer {
     cache:  GlyphCache,
 }
 
+
+// NOTE: Consider using instancing, at least for sentences,
+// maybe for all text ever on the screen at once
+
+// FIXME: make like mapdrawer with index buffer and proper coordinates!
 impl GlyphDrawer {
     pub fn new(mut font: Font, display: &Display) -> GlyphDrawer {
         implement_vertex!(Vertex, pos, tex);
