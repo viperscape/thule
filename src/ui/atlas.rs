@@ -35,19 +35,19 @@ impl Atlas {
                            display: &Display) ->
         Option<RawImage2d<'a,u8>> {
             
-        if let Some(c) = font.char_info(c) {
-            if c.image_size.0 == 0 { return None } //no char found!
-            let img = font.image_mut();
-            let img = img.crop(c.image_position.0,
-                               c.image_position.1,
-                               c.image_size.0,
-                               c.image_size.1).flipv();
-            let raw = img.into_raw();
-            return Some(raw)
-            //if let Some(tex) = Texture2d::new(display, img).ok() {
-            //    return Some((c,tex,raw))
-            //}
+            if let Some(c) = font.char_info(c) {
+                if c.image_size.0 == 0 { return None } //no char found!
+                let img = font.image_mut();
+                let img = img.crop(c.image_position.0,
+                                   c.image_position.1,
+                                   c.image_size.0,
+                                   c.image_size.1).flipv();
+                let raw = img.into_raw();
+                return Some(raw)
+                    //if let Some(tex) = Texture2d::new(display, img).ok() {
+                    //    return Some((c,tex,raw))
+                    //}
+            }
+            None 
         }
-        None 
-    }
 }

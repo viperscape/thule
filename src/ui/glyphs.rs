@@ -46,7 +46,7 @@ v_pos = pos * size;
 static FRAG_SRC: &'static str = r"
     #version 140
 
-    uniform sampler2DArray sample;
+    uniform sampler2D sample;
     in vec2 v_tex_coord;
     flat in uint v_tex_id;
     
@@ -85,7 +85,7 @@ pub struct GlyphDrawer {
     //cache:  GlyphCache,
     pub inst: glium::vertex::VertexBuffer<Attr>,
     //index_buf: glium::index::IndexBuffer<u16>,
-    samples: Texture2dArray,
+    sample: Texture2d,
     pub texts: Vec<Text>,
 }
 
@@ -108,10 +108,10 @@ impl GlyphDrawer {
                                         fragment: FRAG_SRC, } ).unwrap();
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
 
-        let cache = GlyphDrawer::load_glyphs(font, display);
-        //let glyphs = cache.iter().map(|n| n.1).collect();
-        let samples = Texture2dArray::new(display,
-                                          cache).unwrap();
+        let raw = font.image().raw_pixels();
+        let img = ::image::load_from_memory(&*raw).unwrap();
+        let sample = Texture2d::new(display,
+                                    img).unwrap();
         
         let inst = {
             implement_vertex!(Attr,
@@ -128,7 +128,7 @@ impl GlyphDrawer {
                     o_color: (0.,0.,0.,0.),
                     sample_id: 0,
                 }
-                ;5000];
+                ;2500];
 
             glium::vertex::VertexBuffer::dynamic(display, &data).expect("unable to build glyph drawer attr inst vbo")
         };
@@ -136,10 +136,8 @@ impl GlyphDrawer {
         GlyphDrawer {
             vbo: vbo,
             program: program,
-            //_font: font,
-            //cache: cache,
             inst: inst,
-            samples: samples,
+            sample: sample,
             texts: vec!(),
         }
     }
@@ -234,7 +232,7 @@ impl GlyphDrawer {
 
         let uniforms = uniform! {
             transform: *pv.as_ref(),
-            samples: &self.samples,
+            sample: &self.sample,
         };
         
         target.draw((&self.vbo,self.inst.per_instance().
@@ -246,8 +244,8 @@ impl GlyphDrawer {
 
     }
 
-    fn load_glyphs<'a> (mut font: Font,
-                        display: &Display) -> GlyphCache<'a> {
+    /*fn load_glyphs (mut font: Font,
+                        display: &Display) -> GlyphCache {
         let mut cache = vec!();
 
         for c in ascii().into_iter().rev() {
@@ -261,7 +259,7 @@ impl GlyphDrawer {
         }
         
         cache
-    }
+    }*/
 
     pub fn new_from_path(path: &str, display: &Display) -> GlyphDrawer {
         let atlas = Atlas::new(path).expect("Font atlas cannot load, missing fonts?");
