@@ -30,6 +30,16 @@ impl Camera {
         cam
     }
 
+    pub fn new () -> Camera {
+        Camera {
+            offset: zero(),
+            pos: Vec3::new(0.,0.,1.),
+            iso: Iso3::new(zero(),zero()),
+            zoom: 1.,
+            at: zero(),
+        }
+    }
+
     /// updates lookat iso transform
     pub fn look_at (&mut self, at: Vec3<f32>) {
         self.at = at; // store for camera ray

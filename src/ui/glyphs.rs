@@ -19,13 +19,20 @@ static VERT_SRC: &'static str = r"
     in vec2 pos;
     in vec2 tex;
 
+    //in int visible;
+
     uniform mat4 transform;
     uniform vec2 size;
 
     out vec2 v_tex_coord;
+    out vec2 v_pos;
 
     void main() {
-        gl_Position = transform * vec4(pos * size, 0.0, 1.0);
+v_pos = pos * size;
+      //  if (visible == 1) { v_pos = pos * size; }
+      //  else { v_pos = vec2(-3000.0,-3000.0); }
+
+        gl_Position = transform * vec4(v_pos, 0.0, 1.0);
         v_tex_coord = tex;
     }
 ";
@@ -49,6 +56,11 @@ pub struct Vertex {
     pub tex: [f32; 2],
 }
 
+#[derive(Copy, Clone)]
+pub struct Attr {
+    pub visible: i32,
+}
+
 pub type GlyphCache = HashMap<char,(CharInfo,Texture2d)>;
 
 pub struct GlyphDrawer {
@@ -56,6 +68,8 @@ pub struct GlyphDrawer {
     program: glium::Program,
     _font: Font,
     cache:  GlyphCache,
+    pub inst: glium::vertex::VertexBuffer<Attr>,
+    //index_buf: glium::index::IndexBuffer<u16>,
 }
 
 
@@ -79,12 +93,31 @@ impl GlyphDrawer {
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
 
         let cache = GlyphDrawer::load_glyphs(&mut font, display);
+
+        let inst = {
+            implement_vertex!(Attr,
+                              visible);
+
+            let data = vec![
+                Attr {
+                    visible: 0,
+                }
+                ;5000];
+
+            glium::vertex::VertexBuffer::dynamic(display, &data).expect("unable to build glyph drawer attr inst vbo")
+        };
         
         GlyphDrawer {
             vbo: vbo,
             program: program,
             _font: font,
             cache: cache,
+            inst: inst,
+            /*index_buf: glium::index::IndexBuffer::new(
+                display,
+                glium::index::PrimitiveType::TriangleStrip,
+                &[1 as u16, 2, 0, 3],
+                ).unwrap()*/
         }
     }
     
@@ -120,7 +153,8 @@ impl GlyphDrawer {
                     Vec3::new(position.x, position.y, 0.0),
                     Vec3::new(0.0, 0.0, 0.0),
                     );
-                let transform = transform * translation.to_homogeneous();
+                let transform = transform *
+                    translation.to_homogeneous();
                 
                 let uniforms = uniform! {
                     transform: *transform.as_ref(),
@@ -136,8 +170,8 @@ impl GlyphDrawer {
                 };
 
                 target.draw(&self.vbo,
-                            &glium::index::NoIndices
-                            (glium::index::PrimitiveType::TriangleStrip),
+                            &glium::index::NoIndices(
+                                glium::index::PrimitiveType::TriangleStrip),
                             &self.program, &uniforms, &params).unwrap();
             }
             else if c!=' ' { println!("{:?}, no char found",c); }
