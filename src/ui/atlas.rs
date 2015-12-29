@@ -4,7 +4,7 @@ use font_atlas::{RenderedFont,CharInfo};
 use font_atlas_image::{read_atlas};
 use image::{DynamicImage};
 
-use glium::texture::{Texture2d};
+use glium::texture::{Texture2d,RawImage2d,Texture2dDataSource};
 use glium::Display;
 
 use ::Font;
@@ -30,9 +30,11 @@ impl Atlas {
         None
     }
 
-    pub fn sample_tex (c: char,
-                       font: &mut Font,
-                       display: &Display) -> Option<(CharInfo,Texture2d)> {
+    pub fn sample_tex<'a> (c: char,
+                           font:  &mut Font,
+                           display: &Display) ->
+        Option<RawImage2d<'a,u8>> {
+            
         if let Some(c) = font.char_info(c) {
             if c.image_size.0 == 0 { return None } //no char found!
             let img = font.image_mut();
@@ -40,9 +42,11 @@ impl Atlas {
                                c.image_position.1,
                                c.image_size.0,
                                c.image_size.1).flipv();
-            if let Some(tex) = Texture2d::new(display, img).ok() {
-                return Some((c,tex))
-            }
+            let raw = img.into_raw();
+            return Some(raw)
+            //if let Some(tex) = Texture2d::new(display, img).ok() {
+            //    return Some((c,tex,raw))
+            //}
         }
         None 
     }

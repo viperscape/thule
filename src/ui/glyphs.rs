@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use na::{Mat4,Vec2,Vec3,Iso3,Vec4,
          zero, Identity, ToHomogeneous};
 
@@ -7,12 +5,12 @@ use glium::{self,Surface,Display};
 use glium::vertex::VertexBufferAny;
 
 use font_atlas::{CharInfo};
-use glium::texture::{Texture2d};
+use glium::texture::{Texture2d,Texture2dArray,Texture2dDataSource,RawImage2d};
 
 use ui::color;
 
 use ::Font;
-use ui::atlas::{Atlas};
+use ::ui::atlas::{Atlas};
 
 static VERT_SRC: &'static str = r"
     #version 140
@@ -21,14 +19,17 @@ static VERT_SRC: &'static str = r"
     in vec2 tex;
 
     in int visible;
+    in uint sample_id;
 
     uniform mat4 transform;
 
-    in vec2 pos;
+    in vec2 g_pos;
     in vec2 size;
 
     out vec2 v_tex_coord;
     out vec2 v_pos;
+    flat out uint v_tex_id;
+    //in vec4 o_color;
 
     void main() {
 v_pos = pos * size;
@@ -37,19 +38,26 @@ v_pos = pos * size;
 
         gl_Position = transform * vec4(v_pos, 0.0, 1.0);
         v_tex_coord = tex;
+        v_tex_id = sample_id;
+        //v_color = o_color;
     }
 ";
 
 static FRAG_SRC: &'static str = r"
     #version 140
 
+    uniform sampler2DArray sample;
     in vec2 v_tex_coord;
-
-    in sampler2D sample;
+    flat in uint v_tex_id;
+    
     in vec4 o_color;
+    out vec4 f_color;
 
     void main() {
-        gl_FragColor = o_color * texture2D(sample, v_tex_coord);
+        texture(sample, vec3(v_tex_coord, float(v_tex_id)));
+        f_color = texture(sample, vec3(v_tex_coord, float(v_tex_id)));
+
+        //texture2D(sample, v_tex_coord);
     }
 ";
 
@@ -62,24 +70,24 @@ pub struct Vertex {
 #[derive(Copy, Clone)]
 pub struct Attr {
     pub visible: i32,
-    pub pos: (f32,f32),
+    pub g_pos: (f32,f32),
     pub size: (f32,f32),
     pub o_color: (f32,f32,f32,f32),
+    pub sample_id: u32,
 }
 
-pub type GlyphCache = HashMap<char,(CharInfo,Texture2d)>;
+pub type GlyphCache<'a> = Vec<RawImage2d<'a,u8>>;
 
 pub struct GlyphDrawer {
     vbo: glium::vertex::VertexBufferAny,
     program: glium::Program,
-    _font: Font,
-    cache:  GlyphCache,
+    //_font: Font,
+    //cache:  GlyphCache,
     pub inst: glium::vertex::VertexBuffer<Attr>,
     //index_buf: glium::index::IndexBuffer<u16>,
-
+    samples: Texture2dArray,
     pub texts: Vec<Text>,
 }
-
 
 // NOTE: Consider using instancing, at least for sentences,
 // maybe for all text ever on the screen at once
@@ -100,21 +108,25 @@ impl GlyphDrawer {
                                         fragment: FRAG_SRC, } ).unwrap();
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
 
-        let cache = GlyphDrawer::load_glyphs(&mut font, display);
-
+        let cache = GlyphDrawer::load_glyphs(font, display);
+        //let glyphs = cache.iter().map(|n| n.1).collect();
+        let samples = Texture2dArray::new(display,
+                                          cache).unwrap();
+        
         let inst = {
             implement_vertex!(Attr,
                               visible,
-                              pos,
+                              g_pos,
                               size,
                               o_color);
 
             let data = vec![
                 Attr {
                     visible: 0,
-                    pos: (0.,0.),
+                    g_pos: (0.,0.),
                     size: (0.,0.),
                     o_color: (0.,0.,0.,0.),
+                    sample_id: 0,
                 }
                 ;5000];
 
@@ -124,15 +136,10 @@ impl GlyphDrawer {
         GlyphDrawer {
             vbo: vbo,
             program: program,
-            _font: font,
-            cache: cache,
+            //_font: font,
+            //cache: cache,
             inst: inst,
-            /*index_buf: glium::index::IndexBuffer::new(
-                display,
-                glium::index::PrimitiveType::TriangleStrip,
-                &[1 as u16, 2, 0, 3],
-            ).unwrap()*/
-
+            samples: samples,
             texts: vec!(),
         }
     }
@@ -150,66 +157,29 @@ impl GlyphDrawer {
         let mut text = texts.next();
         let mut chars = get_chars(&text);
         
-        let mut cache = None;
-        
         for q in self.inst.map().iter_mut() {
-            
+            i += 1;
             let c = {
                 if i < chars.len() {
-                    Some(chars[i])
+                    Some(chars[i-1])
                 }
                 else {
                     chars = {
                         text = texts.next();
+                        i = 0;
                         get_chars(&text)
                     };
 
                     if i < chars.len() {
-                        Some(chars[i])
+                        Some(chars[i-1])
                     }
                     else { None }
                 }
             };
 
             let mut img_size: Vec2<f32> = zero();
-            cache = self.cache.get(&c);
-            
-            if let Some(cache) = cache {
-                let t = text.unwrap();
-                q.visible = 1;
-                q.pos = *t.pos;
-                q.size = *(t.size * img_size).as_ref();
-                q.sample = &cache.1;
-                q.o_color = *Vec4::new(t.color[0],
-                                       t.color[1],
-                                       t.color[2],
-                                       1.0).as_ref();
-            }
-            else {
-                q.visible = 0;
-            }
 
-            
-            
-            let params = glium::DrawParameters {
-                blend: glium::Blend::alpha_blending(),
-                .. Default::default()
-            };
-
-            let uniforms = uniform! {
-                transform: *pv.as_ref(),
-            };
-            
-            target.draw((&self.vbo,self.inst.per_instance().
-                         expect("unable to instance glyph drawer")),
-                        &glium::index::NoIndices(
-                            glium::index::PrimitiveType::TriangleStrip),
-                        &self.program, &uniforms, &params).
-                expect("glyph drawer target draw failure");
-            
-       /* let width = text.chars().count();
-
-        for (i, c) in text.chars().enumerate() {
+            /*
             if let Some(cache) = self.cache.get(&c) {
                 let mut offset_x = 0;
                 if center {
@@ -232,41 +202,60 @@ impl GlyphDrawer {
                     );
                 let transform = transform *
                     translation.to_homogeneous();
-                
-                let uniforms = uniform! {
-                    transform: *transform.as_ref(),
-                    size: *(size * img_size).as_ref(),
-                    sample: &cache.1,
-                    o_color: *Vec4::new(color[0],color[1],color[2],1.0).as_ref(),
-                };
-
-                // draw parameters
-                let params = glium::DrawParameters {
-                    blend: glium::Blend::alpha_blending(),
-                    .. Default::default()
-                };
-
-                target.draw(&self.vbo,
-                            &glium::index::NoIndices(
-                                glium::index::PrimitiveType::TriangleStrip),
-                            &self.program, &uniforms, &params).unwrap();
             }
-            else if c!=' ' { println!("{:?}, no char found",c); }
-        }*/
+            else if c!=' ' { println!("{:?}, no char found",c); }*/
+            
+            if let Some(c) = c {
+                if let Some(ref t) = text {
+                    q.visible = 1;
+                    q.g_pos = (t.pos.x,t.pos.y);
+                    let size = t.size * img_size;
+                    q.size = (size.x,size.y);
+                    q.sample_id = c as u32;
+                    q.o_color = (t.color[0],
+                                 t.color[1],
+                                 t.color[2],
+                                 1.0);
+                }
+                else {
+                    q.visible = 0;
+                }
+            }
+            else {
+                q.visible = 0;
+            }
+
         }
+        
+        let params = glium::DrawParameters {
+            blend: glium::Blend::alpha_blending(),
+            .. Default::default()
+        };
+
+        let uniforms = uniform! {
+            transform: *pv.as_ref(),
+            samples: &self.samples,
+        };
+        
+        target.draw((&self.vbo,self.inst.per_instance().
+                     expect("unable to instance glyph drawer")),
+                    &glium::index::NoIndices(
+                        glium::index::PrimitiveType::TriangleStrip),
+                    &self.program, &uniforms, &params).
+            expect("glyph drawer target draw failure");
 
     }
 
-    fn load_glyphs (font: &mut Font,
-                    display: &Display) -> GlyphCache {
-        let mut cache = HashMap::new();
+    fn load_glyphs<'a> (mut font: Font,
+                        display: &Display) -> GlyphCache<'a> {
+        let mut cache = vec!();
 
-        for c in ascii().into_iter() {
+        for c in ascii().into_iter().rev() {
             let g = Atlas::sample_tex(c,
-                                      font,
+                                      &mut font,
                                       display);
             if let Some(g) = g {
-                cache.insert(c,g);
+                cache.push(g);
             }
 
         }
