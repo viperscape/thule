@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use na::{Mat4,Vec2,Vec3,Iso3,Vec4,
          zero, Identity, ToHomogeneous};
 
@@ -5,7 +7,11 @@ use glium::{self,Surface,Display};
 use glium::vertex::VertexBufferAny;
 
 use font_atlas::{CharInfo};
-use glium::texture::{Texture2d,Texture2dArray,Texture2dDataSource,RawImage2d};
+use glium::texture::{Texture2d,Texture2dArray,
+                     Texture2dDataSource,
+                     RawImage2d};
+
+use ::image::GenericImage;
 
 use ui::color;
 
@@ -27,16 +33,16 @@ static VERT_SRC: &'static str = r"
 
     out vec2 v_tex_coord;
     out vec2 v_pos;
-    //in vec4 o_color;
+    in vec4 o_color;
+    out vec4 v_color;
 
     void main() {
-v_pos = pos * size;
         if (visible == 1) { v_pos = pos * size; }
         else { v_pos = vec2(-3000.0,-3000.0); }
 
-        gl_Position = transform * vec4(v_pos, 0.0, 1.0);
+        gl_Position = transform * vec4(v_pos + g_pos, 0.0, 1.0);
         v_tex_coord = tex;
-        //v_color = o_color;
+        v_color = o_color;
     }
 ";
 
@@ -46,13 +52,11 @@ static FRAG_SRC: &'static str = r"
     uniform sampler2D sample;
     in vec2 v_tex_coord;
     
-    in vec4 o_color;
+    in vec4 v_color;
     out vec4 f_color;
 
     void main() {
-        f_color = o_color * texture2d(sample, v_tex_coord);
-
-        //texture2D(sample, v_tex_coord);
+        f_color = v_color * texture2D(sample, v_tex_coord);
     }
 ";
 
@@ -70,12 +74,12 @@ pub struct Attr {
     pub o_color: (f32,f32,f32,f32),
 }
 
-pub type GlyphCache<'a> = Vec<RawImage2d<'a,u8>>;
+pub type GlyphCache = HashMap<char,CharInfo>;
 
 pub struct GlyphDrawer {
     vbo: glium::vertex::VertexBufferAny,
     program: glium::Program,
-    //_font: Font,
+    font: Font,
     //cache:  GlyphCache,
     pub inst: glium::vertex::VertexBuffer<Attr>,
     //index_buf: glium::index::IndexBuffer<u16>,
@@ -102,8 +106,9 @@ impl GlyphDrawer {
                                         fragment: FRAG_SRC, } ).unwrap();
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
 
-        let raw = font.image().raw_pixels();
-        let img = ::image::load_from_memory(&*raw).unwrap();
+        let dims = font.image().dimensions();
+        let img = font.image_mut().crop(0,0,dims.0,dims.1);
+        
         let sample = Texture2d::new(display,
                                     img).unwrap();
         
@@ -130,6 +135,7 @@ impl GlyphDrawer {
             vbo: vbo,
             program: program,
             inst: inst,
+            font: font,
             sample: sample,
             texts: vec!(),
         }
@@ -162,58 +168,53 @@ impl GlyphDrawer {
                     };
 
                     if i < chars.len() {
-                        Some(chars[i-1])
+                       Some(chars[i])
                     }
                     else { None }
                 }
             };
 
             let mut img_size: Vec2<f32> = zero();
+            q.visible = 0;
 
-            /*
-            if let Some(cache) = self.cache.get(&c) {
-                let mut offset_x = 0;
-                if center {
-                    offset_x = (width as i32 * cache.0.advance.0) / 2;
-                }
-                let position = Vec2::new((i as f32 *
-                                          cache.0.advance.0 as f32)
-                                         - offset_x as f32,
-                                         0.0) * size;
-
-                let img_size = Vec2::new(cache.0.image_size.0 as f32,
-                                         cache.0.image_size.1 as f32);
-                
-                let position = position +
-                    (img_size * 0.5);
-
-                let translation = Iso3::new(
-                    Vec3::new(position.x, position.y, 0.0),
-                    Vec3::new(0.0, 0.0, 0.0),
-                    );
-                let transform = transform *
-                    translation.to_homogeneous();
-            }
-            else if c!=' ' { println!("{:?}, no char found",c); }*/
-            
             if let Some(c) = c {
-                if let Some(ref t) = text {
-                    q.visible = 1;
-                    q.g_pos = (t.pos.x,t.pos.y);
-                    let size = t.size * img_size;
-                    q.size = (size.x,size.y);
-                    
-                    q.o_color = (t.color[0],
-                                 t.color[1],
-                                 t.color[2],
-                                 1.0);
+                if let Some(cache) = self.font.char_info(c) {
+                    if let Some(ref t) = text { // this is technically unwrappable
+                        let mut offset_x = 0;
+                        if t.center {
+                            offset_x = (chars.len() as i32 *
+                                        cache.advance.0) / 2;
+                        }
+                        let pos = Vec2::new((i as f32 *
+                                             cache.advance.0 as f32)
+                                            - offset_x as f32,
+                                            0.0) * t.size;
+
+                        img_size = Vec2::new(cache.image_size.0 as f32,
+                                             cache.image_size.1 as f32);
+                        
+                        let pos = Vec2::new(t.pos.x,t.pos.y) + pos +
+                            (img_size * 0.5);
+
+                        /* let translation = Iso3::new(
+                        Vec3::new(position.x, position.y, 0.0),
+                        Vec3::new(0.0, 0.0, 0.0),
+                        );
+                        let transform = transform *
+                        translation.to_homogeneous();*/
+                        
+                        
+                        q.visible = 1;
+                        q.g_pos = (pos.x,pos.y);
+                        let size = t.size * img_size;
+                        q.size = (size.x,size.y);
+                        
+                        q.o_color = (t.color[0],
+                                     t.color[1],
+                                     t.color[2],
+                                     1.0);
+                    }
                 }
-                else {
-                    q.visible = 0;
-                }
-            }
-            else {
-                q.visible = 0;
             }
 
         }
@@ -237,7 +238,7 @@ impl GlyphDrawer {
 
     }
 
-    /*fn load_glyphs (mut font: Font,
+   /* fn load_glyphs (mut font: Font,
                         display: &Display) -> GlyphCache {
         let mut cache = vec!();
 
