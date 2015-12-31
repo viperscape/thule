@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use na::{Mat4,Vec2};
 
 use glium::{self,Surface,Display};
@@ -45,12 +43,11 @@ pub struct Vertex {
 pub struct MapDrawer {
     vbo: glium::vertex::VertexBufferAny,
     program: glium::Program,
-    tex: Texture2d,
     index_buf: glium::index::IndexBuffer<u16>,
 }
 
 impl MapDrawer {
-    pub fn new(path: &str, display: &Display) -> MapDrawer {
+    pub fn new(display: &Display) -> MapDrawer {
         implement_vertex!(Vertex, pos, tex);
         
         let verts = vec![
@@ -64,12 +61,10 @@ impl MapDrawer {
                                140 => { vertex: VERT_SRC,
                                         fragment: FRAG_SRC, } ).unwrap();
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
-        let img = ::image::open(&Path::new(&path)).unwrap();
         
         MapDrawer {
             vbo: vbo,
             program: program,
-            tex: Texture2d::new(display,img).unwrap(),
             index_buf: glium::index::IndexBuffer::new(
                 display,
                 glium::index::PrimitiveType::TriangleStrip,
@@ -83,13 +78,14 @@ impl MapDrawer {
         size: Vec2<f32>,
         _player_pos: Vec2<usize>,
         transform: Mat4<f32>,
+        tex: &Texture2d,
         target: &mut glium::Frame,
         ) {
                 
         let uniforms = uniform! {
             transform: *transform.as_ref(),
             size: *size.as_ref(),
-            sample: &self.tex,
+            sample: tex,
         };
 
         // draw parameters

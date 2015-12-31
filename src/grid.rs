@@ -1,16 +1,7 @@
-//use hex2d::{Coordinate};
-//use rand::random;
-use std::path::Path;
-use std::fs::File;
 use noise::{open_simplex2,Brownian2, Seed};
 
 use na::{Vec3,Vec2,};
-//use nc::ray::{RayCast};
-//use nc::shape::{Cuboid};
 use ::ui::{Colorable};
-//use ::ui::Camera;
-//use ::input::mouse::Mouse;
-//use std::collections::HashMap;
 
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
@@ -35,7 +26,6 @@ pub enum TileKind {
 #[derive(Debug,Clone)]
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
-    //pub size: usize,
     seed: u32,
 }
 
@@ -235,8 +225,7 @@ impl GridGroup {
     }
 
     /// exports game map at larger size
-    // TODO: export as img buf, and hot load in render when needed?
-    pub fn export (seed: Option<u32>) {
+    pub fn export (seed: Option<u32>) -> ::image::DynamicImage {
         let seed = seed.unwrap_or(0);
         let wh = 100;
         let m = Grid::gen(seed,
@@ -261,8 +250,6 @@ impl GridGroup {
         }
 
         img = ::image::imageops::rotate180(&img);
-
-        let mut f = File::create(&Path::new("map.png")).unwrap();
-        let _ = ::image::ImageRgb8(img).save(&mut f, ::image::PNG); 
+        ::image::ImageRgb8(img)
     }
 }

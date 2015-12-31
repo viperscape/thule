@@ -1,4 +1,8 @@
+use std::path::Path;
+use std::fs::File;
+
 use ::{Grid,MAPSIZE,GridGroup};
+
 use na::{zero,Vec3,Vec2};
 use clock_ticks::precise_time_s;
 
@@ -7,15 +11,22 @@ pub const MOVE_TIME: f64 = 0.095;
 pub struct GameState {
     pub player: Player,
     pub map: GridGroup,
+    pub minimap: ::glium::Texture2d,
 }
 
 impl GameState {
-    pub fn new () -> GameState {
-        GridGroup::export(None);
+    pub fn new (display: &::glium::Display) -> GameState {
+        let img = GridGroup::export(None);
+        
+        // NOTE: this may be removed in the future
+        let mut f = File::create(&Path::new("map.png")).unwrap();
+        let _ = ::image::ImageRgb8(img.to_rgb()).
+            save(&mut f, ::image::PNG);
         
         GameState {
             player: Player::new(),
             map: GridGroup::new(None,),
+            minimap: ::glium::Texture2d::new(display,img).unwrap(),
         }
     }
 }

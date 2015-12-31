@@ -1,5 +1,5 @@
 use glium::{Display,Surface};
-use ::ui::{Color,Colors,Colorable,Transforms};
+use ::ui::{Color,Colors,Transforms};
 use ::ui::{GlyphDrawer,TileDrawer,MeshDrawer,MapDrawer};
 use ::ui::glyphs::Text;
 use na::{Vec2,Vec3};
@@ -42,7 +42,7 @@ impl Render {
             person: MeshDrawer::new_from_path(
                 "assets/mesh/person.obj",display),
 
-            map: MapDrawer::new("map.png",display),
+            map: MapDrawer::new(display),
 
             fps: Timing::new(),
         }
@@ -131,9 +131,11 @@ impl Render {
                              grid_view.to_screen(player_pos),
                              &mut target,);
 
+            // rebind minimap, incase we updated it
             self.map.draw(Vec2::new(100.,100.),
                           game.player.grid_pos,
                           ui_view.to_screen(Vec3::new(290.,-290.,0.)),
+                          &game.minimap,
                           &mut target);
 
 
