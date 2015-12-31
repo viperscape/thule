@@ -209,7 +209,7 @@ impl GlyphDrawer {
                                                 cache.image_position.1 as f32);
                         
                         let pos = Vec2::new(t.pos.x,t.pos.y) + pos +
-                            (img_size);
+                            (img_size * 0.5);
 
                         /* let translation = Iso3::new(
                         Vec3::new(position.x, position.y, 0.0),
