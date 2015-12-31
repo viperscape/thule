@@ -10,6 +10,7 @@ use ::GameState;
 use ::{TileKind,Tile,Grid};
 
 const FRAME_SAMPLE: usize = 120;
+const COLOR_SAND: Color = [1., 0.92156863, 0.8039216]; //FFEBCD
 
 pub struct Render {
     pub text: GlyphDrawer,
@@ -65,7 +66,7 @@ impl Render {
                                           color[1],
                                           color[2],
                                           1.0), 1.0);
-
+            
             let ui_view = Transforms::ui(win_size);
             let grid_view = Transforms::grid(win_size,&cam);
 
@@ -169,7 +170,7 @@ impl Render {
         else if tile.kind == TileKind::Stone {
             Colors::red_brick() }
         else if tile.kind == TileKind::Sand {
-            Color::from_hex("FFEBCD").unwrap() }
+            COLOR_SAND }
         else { Colors::blue_sky() }
         
     }
