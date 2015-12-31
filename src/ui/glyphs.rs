@@ -30,8 +30,12 @@ static VERT_SRC: &'static str = r"
 
     in vec2 g_pos;
     in vec2 size;
+    in vec4 frame;
 
     out vec2 v_tex_coord;
+    out vec2 frame_size;
+    out vec2 frame_off;
+
     out vec2 v_pos;
     in vec4 o_color;
     out vec4 v_color;
@@ -42,6 +46,8 @@ static VERT_SRC: &'static str = r"
 
         gl_Position = transform * vec4(v_pos + g_pos, 0.0, 1.0);
         v_tex_coord = tex;
+        frame_size = frame.zw;
+        frame_off = frame.xy;
         v_color = o_color;
     }
 ";
@@ -51,12 +57,15 @@ static FRAG_SRC: &'static str = r"
 
     uniform sampler2D sample;
     in vec2 v_tex_coord;
-    
+    in vec2 frame_size;
+    in vec2 frame_off;
+   
     in vec4 v_color;
     out vec4 f_color;
 
     void main() {
-        f_color = v_color * texture2D(sample, v_tex_coord);
+        f_color = v_color * texture2D(sample, fract(v_tex_coord) * frame_size + frame_off);
+        //f_color = v_color * texture2D(sample, v_tex_coord);
     }
 ";
 
@@ -72,6 +81,7 @@ pub struct Attr {
     pub g_pos: (f32,f32),
     pub size: (f32,f32),
     pub o_color: (f32,f32,f32,f32),
+    pub frame: (f32,f32,f32,f32),
 }
 
 pub type GlyphCache = HashMap<char,CharInfo>;
@@ -107,7 +117,7 @@ impl GlyphDrawer {
         let vbo = glium::vertex::VertexBuffer::new(display, &verts).unwrap().into_vertex_buffer_any();
 
         let dims = font.image().dimensions();
-        let img = font.image_mut().crop(0,0,dims.0,dims.1);
+        let img = font.image_mut().crop(0,0,dims.0,dims.1).flipv();
         
         let sample = Texture2d::new(display,
                                     img).unwrap();
@@ -117,7 +127,8 @@ impl GlyphDrawer {
                               visible,
                               g_pos,
                               size,
-                              o_color);
+                              o_color,
+                              frame);
 
             let data = vec![
                 Attr {
@@ -125,6 +136,7 @@ impl GlyphDrawer {
                     g_pos: (0.,0.),
                     size: (0.,0.),
                     o_color: (0.,0.,0.,0.),
+                    frame: (0.,0.,0.,0.),
                 }
                 ;2500];
 
@@ -155,10 +167,10 @@ impl GlyphDrawer {
         let mut chars = get_chars(&text);
         
         for q in self.inst.map().iter_mut() {
-            i += 1;
+            
             let c = {
                 if i < chars.len() {
-                    Some(chars[i-1])
+                    Some(chars[i])
                 }
                 else {
                     chars = {
@@ -173,7 +185,8 @@ impl GlyphDrawer {
                     else { None }
                 }
             };
-
+            i += 1;
+            
             let mut img_size: Vec2<f32> = zero();
             q.visible = 0;
 
@@ -188,13 +201,15 @@ impl GlyphDrawer {
                         let pos = Vec2::new((i as f32 *
                                              cache.advance.0 as f32)
                                             - offset_x as f32,
-                                            0.0) * t.size;
+                                            cache.advance.1 as f32) * t.size;
 
                         img_size = Vec2::new(cache.image_size.0 as f32,
                                              cache.image_size.1 as f32);
+                        let img_pos = Vec2::new(cache.image_position.0 as f32,
+                                                cache.image_position.1 as f32);
                         
                         let pos = Vec2::new(t.pos.x,t.pos.y) + pos +
-                            (img_size * 0.5);
+                            (img_size);
 
                         /* let translation = Iso3::new(
                         Vec3::new(position.x, position.y, 0.0),
@@ -203,12 +218,14 @@ impl GlyphDrawer {
                         let transform = transform *
                         translation.to_homogeneous();*/
                         
-                        
                         q.visible = 1;
                         q.g_pos = (pos.x,pos.y);
                         let size = t.size * img_size;
                         q.size = (size.x,size.y);
-                        
+                        q.frame = (img_pos.x/256., //(img_pos.x + 0.5)/256.,
+                                   img_pos.y/256., //(256. - (img_pos.y + 0.5)) - img_size.y/256.,
+                                   img_size.x/256.,
+                                   img_size.y/256.);
                         q.o_color = (t.color[0],
                                      t.color[1],
                                      t.color[2],
@@ -238,8 +255,8 @@ impl GlyphDrawer {
 
     }
 
-   /* fn load_glyphs (mut font: Font,
-                        display: &Display) -> GlyphCache {
+    /*fn load_glyphs (mut font: &mut Font,
+                    display: &Display) -> Texture2dArray {
         let mut cache = vec!();
 
         for c in ascii().into_iter().rev() {
@@ -251,8 +268,8 @@ impl GlyphDrawer {
             }
 
         }
-        
-        cache
+
+        Texture2dArray::new(display,cache).unwrap()
     }*/
 
     pub fn new_from_path(path: &str, display: &Display) -> GlyphDrawer {
