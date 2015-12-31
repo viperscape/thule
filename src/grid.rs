@@ -14,7 +14,7 @@ use ::ui::{Colorable};
 
 pub const TILESIZE: f32 = 100.;
 pub const MAPSIZE: usize = 1000; // square
-pub const GRIDSIZE: usize = 25;
+pub const GRIDSIZE: usize = 50;
 pub const GROUPSIZE: usize = 3;
 
 

@@ -1,15 +1,12 @@
 use std::collections::HashMap;
 
-use na::{Mat4,Vec2,Vec3,Iso3,Vec4,
-         zero, Identity, ToHomogeneous};
+use na::{Mat4,Vec2,Vec3};
 
 use glium::{self,Surface,Display};
 use glium::vertex::VertexBufferAny;
 
 use font_atlas::{CharInfo};
-use glium::texture::{Texture2d,Texture2dArray,
-                     Texture2dDataSource,
-                     RawImage2d};
+use glium::texture::{Texture2d};
 
 use ::image::GenericImage;
 
@@ -187,7 +184,6 @@ impl GlyphDrawer {
             };
             i += 1;
             
-            let mut img_size: Vec2<f32> = zero();
             q.visible = 0;
 
             if let Some(c) = c {
@@ -203,7 +199,7 @@ impl GlyphDrawer {
                                             - offset_x as f32,
                                             cache.advance.1 as f32) * t.size;
 
-                        img_size = Vec2::new(cache.image_size.0 as f32,
+                        let img_size = Vec2::new(cache.image_size.0 as f32,
                                              cache.image_size.1 as f32);
                         let img_pos = Vec2::new(cache.image_position.0 as f32,
                                                 cache.image_position.1 as f32);

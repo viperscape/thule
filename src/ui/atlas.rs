@@ -1,11 +1,10 @@
 use std::fs::File;
 
-use font_atlas::{RenderedFont,CharInfo};
+use font_atlas::{RenderedFont};
 use font_atlas_image::{read_atlas};
 use image::{DynamicImage};
 
-use glium::texture::{Texture2d,RawImage2d,
-                     Texture2dDataSource};
+use glium::texture::{Texture2d};
 use glium::Display;
 
 use ::Font;
