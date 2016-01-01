@@ -26,19 +26,18 @@ pub enum TileKind {
 #[derive(Debug,Clone)]
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
-    seed: u32,
+    seed: BiomeSeed, // removeme?
 }
 
 impl Grid {
-    pub fn new (seed: u32, start: Vec2<usize>) -> Grid {
+    pub fn new (seed: BiomeSeed, start: Vec2<usize>) -> Grid {
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
         let g = Grid::gen(seed,start,
-                          Vec2::new(GRIDSIZE,GRIDSIZE),
-                          Vec2::new(0.05,0.05));
+                          Vec2::new(GRIDSIZE,GRIDSIZE),);
 
         for (i,r) in g.iter().enumerate() {
             for (j,t) in r.iter().enumerate() {
-                let tile = Grid::gen_tile(t);
+                let tile = Biome::gen_tile(t);
                 v[i][j] = Tile { kind: tile }
             }
         }
@@ -47,32 +46,59 @@ impl Grid {
                seed: seed }
     }
 
-    pub fn regen(s: u32, start: Vec2<usize>, size: Vec2<usize>,
-                 b: &mut Vec<Vec<f32>>, m: Vec2<f32>) {
-        let seed = Seed::new(s);
+    pub fn regen(s: BiomeSeed, start: Vec2<usize>, size: Vec2<usize>,
+                 b: &mut Vec<Vec<Biome>>) {
+
+        // NOTE: precompute these in BiomeSeeds?
+        let terra_s = Seed::new(s.terra);
+        let terra_m = Vec2::new(0.5,0.5);
+
+        let humid_s = Seed::new(s.humid);
+        let humid_m = Vec2::new(0.01,0.1);
+
+        let temp_s = Seed::new(s.temp);
+        let temp_m = Vec2::new(0.01,0.35);
         
         for (i,r) in (start.y .. size.y+start.y).enumerate() {
             for (j,c) in (start.x .. size.x+start.x).enumerate() {
-                let y = r as f32 * m.y;
-                let x = c as f32 * m.x;
+                let y = r as f32 * terra_m.y;
+                let x = c as f32 * terra_m.x;
 
-                let value = Brownian2::new(open_simplex2, 4).
+                let terra = Brownian2::new(open_simplex2, 4).
                     wavelength(16.0).
-                    apply(&seed,&[x,y]);
+                    apply(&terra_s,&[x,y]);
+
+                let y = r as f32 * humid_m.y;
+                let x = c as f32 * humid_m.x;
+
+                let humid = Brownian2::new(open_simplex2, 4).
+                    wavelength(16.0).
+                    apply(&humid_s,&[x,y]);
+
+                let y = r as f32 * temp_m.y;
+                let x = c as f32 * temp_m.x;
+
+                let temp = Brownian2::new(open_simplex2, 4).
+                    wavelength(16.0).
+                    apply(&temp_s,&[x,y]);
                 
-                b[i][j] = value;
+                b[i][j] = Biome {
+                    humid: humid,
+                    temp: temp,
+                    terra: terra,    
+                };
             }
         }
     }
 
-    // TODO: reuse vec in regem/gen for gridgroup
-    pub fn gen(s: u32,
+    // TODO: reuse vec in regen/gen for gridgroup
+    pub fn gen(s: BiomeSeed,
                start: Vec2<usize>,
-               size: Vec2<usize>,
-               m: Vec2<f32>) -> Vec<Vec<f32>> {
-        let mut pixels: Vec<Vec<f32>> = vec![vec![0.;size.y];size.x];
+               size: Vec2<usize>,) -> Vec<Vec<Biome>> {
+        let mut pixels: Vec<Vec<Biome>> =
+            vec![vec![ Biome::default();size.y]; size.x];
 
-        Grid::regen(s,start,size, &mut pixels,m);
+        Grid::regen(s,start,size, &mut pixels);
 
         pixels
     }
@@ -81,22 +107,6 @@ impl Grid {
     //    let s = random::<u32>();
     //    Grid::gen(s,w,h)
     //}
-
-    // TODO: use multiple noise maps for biome
-    pub fn gen_tile(n: &f32) -> TileKind {
-        if n > &0. {
-            if n > &0.35 {
-                TileKind::Stone
-            }
-            else { TileKind::Grass }
-        }
-        else {
-            if n < &-0.35 {
-                TileKind::Water
-            }
-            else { TileKind::Sand }
-        }
-    }
 
     /// returns the appropriate real-coordinates of a grid's coords
     pub fn hex_pos (r: usize, c: usize, size: f32) -> Vec3<f32> {
@@ -126,6 +136,7 @@ impl Grid {
         rr.is_some()
     }*/
 
+    // NOTE: this should be deprecated soon
     pub fn debug (v: &Vec<f32>) -> Vec<&str> {
         let mut t = vec!();
         for n in v {
@@ -163,12 +174,12 @@ impl Grid {
 #[derive(Debug)]
 pub struct GridGroup {
     pub grids: Vec<(Vec2<usize>,Grid)>,
-    seed: u32,
+    seed: BiomeSeed,
 }
 
 impl GridGroup {
-    pub fn new(seed: Option<u32>) -> GridGroup {
-        let seed = seed.unwrap_or(0);
+    pub fn new(seed: Option<BiomeSeed>) -> GridGroup {
+        let seed = seed.unwrap_or(BiomeSeed::default());
         let mut grids = vec!();
 
         for y in 0..GROUPSIZE {
@@ -225,17 +236,17 @@ impl GridGroup {
     }
 
     /// exports game map at larger size
-    pub fn export (seed: Option<Biome>) -> ::image::DynamicImage {
-        let seed = seed.unwrap_or(Biome::default());
+    // TODO: create based on player position
+    pub fn export (seed: Option<BiomeSeed>) -> ::image::DynamicImage {
+        let seed = seed.unwrap_or(BiomeSeed::default());
         let wh = 100;
-        let m = Grid::gen(seed.terra,
+        let m = Grid::gen(seed,
                           Vec2::new(0,0),
-                          Vec2::new(wh,wh),
-                          Vec2::new(0.25,0.25));
+                          Vec2::new(wh,wh),);
         let mut v = vec!();
         for n in m.iter() {
             for t in n.iter() {
-                let tile = Tile { kind: Grid::gen_tile(t) };
+                let tile = Tile { kind: Biome::gen_tile(t) };
                 let b = ::ui::Render::get_tile_color(&tile).to_bytes(); {
                     v.push(b);
                 }
@@ -254,19 +265,51 @@ impl GridGroup {
     }
 }
 
-#[derive(Debug,Clone)]
-pub struct Biome {
+#[derive(Debug,Clone,Copy)]
+pub struct BiomeSeed {
     pub temp: u32,
     pub humid: u32,
     pub terra: u32,
 }
 
-impl Biome {
-    pub fn default () -> Biome {
-        Biome {
+impl BiomeSeed {
+    pub fn default () -> BiomeSeed {
+        BiomeSeed {
             temp: 2,
             humid: 1,
             terra: 0,
+        }
+    }
+}
+
+#[derive(Debug,Clone)]
+pub struct Biome {
+    pub temp: f32,
+    pub humid: f32,
+    pub terra: f32,
+}
+
+impl Biome {
+    // NOTE: consider renaming to empty, or zero
+    pub fn default() -> Biome {
+        Biome {
+            temp: 0.,
+            humid: 0.,
+            terra: 0.,
+        }
+    }
+    pub fn gen_tile(&self) -> TileKind {
+        if self.terra > 0. {
+            if self.terra > 0.35 {
+                TileKind::Stone
+            }
+            else { TileKind::Grass }
+        }
+        else {
+            if self.terra < -0.35 {
+                TileKind::Water
+            }
+            else { TileKind::Sand }
         }
     }
 }

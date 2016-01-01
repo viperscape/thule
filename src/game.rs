@@ -16,7 +16,7 @@ pub struct GameState {
 
 impl GameState {
     pub fn new (display: &::glium::Display) -> GameState {
-        let biome_seeds = ::grid::Biome {
+        let biome_seeds = ::grid::BiomeSeed {
             terra: 0,
             humid: 100,
             temp: 1000,
