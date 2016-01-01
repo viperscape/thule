@@ -26,11 +26,11 @@ pub enum TileKind {
 #[derive(Debug,Clone)]
 pub struct Grid {
     pub tiles: Vec<Vec<Tile>>,
-    seed: BiomeSeed, // removeme?
+    //seed: BiomeSeed, // removeme?
 }
 
 impl Grid {
-    pub fn new (seed: BiomeSeed, start: Vec2<usize>) -> Grid {
+    pub fn new (seed: &BiomeSeed, start: Vec2<usize>) -> Grid {
         let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
         let g = Grid::gen(seed,start,
                           Vec2::new(GRIDSIZE,GRIDSIZE),);
@@ -43,44 +43,37 @@ impl Grid {
         }
 
         Grid { tiles: v,
-               seed: seed }
+               }//seed: seed }
     }
 
-    pub fn regen(s: BiomeSeed, start: Vec2<usize>, size: Vec2<usize>,
+    pub fn regen(s: &BiomeSeed, start: Vec2<usize>, size: Vec2<usize>,
                  b: &mut Vec<Vec<Biome>>) {
 
         // NOTE: precompute these in BiomeSeeds?
-        let terra_s = Seed::new(s.terra);
-        let terra_m = Vec2::new(0.5,0.5);
 
-        let humid_s = Seed::new(s.humid);
-        let humid_m = Vec2::new(0.01,0.1);
-
-        let temp_s = Seed::new(s.temp);
-        let temp_m = Vec2::new(0.01,0.35);
         
         for (i,r) in (start.y .. size.y+start.y).enumerate() {
             for (j,c) in (start.x .. size.x+start.x).enumerate() {
-                let y = r as f32 * terra_m.y;
-                let x = c as f32 * terra_m.x;
+                let y = r as f32 * s.terra.1.y;
+                let x = c as f32 * s.terra.1.x;
 
                 let terra = Brownian2::new(open_simplex2, 4).
                     wavelength(16.0).
-                    apply(&terra_s,&[x,y]);
+                    apply(&s.terra.0,&[x,y]);
 
-                let y = r as f32 * humid_m.y;
-                let x = c as f32 * humid_m.x;
+                let y = r as f32 * s.humid.1.y;
+                let x = c as f32 * s.humid.1.x;
 
                 let humid = Brownian2::new(open_simplex2, 4).
                     wavelength(16.0).
-                    apply(&humid_s,&[x,y]);
+                    apply(&s.humid.0,&[x,y]);
 
-                let y = r as f32 * temp_m.y;
-                let x = c as f32 * temp_m.x;
+                let y = r as f32 * s.temp.1.y;
+                let x = c as f32 * s.temp.1.x;
 
                 let temp = Brownian2::new(open_simplex2, 4).
                     wavelength(16.0).
-                    apply(&temp_s,&[x,y]);
+                    apply(&s.temp.0,&[x,y]);
                 
                 b[i][j] = Biome {
                     humid: humid,
@@ -92,11 +85,11 @@ impl Grid {
     }
 
     // TODO: reuse vec in regen/gen for gridgroup
-    pub fn gen(s: BiomeSeed,
+    pub fn gen(s: &BiomeSeed,
                start: Vec2<usize>,
                size: Vec2<usize>,) -> Vec<Vec<Biome>> {
         let mut pixels: Vec<Vec<Biome>> =
-            vec![vec![ Biome::default();size.y]; size.x];
+            vec![vec![ Biome::zero();size.y]; size.x];
 
         Grid::regen(s,start,size, &mut pixels);
 
@@ -171,7 +164,6 @@ impl Grid {
     }
 }
 
-#[derive(Debug)]
 pub struct GridGroup {
     pub grids: Vec<(Vec2<usize>,Grid)>,
     seed: BiomeSeed,
@@ -185,7 +177,7 @@ impl GridGroup {
         for y in 0..GROUPSIZE {
             for x in 0..GROUPSIZE { 
                 let coord = Vec2::new(x*GRIDSIZE,y*GRIDSIZE);
-                let grid = Grid::new(seed,coord);
+                let grid = Grid::new(&seed,coord);
                 grids.push((coord,grid));
             }
         }
@@ -204,7 +196,7 @@ impl GridGroup {
             if pos.x > coord.x + GRIDSIZE * 2 {
                 coord.x += GRIDSIZE * 3;
                 
-                let new_grid = Grid::new(self.seed,*coord);
+                let new_grid = Grid::new(&self.seed,*coord);
                 *grid = new_grid;
             }
             else if (pos.x as isize) < coord.x as isize - GRIDSIZE as isize
@@ -212,7 +204,7 @@ impl GridGroup {
                 let x = coord.x as isize - (GRIDSIZE * 3) as isize;
                 if x >= 0 {
                     coord.x = x as usize;
-                    let new_grid = Grid::new(self.seed,*coord);
+                    let new_grid = Grid::new(&self.seed,*coord);
                     *grid = new_grid;
                 }
             }
@@ -220,7 +212,7 @@ impl GridGroup {
             if pos.y > coord.y + GRIDSIZE * 2 {
                 coord.y += GRIDSIZE * 3;
                 
-                let new_grid = Grid::new(self.seed,*coord);
+                let new_grid = Grid::new(&self.seed,*coord);
                 *grid = new_grid;
             }
             else if (pos.y as isize) < coord.y as isize - GRIDSIZE as isize
@@ -228,7 +220,7 @@ impl GridGroup {
                 let y = coord.y as isize - (GRIDSIZE * 3) as isize;
                 if y >= 0 {
                     coord.y = y as usize;
-                    let new_grid = Grid::new(self.seed,*coord);
+                    let new_grid = Grid::new(&self.seed,*coord);
                     *grid = new_grid;
                 }
             }
@@ -240,7 +232,7 @@ impl GridGroup {
     pub fn export (seed: Option<BiomeSeed>) -> ::image::DynamicImage {
         let seed = seed.unwrap_or(BiomeSeed::default());
         let wh = 100;
-        let m = Grid::gen(seed,
+        let m = Grid::gen(&seed,
                           Vec2::new(0,0),
                           Vec2::new(wh,wh),);
         let mut v = vec!();
@@ -265,19 +257,26 @@ impl GridGroup {
     }
 }
 
-#[derive(Debug,Clone,Copy)]
 pub struct BiomeSeed {
-    pub temp: u32,
-    pub humid: u32,
-    pub terra: u32,
+    pub temp: (Seed,Vec2<f32>),
+    pub humid: (Seed,Vec2<f32>),
+    pub terra: (Seed,Vec2<f32>),
 }
 
 impl BiomeSeed {
     pub fn default () -> BiomeSeed {
+        let terra_s = Seed::new(0);
+        let terra_m = Vec2::new(0.5,0.5);
+
+        let humid_s = Seed::new(1);
+        let humid_m = Vec2::new(0.01,0.1);
+
+        let temp_s = Seed::new(2);
+        let temp_m = Vec2::new(0.01,0.35);
         BiomeSeed {
-            temp: 2,
-            humid: 1,
-            terra: 0,
+            temp: (temp_s,temp_m),
+            humid: (humid_s,humid_m),
+            terra: (terra_s,terra_m),
         }
     }
 }
@@ -290,8 +289,7 @@ pub struct Biome {
 }
 
 impl Biome {
-    // NOTE: consider renaming to empty, or zero
-    pub fn default() -> Biome {
+    pub fn zero() -> Biome {
         Biome {
             temp: 0.,
             humid: 0.,

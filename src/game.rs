@@ -16,11 +16,7 @@ pub struct GameState {
 
 impl GameState {
     pub fn new (display: &::glium::Display) -> GameState {
-        let biome_seeds = ::grid::BiomeSeed {
-            terra: 0,
-            humid: 100,
-            temp: 1000,
-        };
+        let biome_seeds = ::grid::BiomeSeed::default();
         
         let img = GridGroup::export(Some(biome_seeds));
         
