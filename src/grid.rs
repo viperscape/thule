@@ -230,8 +230,12 @@ impl GridGroup {
     /// exports game map at larger size
     // TODO: create based on player position
     pub fn export (seed: Option<BiomeSeed>) -> ::image::DynamicImage {
-        let seed = seed.unwrap_or(BiomeSeed::default());
-        let wh = 100;
+        let mut seed = seed.unwrap_or(BiomeSeed::default());
+        seed.temp.1 = seed.temp.1 * 10.;
+        seed.humid.1 = seed.humid.1 * 10.;
+        seed.terra.1 = seed.terra.1 * 10.;
+        
+        let wh = MAPSIZE/10;
         let m = Grid::gen(&seed,
                           Vec2::new(0,0),
                           Vec2::new(wh,wh),);
@@ -266,7 +270,7 @@ pub struct BiomeSeed {
 impl BiomeSeed {
     pub fn default () -> BiomeSeed {
         let terra_s = Seed::new(0);
-        let terra_m = Vec2::new(0.5,0.5);
+        let terra_m = Vec2::new(0.05,0.05);
 
         let humid_s = Seed::new(1);
         let humid_m = Vec2::new(0.01,0.1);
