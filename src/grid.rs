@@ -225,10 +225,10 @@ impl GridGroup {
     }
 
     /// exports game map at larger size
-    pub fn export (seed: Option<u32>) -> ::image::DynamicImage {
-        let seed = seed.unwrap_or(0);
+    pub fn export (seed: Option<Biome>) -> ::image::DynamicImage {
+        let seed = seed.unwrap_or(Biome::default());
         let wh = 100;
-        let m = Grid::gen(seed,
+        let m = Grid::gen(seed.terra,
                           Vec2::new(0,0),
                           Vec2::new(wh,wh),
                           Vec2::new(0.25,0.25));
@@ -251,5 +251,22 @@ impl GridGroup {
 
         img = ::image::imageops::rotate180(&img);
         ::image::ImageRgb8(img)
+    }
+}
+
+#[derive(Debug,Clone)]
+pub struct Biome {
+    pub temp: u32,
+    pub humid: u32,
+    pub terra: u32,
+}
+
+impl Biome {
+    pub fn default () -> Biome {
+        Biome {
+            temp: 2,
+            humid: 1,
+            terra: 0,
+        }
     }
 }

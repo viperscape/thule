@@ -16,7 +16,13 @@ pub struct GameState {
 
 impl GameState {
     pub fn new (display: &::glium::Display) -> GameState {
-        let img = GridGroup::export(None);
+        let biome_seeds = ::grid::Biome {
+            terra: 0,
+            humid: 100,
+            temp: 1000,
+        };
+        
+        let img = GridGroup::export(Some(biome_seeds));
         
         // NOTE: this may be removed in the future
         let mut f = File::create(&Path::new("map.png")).unwrap();
