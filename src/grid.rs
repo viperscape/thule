@@ -21,6 +21,8 @@ pub enum TileKind {
     Water,
     Stone,
     Sand,
+    Snow,
+    Ice,
 }
 
 #[derive(Debug,Clone)]
@@ -273,10 +275,11 @@ impl BiomeSeed {
         let terra_m = Vec2::new(0.05,0.05);
 
         let humid_s = Seed::new(1);
-        let humid_m = Vec2::new(0.01,0.1);
+        let humid_m = Vec2::new(0.65,0.65);
 
         let temp_s = Seed::new(2);
-        let temp_m = Vec2::new(0.01,0.35);
+        let temp_m = Vec2::new(0.01,0.025);
+        
         BiomeSeed {
             temp: (temp_s,temp_m),
             humid: (humid_s,humid_m),
@@ -303,13 +306,20 @@ impl Biome {
     pub fn gen_tile(&self) -> TileKind {
         if self.terra > 0. {
             if self.terra > 0.35 {
-                TileKind::Stone
+                if self.temp < -0.2 &&
+                    self.humid > 0.45 {
+                        TileKind::Snow
+                    }
+                else { TileKind::Stone }
             }
             else { TileKind::Grass }
         }
         else {
             if self.terra < -0.35 {
-                TileKind::Water
+                if self.temp < -0.45 {
+                    TileKind::Ice
+                }
+                else { TileKind::Water }
             }
             else { TileKind::Sand }
         }

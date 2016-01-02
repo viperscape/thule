@@ -173,7 +173,11 @@ impl Render {
             Colors::red_brick() }
         else if tile.kind == TileKind::Sand {
             COLOR_SAND }
-        else { Colors::blue_sky() }
+        else if tile.kind == TileKind::Ice {
+            Colors::blue_sky() }
+        else if tile.kind == TileKind::Snow {
+            Colors::white_ghost() }
+        else { Colors::blue() }
         
     }
 }
