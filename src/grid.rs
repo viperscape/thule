@@ -66,16 +66,12 @@ impl Grid {
                 let y = r as f32 * s.humid.1.y;
                 let x = c as f32 * s.humid.1.x;
 
-                let humid = Brownian2::new(open_simplex2, 4).
-                    wavelength(16.0).
-                    apply(&s.humid.0,&[x,y]);
+                let humid = open_simplex2(&s.humid.0,&[x,y]);
 
                 let y = r as f32 * s.temp.1.y;
                 let x = c as f32 * s.temp.1.x;
 
-                let temp = Brownian2::new(open_simplex2, 4).
-                    wavelength(16.0).
-                    apply(&s.temp.0,&[x,y]);
+                let temp = open_simplex2(&s.temp.0,&[x,y]);
                 
                 b[i][j] = Biome {
                     humid: humid,
