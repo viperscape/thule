@@ -14,7 +14,6 @@ use na::{Vec3,Vec2,zero};
 fn main() {
     let mut iface = Interface::new(800,800,Bindings::default());
     let mut game = GameState::new(&iface.get_display_mut());
-    return;
     
     'main: loop {
         check_keys(&mut game,&mut iface);
@@ -47,9 +46,9 @@ fn main() {
 fn check_keys (gs: &mut GameState,iface: &mut Interface) {
     let keys = iface.keyboard.get_released_keys();
     
-   // if when("refresh",&iface,) {
-   //     gs.map = Grid::new(Some(rand::random::<u32>()),zero());
-   // }
+    if when("map_view",&iface,) {
+        gs.map_view = !gs.map_view;
+    }
 
     let size = 100. * iface.cam.zoom;
     if when("focus",&iface) {

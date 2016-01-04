@@ -36,7 +36,7 @@ impl Default for Bindings {
                                     "S" => VirtualKeyCode::S,
                                     "D" => VirtualKeyCode::D,
                                     "W" => VirtualKeyCode::W,
-                                    "R" => VirtualKeyCode::R,
+                                    "M" => VirtualKeyCode::M,
                                     "Tab" => VirtualKeyCode::Tab,
                                     _ => VirtualKeyCode::F12,
                                 }

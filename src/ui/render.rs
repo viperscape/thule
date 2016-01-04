@@ -132,9 +132,15 @@ impl Render {
                              &mut target,);
 
             // rebind minimap, incase we updated it
-            self.map.draw(Vec2::new(100.,100.),
+            let map = {
+                if !game.map_view { (Vec2::new(100.,100.),
+                                     Vec3::new(290.,-290.,0.)) }
+                else { (Vec2::new(400.,400.),
+                        Vec3::new(0.,0.,0.)) }
+            };
+            self.map.draw(map.0,
                           game.player.grid_pos,
-                          ui_view.to_screen(Vec3::new(290.,-290.,0.)),
+                          ui_view.to_screen(map.1),
                           &game.minimap,
                           &mut target);
 
@@ -142,19 +148,11 @@ impl Render {
             
 
             self.text.push(Text {
-                text: format!("fps:{:?}",frame_time_avg),
+                text: format!("fps:{:0.2?}",frame_time_avg),
                 size: Vec2::new(1.,1.),
                 color: Colors::black(),
                 center: false,
                 pos: Vec3::new(-390.,-390.,0.),
-            });
-
-            self.text.push(Text {
-                text: format!("cam:{:?},zoom:{:?}",cam.pos,cam.zoom),
-                size: Vec2::new(1.,1.),
-                color: Colors::black(),
-                center: false,
-                pos: Vec3::new(-390.,-370.,0.),
             });
 
             self.text.draw(ui_view.to_pv(),&mut target);

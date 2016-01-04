@@ -16,6 +16,7 @@ pub struct GameState {
     pub player: Player,
     pub map: GridGroup,
     pub minimap: ::glium::Texture2d,
+    pub map_view: bool,
 }
 
 impl GameState {
@@ -47,6 +48,7 @@ impl GameState {
             player: Player::new(),
             map: GridGroup::new(None,),
             minimap: ::glium::Texture2d::new(display,img).unwrap(),
+            map_view: false,
         }
     }
 }
