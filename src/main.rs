@@ -14,6 +14,7 @@ use na::{Vec3,Vec2,zero};
 fn main() {
     let mut iface = Interface::new(800,800,Bindings::default());
     let mut game = GameState::new(&iface.get_display_mut());
+    return;
     
     'main: loop {
         check_keys(&mut game,&mut iface);

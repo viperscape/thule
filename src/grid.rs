@@ -8,6 +8,7 @@ pub const MAPSIZE: usize = 1000; // square
 pub const GRIDSIZE: usize = 25;
 pub const GROUPSIZE: usize = 3;
 
+pub type GridMap = Vec<Vec<Biome>>;
 
 #[derive(Debug,Clone)]
 pub struct Tile {
@@ -72,6 +73,7 @@ impl Grid {
                 let x = c as f32 * s.temp.1.x;
 
                 let temp = open_simplex2(&s.temp.0,&[x,y]);
+                let temp = temp / s.temp.1.y;
                 
                 b[i][j] = Biome {
                     humid: humid,
@@ -225,18 +227,17 @@ impl GridGroup {
         }
     }
 
-    /// exports game map at larger size
-    // TODO: create based on player position
-    pub fn export (seed: Option<BiomeSeed>) -> ::image::DynamicImage {
-        let mut seed = seed.unwrap_or(BiomeSeed::default());
-        seed.temp.1 = seed.temp.1 * 10.;
-        seed.humid.1 = seed.humid.1 * 10.;
-        seed.terra.1 = seed.terra.1 * 10.;
-        
-        let wh = MAPSIZE/10;
+    pub fn gen_map (seed: Option<BiomeSeed>) -> GridMap {
+        let seed = seed.unwrap_or(BiomeSeed::default());
         let m = Grid::gen(&seed,
                           Vec2::new(0,0),
-                          Vec2::new(wh,wh),);
+                          Vec2::new(MAPSIZE,MAPSIZE),);
+        m
+    }
+    
+    /// exports game map at larger size
+    // TODO: create based on player position
+    pub fn export (m: &GridMap) -> ::image::DynamicImage {
         let mut v = vec!();
         for n in m.iter() {
             for t in n.iter() {
@@ -246,7 +247,8 @@ impl GridGroup {
                 }
             }
         }
-        let mut img = ::image::ImageBuffer::new(wh as u32, wh as u32);
+        let mut img = ::image::ImageBuffer::new(MAPSIZE as u32,
+                                                MAPSIZE as u32);
 
         let mut i = 0;
         for (_,_, pixel) in img.enumerate_pixels_mut() {
@@ -284,7 +286,7 @@ impl BiomeSeed {
     }
 }
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Biome {
     pub temp: f32,
     pub humid: f32,
@@ -300,24 +302,24 @@ impl Biome {
         }
     }
     pub fn gen_tile(&self) -> TileKind {
-        if self.terra > 0. {
+        let water = - 0.25;
+        if self.terra > water {
             if self.terra > 0.35 {
                 if self.temp < -0.2 &&
                     self.humid > 0.45 {
-                        TileKind::Snow
+                        TileKind::Stone//TileKind::Snow
                     }
                 else { TileKind::Stone }
             }
-            else { TileKind::Grass }
+            else if self.terra > water+0.15 { TileKind::Grass }
+            else { TileKind::Sand }
         }
         else {
-            if self.terra < -0.35 {
-                if self.temp < -0.45 {
-                    TileKind::Ice
+            if self.temp < -0.2 &&
+                self.humid < 0.45 {
+                    TileKind::Water//TileKind::Ice
                 }
-                else { TileKind::Water }
-            }
-            else { TileKind::Sand }
+            else { TileKind::Water }
         }
     }
 }

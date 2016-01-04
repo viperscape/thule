@@ -3,6 +3,7 @@
 
 extern crate rustc_serialize;
 extern crate rand;
+extern crate bincode;
 
 #[macro_use] extern crate glium;
 extern crate nalgebra as na;

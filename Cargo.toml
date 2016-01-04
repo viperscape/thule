@@ -11,6 +11,7 @@ font-atlas-image = "0.1.0"
 image = "0.3.14"
 
 rustc-serialize = "0.3.16"
+bincode = "*"
 rand = "0.3.11"
 
 glium = "0.9.1"

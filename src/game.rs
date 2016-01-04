@@ -1,5 +1,9 @@
 use std::path::Path;
 use std::fs::File;
+use std::io::{Read,Write};
+
+use bincode::SizeLimit;
+use bincode::rustc_serialize::{encode, decode};
 
 use ::{Grid,MAPSIZE,GridGroup};
 
@@ -17,8 +21,22 @@ pub struct GameState {
 impl GameState {
     pub fn new (display: &::glium::Display) -> GameState {
         let biome_seeds = ::grid::BiomeSeed::default();
-        
-        let img = GridGroup::export(Some(biome_seeds));
+        let m = {
+            if let Some(mut f) = File::open(&Path::new("map.dat")).ok() {
+                let mut b = vec!();
+                let _ = f.read_to_end(&mut b);
+                decode(&b[..]).unwrap()
+            }
+            else {
+                let m = GridGroup::gen_map(Some(biome_seeds));
+                if let Some(mut f) = File::create(&Path::new("map.dat")).ok() {
+                    let b = encode(&m,SizeLimit::Infinite).unwrap();
+                    let _ = f.write(&b);
+                }
+                m
+            }
+        };
+        let img = GridGroup::export(&m);
         
         // NOTE: this may be removed in the future
         let mut f = File::create(&Path::new("map.png")).unwrap();
