@@ -95,11 +95,6 @@ impl Grid {
         pixels
     }
 
-    //pub fn gen_rand(w: usize, h: usize) -> Vec<Vec<f32>> {
-    //    let s = random::<u32>();
-    //    Grid::gen(s,w,h)
-    //}
-
     /// returns the appropriate real-coordinates of a grid's coords
     pub fn hex_pos (r: usize, c: usize, size: f32) -> Vec3<f32> {
         let off = (r & 1) as f32 * (size / 2.);
@@ -190,6 +185,8 @@ impl GridGroup {
     /// position in list of gridgroup
     /// then finds which grid side to build and reposition for the
     /// grid instances
+    // NOTE: because we save/load map data, we should
+    // not generate biomes on the fly, but pull from the heap data
     pub fn update(&mut self,pos:Vec2<usize>) {
         for &mut (ref mut coord,ref mut grid) in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE * 2 {
@@ -235,7 +232,6 @@ impl GridGroup {
     }
     
     /// exports game map at larger size
-    // TODO: create based on player position
     pub fn export (m: &GridMap) -> ::image::DynamicImage {
         let mut v = vec!();
         for n in m.iter() {
