@@ -1,6 +1,6 @@
 use noise::{open_simplex2,Brownian2, Seed};
 
-use na::{Vec3,Vec2,};
+use na::{Vec3,Vec2,zero};
 use ::ui::{Colorable};
 
 pub const TILESIZE: f32 = 100.;
@@ -8,15 +8,12 @@ pub const MAPSIZE: usize = 1000; // square
 pub const GRIDSIZE: usize = 25;
 pub const GROUPSIZE: usize = 3;
 
-pub type GridMap = Vec<Vec<Biome>>;
-
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Tile {
-    //pub coord: Coordinate,
     pub kind: TileKind,
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,RustcEncodable, RustcDecodable, PartialEq)]
 pub enum TileKind {
     Grass,
     Water,
@@ -26,18 +23,18 @@ pub enum TileKind {
     Ice,
 }
 
-#[derive(Debug,Clone)]
+
+#[derive(Debug,Clone,RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Grid {
     pub tiles: Vec<Vec<(Tile,Biome)>>,
-    //seed: BiomeSeed, // removeme?
 }
 
 impl Grid {
-    pub fn new (seed: &BiomeSeed, start: Vec2<usize>) -> Grid {
+    pub fn new (seed: &BiomeSeed, start: Vec2<usize>, size: usize) -> Grid {
         let mut v = vec![vec![(Tile { kind: TileKind::Grass },
-                               Biome::zero()); GRIDSIZE];GRIDSIZE];
+                               Biome::zero()); size];size];
         let g = Grid::gen(seed,start,
-                          Vec2::new(GRIDSIZE,GRIDSIZE),);
+                          Vec2::new(size,size),);
 
         for (i,r) in g.iter().enumerate() {
             for (j,t) in r.iter().enumerate() {
@@ -47,8 +44,11 @@ impl Grid {
             }
         }
 
-        Grid { tiles: v,
-               }//seed: seed }
+        Grid { tiles: v }
+    }
+
+    pub fn default () -> Grid {
+        Grid::new(&BiomeSeed::default(),zero(),GRIDSIZE)
     }
 
     pub fn regen(s: &BiomeSeed, start: Vec2<usize>, size: Vec2<usize>,
@@ -171,7 +171,7 @@ impl GridGroup {
         for y in 0..GROUPSIZE {
             for x in 0..GROUPSIZE { 
                 let coord = Vec2::new(x*GRIDSIZE,y*GRIDSIZE);
-                let grid = Grid::new(&seed,coord);
+                let grid = Grid::new(&seed,coord,GRIDSIZE);
                 grids.push((coord,grid));
             }
         }
@@ -192,7 +192,7 @@ impl GridGroup {
             if pos.x > coord.x + GRIDSIZE * 2 {
                 coord.x += GRIDSIZE * 3;
                 
-                let new_grid = Grid::new(&self.seed,*coord);
+                let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
                 *grid = new_grid;
             }
             else if (pos.x as isize) < coord.x as isize - GRIDSIZE as isize
@@ -200,7 +200,7 @@ impl GridGroup {
                 let x = coord.x as isize - (GRIDSIZE * 3) as isize;
                 if x >= 0 {
                     coord.x = x as usize;
-                    let new_grid = Grid::new(&self.seed,*coord);
+                    let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
                     *grid = new_grid;
                 }
             }
@@ -208,7 +208,7 @@ impl GridGroup {
             if pos.y > coord.y + GRIDSIZE * 2 {
                 coord.y += GRIDSIZE * 3;
                 
-                let new_grid = Grid::new(&self.seed,*coord);
+                let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
                 *grid = new_grid;
             }
             else if (pos.y as isize) < coord.y as isize - GRIDSIZE as isize
@@ -216,28 +216,26 @@ impl GridGroup {
                 let y = coord.y as isize - (GRIDSIZE * 3) as isize;
                 if y >= 0 {
                     coord.y = y as usize;
-                    let new_grid = Grid::new(&self.seed,*coord);
+                    let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
                     *grid = new_grid;
                 }
             }
         }
     }
 
-    pub fn gen_map (seed: Option<BiomeSeed>) -> GridMap {
+    pub fn gen_map (seed: Option<BiomeSeed>) -> Grid {
         let seed = seed.unwrap_or(BiomeSeed::default());
-        let m = Grid::gen(&seed,
-                          Vec2::new(0,0),
-                          Vec2::new(MAPSIZE,MAPSIZE),);
-        m
+        Grid::new(&seed,
+                  Vec2::new(0,0),
+                  MAPSIZE)
     }
     
     /// exports game map at larger size
-    pub fn export (m: &GridMap) -> ::image::DynamicImage {
+    pub fn export (m: &Grid) -> ::image::DynamicImage {
         let mut v = vec!();
-        for n in m.iter() {
+        for n in m.tiles.iter() {
             for t in n.iter() {
-                let tile = Tile { kind: Biome::gen_tile(t) };
-                let b = ::ui::Render::get_tile_color(&tile).to_bytes(); {
+                let b = ::ui::Render::get_tile_color(&t.0).to_bytes(); {
                     v.push(b);
                 }
             }

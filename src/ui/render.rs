@@ -110,7 +110,7 @@ impl Render {
                     let mut pos = Grid::hex_pos(aposy,
                                             aposx,
                                             size);
-                    pos.y = game_tile.1.terra * 100.;
+                    pos.y = game_tile.1.terra * 1000.;
                     tile.pos_tile = (pos.x,pos.y,pos.z);
                     tile.pos_player = (player_pos.x,
                                        player_pos.y,
