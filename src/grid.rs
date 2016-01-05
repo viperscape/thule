@@ -53,9 +53,6 @@ impl Grid {
 
     pub fn regen(s: &BiomeSeed, start: Vec2<usize>, size: Vec2<usize>,
                  b: &mut Vec<Vec<Biome>>) {
-
-        // NOTE: precompute these in BiomeSeeds?
-
         
         for (i,r) in (start.y .. size.y+start.y).enumerate() {
             for (j,c) in (start.x .. size.x+start.x).enumerate() {
