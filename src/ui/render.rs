@@ -99,7 +99,7 @@ impl Render {
                             Colors::yellow()
                         }
                         else {
-                            Render::get_tile_color(&game_tile)
+                            Render::get_tile_color(&game_tile.0)
                         }
                     };
                     

@@ -28,20 +28,22 @@ pub enum TileKind {
 
 #[derive(Debug,Clone)]
 pub struct Grid {
-    pub tiles: Vec<Vec<Tile>>,
+    pub tiles: Vec<Vec<(Tile,Biome)>>,
     //seed: BiomeSeed, // removeme?
 }
 
 impl Grid {
     pub fn new (seed: &BiomeSeed, start: Vec2<usize>) -> Grid {
-        let mut v = vec![vec![Tile { kind: TileKind::Grass }; GRIDSIZE];GRIDSIZE];
+        let mut v = vec![vec![(Tile { kind: TileKind::Grass },
+                               Biome::zero()); GRIDSIZE];GRIDSIZE];
         let g = Grid::gen(seed,start,
                           Vec2::new(GRIDSIZE,GRIDSIZE),);
 
         for (i,r) in g.iter().enumerate() {
             for (j,t) in r.iter().enumerate() {
                 let tile = Biome::gen_tile(t);
-                v[i][j] = Tile { kind: tile }
+                v[i][j] = (Tile { kind: tile },
+                           t.clone());
             }
         }
 
