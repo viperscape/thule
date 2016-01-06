@@ -25,7 +25,10 @@ fn main() {
         game.player.shift(offset,&game.map);
         iface.cam.repos(game.player.pos(size));
 
-        game.map.update(game.player.grid_pos,&game.world);
+        // update world mesh data if needed
+        if game.map.update(game.player.grid_pos) {
+            
+        }
         
         
         iface.update(&game);
@@ -55,8 +58,9 @@ fn check_keys (gs: &mut GameState,iface: &mut Interface) {
         iface.cam.look_at(gs.player.pos(size));
     }
 
-    if keys[VirtualKeyCode::F12 as usize] &
-        keys[VirtualKeyCode::Escape as usize] {
+    let held = iface.keyboard.get_held_keys();
+    if held[VirtualKeyCode::F12 as usize] &
+        held[VirtualKeyCode::Escape as usize] {
             iface.events.push(Events::Quit);
         }
 }
