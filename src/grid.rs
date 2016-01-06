@@ -200,7 +200,6 @@ impl GridGroup {
         for y in 0..GROUPSIZE {
             for x in 0..GROUPSIZE { 
                 let coord = Vec2::new(x*GRIDSIZE,y*GRIDSIZE);
-                //let grid = Grid::new(&seed,coord,GRIDSIZE);
                 grids.push(coord);
             }
         }
@@ -220,33 +219,23 @@ impl GridGroup {
         for coord in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE * 2 {
                 coord.x += GRIDSIZE * 3;
-                
-               // let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-               // *grid = new_grid;
             }
             else if (pos.x as isize) < coord.x as isize - GRIDSIZE as isize
             {
                 let x = coord.x as isize - (GRIDSIZE * 3) as isize;
                 if x >= 0 {
                     coord.x = x as usize;
-                    //let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                    //*grid = new_grid;
                 }
             }
 
             if pos.y > coord.y + GRIDSIZE * 2 {
                 coord.y += GRIDSIZE * 3;
-                
-                //let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                //*grid = new_grid;
             }
             else if (pos.y as isize) < coord.y as isize - GRIDSIZE as isize
             {
                 let y = coord.y as isize - (GRIDSIZE * 3) as isize;
                 if y >= 0 {
                     coord.y = y as usize;
-                    //let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                    //*grid = new_grid;
                 }
             }
         }
