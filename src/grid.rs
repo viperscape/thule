@@ -189,12 +189,10 @@ impl Grid {
 
 pub struct GridGroup {
     pub grids: Vec<Vec2<usize>>, // relative origin coordinate
-    seed: BiomeSeed,
 }
 
 impl GridGroup {
-    pub fn new(seed: Option<BiomeSeed>) -> GridGroup {
-        let seed = seed.unwrap_or(BiomeSeed::default());
+    pub fn new() -> GridGroup {
         let mut grids = vec!();
 
         for y in 0..GROUPSIZE {
@@ -204,8 +202,7 @@ impl GridGroup {
             }
         }
         
-        GridGroup { grids: grids,
-                    seed: seed }
+        GridGroup { grids: grids }
     }
 
     /// updates grids based on player position
@@ -214,7 +211,8 @@ impl GridGroup {
     /// then finds which grid side to build and reposition for the
     /// grid instances
     // NOTE: I'll have to fix if pos > MAPSIZE
-    pub fn update(&mut self,pos:Vec2<usize>, map: &Grid) {
+    pub fn update(&mut self,pos:Vec2<usize>, map: &Grid) -> bool {
+        let mut is_updated = true;
         for coord in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE * 2 {
                 coord.x += GRIDSIZE * 3;
@@ -226,6 +224,7 @@ impl GridGroup {
                     coord.x = x as usize;
                 }
             }
+            else { is_updated = false }
 
             if pos.y > coord.y + GRIDSIZE * 2 {
                 coord.y += GRIDSIZE * 3;
@@ -237,7 +236,10 @@ impl GridGroup {
                     coord.y = y as usize;
                 }
             }
+            else { is_updated = false }
         }
+
+        is_updated
     }
 }
 

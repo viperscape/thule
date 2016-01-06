@@ -56,7 +56,7 @@ impl GameState {
         
         GameState {
             player: Player::new(),
-            map: GridGroup::new(None,),
+            map: GridGroup::new(),
             world: m,
             minimap: ::glium::Texture2d::new(display,img).unwrap(),
             map_view: false,
