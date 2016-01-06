@@ -38,12 +38,21 @@ impl GameState {
                 m
             }
         };
-        let img = Grid::export(&m);
-        
-        // NOTE: this may be removed in the future
-        let mut f = File::create(&Path::new("map.png")).unwrap();
-        let _ = ::image::ImageRgb8(img.to_rgb()).
-            save(&mut f, ::image::PNG);
+
+        let img = {
+            if let Some(img) = ::image::open(&Path::new("map.png")).ok() {
+                img
+            }
+            else {
+                let img = Grid::export(&m);
+                
+                let mut f = File::create(&Path::new("map.png")).unwrap();
+                let _ = ::image::ImageRgb8(img.to_rgb()).
+                    save(&mut f, ::image::PNG);
+                
+                img
+            }
+        };
         
         GameState {
             player: Player::new(),
