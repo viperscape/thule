@@ -213,8 +213,6 @@ impl GridGroup {
     /// position in list of gridgroup
     /// then finds which grid side to build and reposition for the
     /// grid instances
-    // NOTE: because we save/load map data, we should
-    // not generate biomes on the fly, but pull from the heap data
     pub fn update(&mut self,pos:Vec2<usize>, map: &Grid) {
         for coord in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE * 2 {
