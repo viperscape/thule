@@ -25,7 +25,7 @@ fn main() {
         game.player.shift(offset,&game.map);
         iface.cam.repos(game.player.pos(size));
 
-        game.map.update(game.player.grid_pos);
+        game.map.update(game.player.grid_pos,&game.world);
         
         
         iface.update(&game);

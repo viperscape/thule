@@ -103,6 +103,35 @@ impl Grid {
                   r as f32 * size * 0.75)
     }
 
+    pub fn gen_map (seed: Option<BiomeSeed>) -> Grid {
+        let seed = seed.unwrap_or(BiomeSeed::default());
+        Grid::new(&seed,
+                  Vec2::new(0,0),
+                  MAPSIZE)
+    }
+    
+    /// exports game map at larger size
+    pub fn export (m: &Grid) -> ::image::DynamicImage {
+        let mut v = vec!();
+        for n in m.tiles.iter() {
+            for t in n.iter() {
+                let b = ::ui::Render::get_tile_color(&t.0).to_bytes(); {
+                    v.push(b);
+                }
+            }
+        }
+        let mut img = ::image::ImageBuffer::new(MAPSIZE as u32,
+                                                MAPSIZE as u32);
+
+        let mut i = 0;
+        for (_,_, pixel) in img.enumerate_pixels_mut() {
+            *pixel = ::image::Rgb(v[i]);
+            i += 1;
+        }
+
+        img = ::image::imageops::rotate180(&img);
+        ::image::ImageRgb8(img)
+    }
   /*  /// intersects ray, based on dimensions and cam position
     pub fn has_ray (&self,cam:&Camera, with_mouse: Option<(&Mouse,Vec2<f32>)>) -> bool {
         let size = (self.size as f32 * 1. * cam.zoom) / 2.;
@@ -159,7 +188,7 @@ impl Grid {
 }
 
 pub struct GridGroup {
-    pub grids: Vec<(Vec2<usize>,Grid)>,
+    pub grids: Vec<Vec2<usize>>, // relative origin coordinate
     seed: BiomeSeed,
 }
 
@@ -171,8 +200,8 @@ impl GridGroup {
         for y in 0..GROUPSIZE {
             for x in 0..GROUPSIZE { 
                 let coord = Vec2::new(x*GRIDSIZE,y*GRIDSIZE);
-                let grid = Grid::new(&seed,coord,GRIDSIZE);
-                grids.push((coord,grid));
+                //let grid = Grid::new(&seed,coord,GRIDSIZE);
+                grids.push(coord);
             }
         }
         
@@ -187,70 +216,40 @@ impl GridGroup {
     /// grid instances
     // NOTE: because we save/load map data, we should
     // not generate biomes on the fly, but pull from the heap data
-    pub fn update(&mut self,pos:Vec2<usize>) {
-        for &mut (ref mut coord,ref mut grid) in self.grids.iter_mut() {
+    pub fn update(&mut self,pos:Vec2<usize>, map: &Grid) {
+        for coord in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE * 2 {
                 coord.x += GRIDSIZE * 3;
                 
-                let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                *grid = new_grid;
+               // let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
+               // *grid = new_grid;
             }
             else if (pos.x as isize) < coord.x as isize - GRIDSIZE as isize
             {
                 let x = coord.x as isize - (GRIDSIZE * 3) as isize;
                 if x >= 0 {
                     coord.x = x as usize;
-                    let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                    *grid = new_grid;
+                    //let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
+                    //*grid = new_grid;
                 }
             }
 
             if pos.y > coord.y + GRIDSIZE * 2 {
                 coord.y += GRIDSIZE * 3;
                 
-                let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                *grid = new_grid;
+                //let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
+                //*grid = new_grid;
             }
             else if (pos.y as isize) < coord.y as isize - GRIDSIZE as isize
             {
                 let y = coord.y as isize - (GRIDSIZE * 3) as isize;
                 if y >= 0 {
                     coord.y = y as usize;
-                    let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
-                    *grid = new_grid;
+                    //let new_grid = Grid::new(&self.seed,*coord,GRIDSIZE);
+                    //*grid = new_grid;
                 }
             }
         }
-    }
-
-    pub fn gen_map (seed: Option<BiomeSeed>) -> Grid {
-        let seed = seed.unwrap_or(BiomeSeed::default());
-        Grid::new(&seed,
-                  Vec2::new(0,0),
-                  MAPSIZE)
-    }
-    
-    /// exports game map at larger size
-    pub fn export (m: &Grid) -> ::image::DynamicImage {
-        let mut v = vec!();
-        for n in m.tiles.iter() {
-            for t in n.iter() {
-                let b = ::ui::Render::get_tile_color(&t.0).to_bytes(); {
-                    v.push(b);
-                }
-            }
-        }
-        let mut img = ::image::ImageBuffer::new(MAPSIZE as u32,
-                                                MAPSIZE as u32);
-
-        let mut i = 0;
-        for (_,_, pixel) in img.enumerate_pixels_mut() {
-            *pixel = ::image::Rgb(v[i]);
-            i += 1;
-        }
-
-        img = ::image::imageops::rotate180(&img);
-        ::image::ImageRgb8(img)
     }
 }
 

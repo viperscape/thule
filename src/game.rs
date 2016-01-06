@@ -15,6 +15,7 @@ pub const MOVE_TIME: f64 = 0.095;
 pub struct GameState {
     pub player: Player,
     pub map: GridGroup,
+    pub world: Grid,
     pub minimap: ::glium::Texture2d,
     pub map_view: bool,
 }
@@ -29,7 +30,7 @@ impl GameState {
                 decode(&b[..]).unwrap()
             }
             else {
-                let m = GridGroup::gen_map(Some(biome_seeds));
+                let m = Grid::gen_map(Some(biome_seeds));
                 if let Some(mut f) = File::create(&Path::new("map.dat")).ok() {
                     let b = encode(&m,SizeLimit::Infinite).unwrap();
                     let _ = f.write(&b);
@@ -37,7 +38,7 @@ impl GameState {
                 m
             }
         };
-        let img = GridGroup::export(&m);
+        let img = Grid::export(&m);
         
         // NOTE: this may be removed in the future
         let mut f = File::create(&Path::new("map.png")).unwrap();
@@ -47,6 +48,7 @@ impl GameState {
         GameState {
             player: Player::new(),
             map: GridGroup::new(None,),
+            world: m,
             minimap: ::glium::Texture2d::new(display,img).unwrap(),
             map_view: false,
         }

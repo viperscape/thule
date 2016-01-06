@@ -81,17 +81,18 @@ impl Render {
                     c += 1;
                     let r = i/::GRIDSIZE;
                     if c > ::GRIDSIZE as isize - 1 { c = 0; }
-                    
-                    let game_tile = &game.map
-                        .grids[g].1
-                        .tiles[r][c as usize];
+
+                    let coord = &game.map.grids[g];
+                    let game_tile = &game.world.tiles
+                        [coord.y + r]
+                        [coord.x + c as usize];
 
                     tile.color_fog = (color[0],
                                       color[1],
                                       color[2]);
 
-                    let aposy = r + game.map.grids[g].0.y;
-                    let aposx = c  as usize + game.map.grids[g].0.x;
+                    let aposy = r + game.map.grids[g].y;
+                    let aposx = c  as usize + game.map.grids[g].x;
                     
                     let tile_color = {
                         if game.player.grid_pos == Vec2::new(aposx,
