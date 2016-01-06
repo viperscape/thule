@@ -211,7 +211,7 @@ impl GridGroup {
     /// then finds which grid side to build and reposition for the
     /// grid instances
     // NOTE: I'll have to fix if pos > MAPSIZE
-    pub fn update(&mut self,pos:Vec2<usize>, map: &Grid) -> bool {
+    pub fn update(&mut self,pos:Vec2<usize>) -> bool {
         let mut is_updated = true;
         for coord in self.grids.iter_mut() {
             if pos.x > coord.x + GRIDSIZE * 2 {
