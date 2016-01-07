@@ -24,6 +24,8 @@ static VERT_SRC: &'static str = r"
         in vec3 color;
         in int visible;
 
+        in vec4 heights;
+
         in vec3 color_fog;
 
         uniform mat4  pv;
@@ -38,7 +40,14 @@ static VERT_SRC: &'static str = r"
         void main() {
              if (visible == 1) {
                vec3 off = vec3(0.0,0.0,0.0);
-               if (gl_VertexID == 2) { off = vec3(0.0,0.5,0.0); } // id-1 is center
+               if ((gl_VertexID == 1) ||
+                   (gl_VertexID == 3) ||
+                   (gl_VertexID == 6) ||
+                   (gl_VertexID == 11) ||
+                   (gl_VertexID == 13) ||
+                   (gl_VertexID == 17)) 
+                { off = vec3(0.0,heights.x,0.0); }
+
                v_position = (pos + off) * size;
              }
              else { v_position = vec3(-3000.0,-3000.0,-3000.0); }
@@ -85,6 +94,7 @@ pub struct Attr {
     pub color: (f32,f32,f32),
     pub color_fog: (f32,f32,f32),
     pub visible: i32,
+    pub heights: (f32,f32,f32,f32),
 }
 
 // TODO: consider using MeshDrawer with traits instead of reimpl
@@ -111,7 +121,8 @@ impl TileDrawer {
                               pos_player,
                               color,
                               color_fog,
-                              visible);
+                              visible,
+                              heights);
 
             let data = vec![
                 Attr {
@@ -120,6 +131,7 @@ impl TileDrawer {
                     color: (1.,1.,1.),
                     visible: 1,
                     color_fog: (1.,1.,1.),
+                    heights: (0.,0.,0.,0.),
                 }
                 ;(::GRIDSIZE * ::GRIDSIZE)];
 

@@ -108,14 +108,19 @@ impl Render {
                                   tile_color[1],
                                   tile_color[2]);
 
-                    let mut pos = Grid::hex_pos(aposy,
-                                                aposx,
-                                                size);
+                    let pos = Grid::hex_pos(aposy,
+                                            aposx,
+                                            size);
                     
                     tile.pos_tile = (pos.x,pos.y,pos.z);
                     tile.pos_player = (player_pos.x,
                                        player_pos.y,
                                        player_pos.z);
+
+                    tile.heights = (game_tile.1.terra,
+                                    0.,
+                                    0.,
+                                    0.,);
                 }
             }
 
