@@ -121,7 +121,7 @@ impl Render {
                     // grab neighboring heights and avg
                     // row then column
                     let h1 = {
-                        if coords[0] - 1 > 0 {
+                        if coords[0] as isize - 1 > 0 {
                             game.world.tiles
                                 [coords[0] - 1]
                                 [coords[1]].1.terra
@@ -137,7 +137,7 @@ impl Render {
                         else { 0. }
                     };
                     let h3 = {
-                        if coords[1] - 1 >= 0 {
+                        if coords[1] as isize - 1 >= 0 {
                             game.world.tiles
                                 [coords[0]]
                                 [coords[1] - 1].1.terra
@@ -153,7 +153,7 @@ impl Render {
                         else { 0. }
                     };
                     let h5 = {
-                        if coords[0] - 1 >= 0 &&
+                        if coords[0] as isize - 1 >= 0 &&
                             coords[1] + 1 < ::MAPSIZE {
                             game.world.tiles
                                 [coords[0] - 1]
@@ -162,17 +162,24 @@ impl Render {
                         else { 0. }
                     };
                      let h6 = {
-                        if coords[0] - 1 >= 0 &&
-                            coords[1] - 1 >= 0 {
+                        if coords[0] as isize - 1 >= 0 &&
+                            coords[1] as isize - 1 >= 0 {
                             game.world.tiles
                                 [coords[0] - 1]
                                 [coords[1] - 1].1.terra
                         }
                         else { 0. }
                     };
-                    
-                    tile.heights = (0.,0.,0.,game_tile.1.terra);
-                    tile.heights_too = (0.,0.,0.);
+
+                    let h0 = game_tile.1.terra;
+                    let hs = 10.0;
+                    tile.heights = (((h6+h3+h0)/3.)*hs,
+                                    ((h6+h1+h0)/3.)*hs,
+                                    ((h5+h1+h0)/3.)*hs,
+                                    h0);
+                    tile.heights_too = (((h2+h3+h0)/3.)*hs,
+                                        ((h2+h4+h0)/3.)*hs,
+                                        ((h5+h4+h0)/3.)*hs);
                 }
             }
 
