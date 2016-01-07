@@ -37,7 +37,9 @@ static VERT_SRC: &'static str = r"
 
         void main() {
              if (visible == 1) {
-               v_position = pos * size;
+               vec3 off = vec3(0.0,0.0,0.0);
+               if (gl_VertexID == 2) { off = vec3(0.0,0.5,0.0); } // id-1 is center
+               v_position = (pos + off) * size;
              }
              else { v_position = vec3(-3000.0,-3000.0,-3000.0); }
 
