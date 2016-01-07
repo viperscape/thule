@@ -11,8 +11,6 @@ use obj;
 use ::ui::mesh::{Vertex,load_wavefront};
 
 
-// TODO: consider storing either model mat or pos for instances
-
 static VERT_SRC: &'static str = r"
         #version 140
 
