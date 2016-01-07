@@ -24,7 +24,8 @@ static VERT_SRC: &'static str = r"
         in vec3 color;
         in int visible;
 
-        in vec4 heights;
+        in vec4 heights; // w for tile center vertex
+        in vec4 heights_too; // second set of height averages for neighbors
 
         in vec3 color_fog;
 
@@ -46,6 +47,24 @@ static VERT_SRC: &'static str = r"
                    (gl_VertexID == 11) ||
                    (gl_VertexID == 13) ||
                    (gl_VertexID == 17)) 
+                { off = vec3(0.0,heights.w,0.0); }
+              else if ((gl_VertexID == 2) ||
+                   (gl_VertexID == 8)) 
+                { off = vec3(0.0,heights.x,0.0); }
+              else if ((gl_VertexID == 5) ||
+                   (gl_VertexID == 9)) 
+                { off = vec3(0.0,heights.x,0.0); }
+              else if ((gl_VertexID == 15) ||
+                   (gl_VertexID == 10)) 
+                { off = vec3(0.0,heights.x,0.0); }
+              else if ((gl_VertexID == 12) ||
+                   (gl_VertexID == 7)) 
+                { off = vec3(0.0,heights.x,0.0); }
+              else if ((gl_VertexID == 14) ||
+                   (gl_VertexID == 16)) 
+                { off = vec3(0.0,heights.x,0.0); }
+              else if ((gl_VertexID == 0) ||
+                   (gl_VertexID == 4)) 
                 { off = vec3(0.0,heights.x,0.0); }
 
                v_position = (pos + off) * size;
@@ -95,6 +114,7 @@ pub struct Attr {
     pub color_fog: (f32,f32,f32),
     pub visible: i32,
     pub heights: (f32,f32,f32,f32),
+    pub heights_too: (f32,f32,f32),
 }
 
 // TODO: consider using MeshDrawer with traits instead of reimpl
@@ -122,7 +142,7 @@ impl TileDrawer {
                               color,
                               color_fog,
                               visible,
-                              heights);
+                              heights,heights_too);
 
             let data = vec![
                 Attr {
@@ -132,6 +152,7 @@ impl TileDrawer {
                     visible: 1,
                     color_fog: (1.,1.,1.),
                     heights: (0.,0.,0.,0.),
+                    heights_too: (0.,0.,0.),
                 }
                 ;(::GRIDSIZE * ::GRIDSIZE)];
 

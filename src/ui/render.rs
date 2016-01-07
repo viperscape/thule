@@ -117,10 +117,7 @@ impl Render {
                                        player_pos.y,
                                        player_pos.z);
 
-                    tile.heights = (game_tile.1.terra,
-                                    0.,
-                                    0.,
-                                    0.,);
+                    tile.heights = (0.,0.,0.,game_tile.1.terra);
                 }
             }
 
