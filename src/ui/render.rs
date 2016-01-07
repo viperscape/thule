@@ -83,9 +83,10 @@ impl Render {
                     if c > ::GRIDSIZE as isize - 1 { c = 0; }
 
                     let coord = &game.map.grids[g];
+                    let coords = [coord.y + r,coord.x + c as usize];
                     let game_tile = &game.world.tiles
-                        [coord.y + r]
-                        [coord.x + c as usize];
+                        [coords[0]]
+                        [coords[1]];
 
                     tile.color_fog = (color[0],
                                       color[1],
@@ -117,7 +118,42 @@ impl Render {
                                        player_pos.y,
                                        player_pos.z);
 
+                    // grab neighboring heights and avg
+                    let h1 = {
+                        if coords[0] - 1 > 0 {
+                            game.world.tiles
+                                [coords[0] - 1]
+                                [coords[1]].1.terra
+                        }
+                        else { 0. }
+                    };
+                    let h2 = {
+                        if coords[0] + 1 < ::MAPSIZE {
+                            game.world.tiles
+                                [coords[0] + 1]
+                                [coords[1]].1.terra
+                        }
+                        else { 0. }
+                    };
+                    let h3 = {
+                        if coords[1] - 1 > 0 {
+                            game.world.tiles
+                                [coords[0]]
+                                [coords[1] - 1].1.terra
+                        }
+                        else { 0. }
+                    };
+                    let h4 = {
+                        if coords[1] + 1 < ::MAPSIZE {
+                            game.world.tiles
+                                [coords[0]]
+                                [coords[1] + 1].1.terra
+                        }
+                        else { 0. }
+                    };
+                    
                     tile.heights = (0.,0.,0.,game_tile.1.terra);
+                    tile.heights_too = (0.,0.,0.);
                 }
             }
 
