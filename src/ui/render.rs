@@ -119,6 +119,7 @@ impl Render {
                                        player_pos.z);
 
                     // grab neighboring heights and avg
+                    // row then column
                     let h1 = {
                         if coords[0] - 1 > 0 {
                             game.world.tiles
@@ -136,7 +137,7 @@ impl Render {
                         else { 0. }
                     };
                     let h3 = {
-                        if coords[1] - 1 > 0 {
+                        if coords[1] - 1 >= 0 {
                             game.world.tiles
                                 [coords[0]]
                                 [coords[1] - 1].1.terra
@@ -148,6 +149,24 @@ impl Render {
                             game.world.tiles
                                 [coords[0]]
                                 [coords[1] + 1].1.terra
+                        }
+                        else { 0. }
+                    };
+                    let h5 = {
+                        if coords[0] - 1 >= 0 &&
+                            coords[1] + 1 < ::MAPSIZE {
+                            game.world.tiles
+                                [coords[0] - 1]
+                                [coords[1] + 1].1.terra
+                        }
+                        else { 0. }
+                    };
+                     let h6 = {
+                        if coords[0] - 1 >= 0 &&
+                            coords[1] - 1 >= 0 {
+                            game.world.tiles
+                                [coords[0] - 1]
+                                [coords[1] - 1].1.terra
                         }
                         else { 0. }
                     };
