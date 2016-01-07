@@ -84,6 +84,14 @@ impl Render {
 
                     let coord = &game.map.grids[g];
                     let coords = [coord.y + r,coord.x + c as usize];
+
+                    if ((coords[0] < 0) ||
+                        (coords[0] > ::MAPSIZE -1) ||
+                        (coords[1] < 1) ||
+                        (coords[1] > ::MAPSIZE -1)) {
+                        //tile.visible = 0;
+                    }
+                    
                     let game_tile = &game.world.tiles
                         [coords[0]]
                         [coords[1]];
@@ -120,13 +128,14 @@ impl Render {
 
                     // grab neighboring heights and avg
                     // row then column
+                    let nn = 0.;
                     let h1 = {
                         if coords[0] as isize - 1 > 0 {
                             game.world.tiles
                                 [coords[0] - 1]
                                 [coords[1]].1.terra
                         }
-                        else { 0. }
+                        else { nn }
                     };
                     let h2 = {
                         if coords[0] + 1 < ::MAPSIZE {
@@ -134,7 +143,7 @@ impl Render {
                                 [coords[0] + 1]
                                 [coords[1]].1.terra
                         }
-                        else { 0. }
+                        else { nn }
                     };
                     let h3 = {
                         if coords[1] as isize - 1 >= 0 {
@@ -142,7 +151,7 @@ impl Render {
                                 [coords[0]]
                                 [coords[1] - 1].1.terra
                         }
-                        else { 0. }
+                        else { nn }
                     };
                     let h4 = {
                         if coords[1] + 1 < ::MAPSIZE {
@@ -150,7 +159,7 @@ impl Render {
                                 [coords[0]]
                                 [coords[1] + 1].1.terra
                         }
-                        else { 0. }
+                        else { nn }
                     };
                     let h5 = {
                         if coords[0] as isize - 1 >= 0 &&
@@ -159,7 +168,7 @@ impl Render {
                                 [coords[0] - 1]
                                 [coords[1] + 1].1.terra
                         }
-                        else { 0. }
+                        else { nn }
                     };
                      let h6 = {
                         if coords[0] as isize - 1 >= 0 &&
@@ -168,7 +177,7 @@ impl Render {
                                 [coords[0] - 1]
                                 [coords[1] - 1].1.terra
                         }
-                        else { 0. }
+                        else { nn }
                     };
 
                     let h0 = game_tile.1.terra;
@@ -176,7 +185,7 @@ impl Render {
                     tile.heights = (((h6+h3+h0)/3.)*hs,
                                     ((h6+h1+h0)/3.)*hs,
                                     ((h5+h1+h0)/3.)*hs,
-                                    h0);
+                                    h0*hs);
                     tile.heights_too = (((h2+h3+h0)/3.)*hs,
                                         ((h2+h4+h0)/3.)*hs,
                                         ((h5+h4+h0)/3.)*hs);
@@ -219,6 +228,14 @@ impl Render {
                 color: Colors::black(),
                 center: false,
                 pos: Vec3::new(-390.,-390.,0.),
+            });
+
+            self.text.push(Text {
+                text: format!("pos:{:?}", game.player.grid_pos),
+                size: Vec2::new(1.,1.),
+                color: Colors::black(),
+                center: false,
+                pos: Vec3::new(-390.,-370.,0.),
             });
 
             self.text.draw(ui_view.to_pv(),&mut target);
