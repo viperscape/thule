@@ -37,6 +37,7 @@ static VERT_SRC: &'static str = r"
         out vec3 v_normal;
 
         void main() {
+          vec3 colors = vec3(0.0,0.0,0.0);
              if (visible == 1) {
                vec3 off = vec3(0.0,0.0,0.0);
                if ((gl_VertexID == 1) ||
@@ -45,7 +46,7 @@ static VERT_SRC: &'static str = r"
                    (gl_VertexID == 11) ||
                    (gl_VertexID == 13) ||
                    (gl_VertexID == 17)) 
-                { off = vec3(0.0,heights.w,0.0); }
+                { off = vec3(0.0,heights.w * -1.0,0.0); }
 
               else if ((gl_VertexID == 5) ||
                    (gl_VertexID == 9)) 
@@ -58,14 +59,14 @@ static VERT_SRC: &'static str = r"
                 { off = vec3(0.0,heights.z,0.0); }
 
               else if ((gl_VertexID == 0) ||
-                   (gl_VertexID == 4)) 
-                { off = vec3(0.0,heights_too.x,0.0); }
+                   (gl_VertexID == 4))
+                { off = vec3(0.0,heights_too.x,0.0); colors = vec3(1.0,0.0,0.0); }
               else if ((gl_VertexID == 2) ||
                    (gl_VertexID == 8)) 
-                { off = vec3(0.0,heights_too.y,0.0); }
+                { off = vec3(0.0,heights_too.y,0.0); colors = vec3(0.0,1.0,0.0); }
               else if ((gl_VertexID == 12) ||
                    (gl_VertexID == 7)) 
-                { off = vec3(0.0,heights_too.z,0.0); }
+                { off = vec3(0.0,heights_too.z,0.0); colors = vec3(0.0,0.0,1.0); }
 
 
                v_position = (pos + off) * size;
@@ -90,7 +91,7 @@ float fog_factor = (dist-fog_start)/(fog_end-fog_start);
 fog_factor = clamp(fog_factor,0,1);
 
           //v_color = vec4(color,1.0);
-          v_color = vec4(mix(color,color_fog,vec3(fog_factor)),1.0);
+          v_color = vec4(mix(colors,color_fog,vec3(fog_factor)),1.0);
         }
 ";
 

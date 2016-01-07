@@ -181,14 +181,14 @@ impl Render {
                     };
 
                     let h0 = game_tile.1.terra;
-                    let hs = 10.0;
-                    tile.heights = (((h6+h3+h0)/3.)*hs,
-                                    ((h6+h1+h0)/3.)*hs,
-                                    ((h5+h1+h0)/3.)*hs,
+                    let hs = 1.0;
+                    tile.heights = (((h6+h3+h0)/1.)*hs,
+                                    ((h6+h1+h0)/1.)*hs,
+                                    ((h5+h1+h0)/1.)*hs,
                                     h0*hs);
-                    tile.heights_too = (((h2+h3+h0)/3.)*hs,
-                                        ((h2+h4+h0)/3.)*hs,
-                                        ((h5+h4+h0)/3.)*hs);
+                    tile.heights_too = (((h2+h3+h0)/1.)*hs,
+                                        ((h2+h4+h0)/1.)*hs,
+                                        ((h5+h4+h0)/1.)*hs);
                 }
             }
 
