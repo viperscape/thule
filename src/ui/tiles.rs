@@ -22,8 +22,7 @@ static VERT_SRC: &'static str = r"
         in vec3 color;
         in int visible;
 
-        in vec4 heights; // w for tile center vertex
-        in vec3 heights_too; // second set of height averages for neighbors
+        in float height;
 
         in vec3 color_fog;
 
@@ -37,38 +36,8 @@ static VERT_SRC: &'static str = r"
         out vec3 v_normal;
 
         void main() {
-          vec3 colors = vec3(0.0,0.0,0.0);
              if (visible == 1) {
-               vec3 off = vec3(0.0,0.0,0.0);
-               if ((gl_VertexID == 1) ||
-                   (gl_VertexID == 3) ||
-                   (gl_VertexID == 6) ||
-                   (gl_VertexID == 11) ||
-                   (gl_VertexID == 13) ||
-                   (gl_VertexID == 17)) 
-                { off = vec3(0.0,heights.w * -1.0,0.0); }
-
-              else if ((gl_VertexID == 5) ||
-                   (gl_VertexID == 9)) 
-                { off = vec3(0.0,heights.x,0.0); }
-              else if ((gl_VertexID == 15) ||
-                   (gl_VertexID == 10)) 
-                { off = vec3(0.0,heights.y,0.0); }
-              else if ((gl_VertexID == 14) ||
-                   (gl_VertexID == 16)) 
-                { off = vec3(0.0,heights.z,0.0); }
-
-              else if ((gl_VertexID == 0) ||
-                   (gl_VertexID == 4))
-                { off = vec3(0.0,heights_too.x,0.0); colors = vec3(1.0,0.0,0.0); }
-              else if ((gl_VertexID == 2) ||
-                   (gl_VertexID == 8)) 
-                { off = vec3(0.0,heights_too.y,0.0); colors = vec3(0.0,1.0,0.0); }
-              else if ((gl_VertexID == 12) ||
-                   (gl_VertexID == 7)) 
-                { off = vec3(0.0,heights_too.z,0.0); colors = vec3(0.0,0.0,1.0); }
-
-
+               vec3 off = vec3(0.0,height,0.0);
                v_position = (pos + off) * size;
              }
              else { v_position = vec3(-3000.0,-3000.0,-3000.0); }
@@ -77,21 +46,20 @@ static VERT_SRC: &'static str = r"
              v_normal = norm;
              gl_Position = pv * vec4(apos, 1.0);
 
-//distance of fragment in worldspace
-// TODO: move to frag
-float distx = apos.x-pos_player.x;
-float distz = apos.z-pos_player.z;
-float dist = sqrt(pow(distx,2.0)+pow(distz,2.0));
+          //distance of fragment in worldspace
+          // TODO: move to frag
+          float distx = apos.x-pos_player.x;
+          float distz = apos.z-pos_player.z;
+          float dist = sqrt(pow(distx,2.0)+pow(distz,2.0));
 
-float fog_start = 1300 * (size.x / 100.); // this removes zoom
-float fog_end = 1900 * (size.x / 100.);
+          float fog_start = 1300 * (size.x / 100.); // this removes zoom
+          float fog_end = 1900 * (size.x / 100.);
 
-//linear interpolation
-float fog_factor = (dist-fog_start)/(fog_end-fog_start);
-fog_factor = clamp(fog_factor,0,1);
+          //linear interpolation
+          float fog_factor = (dist-fog_start)/(fog_end-fog_start);
+          fog_factor = clamp(fog_factor,0,1);
 
-          //v_color = vec4(color,1.0);
-          v_color = vec4(mix(colors,color_fog,vec3(fog_factor)),1.0);
+          v_color = vec4(mix(color,color_fog,vec3(fog_factor)),1.0);
         }
 ";
 
@@ -115,8 +83,7 @@ pub struct Attr {
     pub color: (f32,f32,f32),
     pub color_fog: (f32,f32,f32),
     pub visible: i32,
-    pub heights: (f32,f32,f32,f32),
-    pub heights_too: (f32,f32,f32),
+    pub height: f32,
 }
 
 // TODO: consider using MeshDrawer with traits instead of reimpl
@@ -144,7 +111,7 @@ impl TileDrawer {
                               color,
                               color_fog,
                               visible,
-                              heights,heights_too);
+                              height);
 
             let data = vec![
                 Attr {
@@ -153,8 +120,7 @@ impl TileDrawer {
                     color: (1.,1.,1.),
                     visible: 1,
                     color_fog: (1.,1.,1.),
-                    heights: (0.,0.,0.,0.),
-                    heights_too: (0.,0.,0.),
+                    height: 0.,
                 }
                 ;(::GRIDSIZE * ::GRIDSIZE)];
 

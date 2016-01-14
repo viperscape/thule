@@ -29,7 +29,7 @@ impl Render {
         for _ in 0 .. ::GROUPSIZE {
             for _ in 0 .. ::GROUPSIZE {
                 tiles.push(TileDrawer::new_from_path(
-                    "assets/mesh/hex.obj",display));
+                    "assets/mesh/hex3d.obj",display));
             }
         }
         
@@ -71,7 +71,7 @@ impl Render {
             let grid_view = Transforms::grid(win_size,&cam);
 
             let size = 100. * cam.zoom;
-            let player_pos = game.player.pos(size);
+            let mut player_pos = game.player.pos(size);
             
             // iter 2d tiles
             let mut c = -1;
@@ -84,17 +84,11 @@ impl Render {
 
                     let coord = &game.map.grids[g];
                     let coords = [coord.y + r,coord.x + c as usize];
-
-                    if ((coords[0] < 0) ||
-                        (coords[0] > ::MAPSIZE -1) ||
-                        (coords[1] < 1) ||
-                        (coords[1] > ::MAPSIZE -1)) {
-                        //tile.visible = 0;
-                    }
                     
                     let game_tile = &game.world.tiles
                         [coords[0]]
                         [coords[1]];
+                    let h = game_tile.1.terra*10.;
 
                     tile.color_fog = (color[0],
                                       color[1],
@@ -106,6 +100,7 @@ impl Render {
                     let tile_color = {
                         if game.player.grid_pos == Vec2::new(aposx,
                                                              aposy) {
+                            player_pos.y += h*size + 25.; // 25. offset player size
                             Colors::yellow()
                         }
                         else {
@@ -120,75 +115,15 @@ impl Render {
                     let pos = Grid::hex_pos(aposy,
                                             aposx,
                                             size);
+
+                    
+                    tile.height = h;
                     
                     tile.pos_tile = (pos.x,pos.y,pos.z);
                     tile.pos_player = (player_pos.x,
                                        player_pos.y,
                                        player_pos.z);
-
-                    // grab neighboring heights and avg
-                    // row then column
-                    let nn = 0.;
-                    let h1 = {
-                        if coords[0] as isize - 1 > 0 {
-                            game.world.tiles
-                                [coords[0] - 1]
-                                [coords[1]].1.terra
-                        }
-                        else { nn }
-                    };
-                    let h2 = {
-                        if coords[0] + 1 < ::MAPSIZE {
-                            game.world.tiles
-                                [coords[0] + 1]
-                                [coords[1]].1.terra
-                        }
-                        else { nn }
-                    };
-                    let h3 = {
-                        if coords[1] as isize - 1 >= 0 {
-                            game.world.tiles
-                                [coords[0]]
-                                [coords[1] - 1].1.terra
-                        }
-                        else { nn }
-                    };
-                    let h4 = {
-                        if coords[1] + 1 < ::MAPSIZE {
-                            game.world.tiles
-                                [coords[0]]
-                                [coords[1] + 1].1.terra
-                        }
-                        else { nn }
-                    };
-                    let h5 = {
-                        if coords[0] as isize - 1 >= 0 &&
-                            coords[1] + 1 < ::MAPSIZE {
-                            game.world.tiles
-                                [coords[0] - 1]
-                                [coords[1] + 1].1.terra
-                        }
-                        else { nn }
-                    };
-                     let h6 = {
-                        if coords[0] as isize - 1 >= 0 &&
-                            coords[1] as isize - 1 >= 0 {
-                            game.world.tiles
-                                [coords[0] - 1]
-                                [coords[1] - 1].1.terra
-                        }
-                        else { nn }
-                    };
-
-                    let h0 = game_tile.1.terra;
-                    let hs = 1.0;
-                    tile.heights = (((h6+h3+h0)/1.)*hs,
-                                    ((h6+h1+h0)/1.)*hs,
-                                    ((h5+h1+h0)/1.)*hs,
-                                    h0*hs);
-                    tile.heights_too = (((h2+h3+h0)/1.)*hs,
-                                        ((h2+h4+h0)/1.)*hs,
-                                        ((h5+h4+h0)/1.)*hs);
+                    
                 }
             }
 
