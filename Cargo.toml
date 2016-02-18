@@ -14,7 +14,7 @@ rustc-serialize = "0.3.16"
 bincode = "*"
 rand = "0.3.11"
 
-glium = "0.9.1"
+glium = "0.13.5"
 
 clock_ticks = "*"
 
