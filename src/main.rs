@@ -1,4 +1,3 @@
-#![feature(drain)]
 extern crate rand;
 
 extern crate thule;

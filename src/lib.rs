@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-#![feature(drain)]
 
 extern crate rustc_serialize;
 extern crate rand;
